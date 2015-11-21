@@ -10,7 +10,7 @@ type Responder interface {
 
 type TGBotAPI interface {
 	Send(c tgbotapi.Chattable) (tgbotapi.Message, error)
-	GetFileDirectUrl(fileID string) (string, error)
+	GetFileDirectURL(fileID string) (string, error)
 	IsMessageToMe(message tgbotapi.Message) bool
 	GetUpdatesChan(config tgbotapi.UpdateConfig) (<-chan tgbotapi.Update, error)
 }

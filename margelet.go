@@ -39,7 +39,7 @@ func (this *Margelet) Send(c tgbotapi.Chattable) (tgbotapi.Message, error) {
 }
 
 func (this *Margelet) GetFileDirectUrl(fileID string) (string, error) {
-	return this.bot.GetFileDirectUrl(fileID)
+	return this.bot.GetFileDirectURL(fileID)
 }
 
 func (this *Margelet) IsMessageToMe(message tgbotapi.Message) bool {

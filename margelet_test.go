@@ -15,7 +15,7 @@ func (this BotMock) Send(c tgbotapi.Chattable) (tgbotapi.Message, error) {
 	return tgbotapi.Message{}, nil
 }
 
-func (this BotMock) GetFileDirectUrl(fileID string) (string, error) {
+func (this BotMock) GetFileDirectURL(fileID string) (string, error) {
 	return "https://example.com/test.txt", nil
 }
 
