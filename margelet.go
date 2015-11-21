@@ -28,7 +28,7 @@ func NewMargelet(token string) (*Margelet, error) {
 	return &Margelet{bot, []Responder{}}, nil
 }
 
-func (this *Margelet) addResponder(responder Responder) {
+func (this *Margelet) AddResponder(responder Responder) {
 	this.responders = append(this.responders, responder)
 }
 
