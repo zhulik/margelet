@@ -6,7 +6,8 @@ import (
 
 type Margelet struct {
 	bot        *tgbotapi.BotAPI
-	responders []Responder
+	messageResponders []Responder
+	commandResponders []Responder
 }
 
 func NewMargelet(token string) (*Margelet, error) {
@@ -25,11 +26,15 @@ func NewMargelet(token string) (*Margelet, error) {
 		return nil, err
 	}
 
-	return &Margelet{bot, []Responder{}}, nil
+	return &Margelet{bot, []Responder{}, []Responder{}}, nil
 }
 
-func (this *Margelet) AddResponder(responder Responder) {
-	this.responders = append(this.responders, responder)
+func (this *Margelet) AddMessageResponder(responder Responder) {
+	this.messageResponders = append(this.messageResponders, responder)
+}
+
+func (this *Margelet) AddCommandResponder(responder Responder) {
+	this.commandResponders = append(this.commandResponders, responder)
 }
 
 func (this *Margelet) Send(c tgbotapi.Chattable) (tgbotapi.Message, error) {
@@ -48,15 +53,28 @@ func (this *Margelet) Run() {
 	for {
 		select {
 		case update := <-this.bot.Updates:
-			for _, responder := range this.responders {
-				msg, err := responder.Response(this, update.Message)
-
-				if err != nil {
-					msg = tgbotapi.NewMessage(update.Message.Chat.ID, "Error occured: "+err.Error())
-				}
-
-				this.Send(msg)
+			message := update.Message
+			if message.IsCommand() {
+				this.handleMessage(message, this.commandResponders)
+			} else {
+				this.handleMessage(message, this.messageResponders)
 			}
+		}
+	}
+}
+
+func (this *Margelet) handleMessage(message tgbotapi.Message, responders []Responder) {
+	for _, responder := range responders {
+		msg, err := responder.Response(this, message)
+
+		if err != nil {
+			msg = tgbotapi.NewMessage(message.Chat.ID, "Error occured: " + err.Error())
+		}
+
+		_, err = this.Send(msg)
+		if err != nil {
+			msg = tgbotapi.NewMessage(message.Chat.ID, "Error occured: " + err.Error())
+			this.Send(msg)
 		}
 	}
 }
