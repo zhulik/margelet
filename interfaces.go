@@ -5,5 +5,5 @@ import (
 )
 
 type Responder interface {
-	Response(message tgbotapi.Message) (tgbotapi.Chattable, error)
+	Response(bot *Margelet, message tgbotapi.Message) (tgbotapi.Chattable, error)
 }

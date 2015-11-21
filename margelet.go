@@ -49,7 +49,7 @@ func (this *Margelet) Run() {
 		select {
 		case update := <-this.bot.Updates:
 			for _, responder := range this.responders {
-				msg, err := responder.Response(update.Message)
+				msg, err := responder.Response(this, update.Message)
 
 				if err != nil {
 					msg = tgbotapi.NewMessage(update.Message.Chat.ID, "Error occured: "+err.Error())
