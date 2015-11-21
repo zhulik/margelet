@@ -53,7 +53,7 @@ func (this *Margelet) Run() error {
 		return err
 	}
 
-	for !this.running {
+	for this.running {
 		select {
 		case update := <-updates:
 			message := update.Message

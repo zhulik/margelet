@@ -4,6 +4,7 @@ import (
 	"github.com/zhulik/margelet"
 	"github.com/zhulik/telegram-bot-api"
 	"testing"
+	"time"
 )
 
 type BotMock struct {
@@ -88,6 +89,7 @@ func TestRun(t *testing.T) {
 	go m.Run()
 	botMock.Updates <- tgbotapi.Update{Message: tgbotapi.Message{Text: "/test"}}
 	botMock.Updates <- tgbotapi.Update{Message: tgbotapi.Message{Text: "Test"}}
+	time.Sleep(1 * time.Second)
 	m.Stop()
 
 }
