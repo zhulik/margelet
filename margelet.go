@@ -5,36 +5,33 @@ import (
 )
 
 type Margelet struct {
-	bot        *tgbotapi.BotAPI
-	messageResponders []Responder
-	commandResponders map[string]Responder
+	bot               TGBotAPI
+	MessageResponders []Responder
+	CommandResponders map[string]Responder
+	running           bool
 }
 
-func NewMargelet(token string) (*Margelet, error) {
+func NewMargelet(token string, verbose bool) (*Margelet, error) {
 	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
 		return nil, err
 	}
 
-	bot.Debug = false
+	bot.Debug = verbose
 
-	var ucfg tgbotapi.UpdateConfig = tgbotapi.NewUpdate(0)
-	ucfg.Timeout = 60
-	err = bot.UpdatesChan(ucfg)
+	return &Margelet{bot, []Responder{}, map[string]Responder{}, true}, nil
+}
 
-	if err != nil {
-		return nil, err
-	}
-
-	return &Margelet{bot, []Responder{}, map[string]Responder{}}, nil
+func NewMargeletFromBot(bot TGBotAPI) (*Margelet, error) {
+	return &Margelet{bot, []Responder{}, map[string]Responder{}, true}, nil
 }
 
 func (this *Margelet) AddMessageResponder(responder Responder) {
-	this.messageResponders = append(this.messageResponders, responder)
+	this.MessageResponders = append(this.MessageResponders, responder)
 }
 
 func (this *Margelet) AddCommandResponder(command string, responder Responder) {
-	this.commandResponders[command] = responder
+	this.CommandResponders[command] = responder
 }
 
 func (this *Margelet) Send(c tgbotapi.Chattable) (tgbotapi.Message, error) {
@@ -49,20 +46,31 @@ func (this *Margelet) IsMessageToMe(message tgbotapi.Message) bool {
 	return this.bot.IsMessageToMe(message)
 }
 
-func (this *Margelet) Run() {
-	for {
+func (this *Margelet) Run() error {
+	updates, err := this.bot.GetUpdatesChan(tgbotapi.UpdateConfig{Timeout: 60})
+
+	if err != nil {
+		return err
+	}
+
+	for !this.running {
 		select {
-		case update := <-this.bot.Updates:
+		case update := <-updates:
 			message := update.Message
 			if message.IsCommand() {
-				if responder, ok := this.commandResponders[message.Command()]; ok {
+				if responder, ok := this.CommandResponders[message.Command()]; ok {
 					this.handleMessage(message, []Responder{responder})
 				}
 			} else {
-				this.handleMessage(message, this.messageResponders)
+				this.handleMessage(message, this.MessageResponders)
 			}
 		}
 	}
+	return nil
+}
+
+func (this *Margelet) Stop() {
+	this.running = false
 }
 
 func (this *Margelet) handleMessage(message tgbotapi.Message, responders []Responder) {
@@ -70,12 +78,12 @@ func (this *Margelet) handleMessage(message tgbotapi.Message, responders []Respo
 		msg, err := responder.Response(this, message)
 
 		if err != nil {
-			msg = tgbotapi.NewMessage(message.Chat.ID, "Error occured: " + err.Error())
+			msg = tgbotapi.NewMessage(message.Chat.ID, "Error occured: "+err.Error())
 		}
 
 		_, err = this.Send(msg)
 		if err != nil {
-			msg = tgbotapi.NewMessage(message.Chat.ID, "Error occured: " + err.Error())
+			msg = tgbotapi.NewMessage(message.Chat.ID, "Error occured: "+err.Error())
 			this.Send(msg)
 		}
 	}
