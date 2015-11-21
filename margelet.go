@@ -32,8 +32,16 @@ func (this *Margelet) AddResponder(responder Responder) {
 	this.responders = append(this.responders, responder)
 }
 
-func (this *Margelet) Send(c tgbotapi.Chattable) {
-	this.bot.Send(c)
+func (this *Margelet) Send(c tgbotapi.Chattable) (tgbotapi.Message, error) {
+	return this.bot.Send(c)
+}
+
+func (this *Margelet) GetFileDirectUrl(fileID string) (string, error) {
+	return this.bot.GetFileDirectUrl(fileID)
+}
+
+func (this *Margelet) IsMessageToMe(message tgbotapi.Message) bool {
+	return this.bot.IsMessageToMe(message)
 }
 
 func (this *Margelet) Run() {
