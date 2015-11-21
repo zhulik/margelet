@@ -91,5 +91,4 @@ func TestRun(t *testing.T) {
 	botMock.Updates <- tgbotapi.Update{Message: tgbotapi.Message{Text: "Test"}}
 	time.Sleep(1 * time.Second)
 	m.Stop()
-
 }
