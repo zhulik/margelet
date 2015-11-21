@@ -7,7 +7,7 @@ import (
 type Margelet struct {
 	bot        *tgbotapi.BotAPI
 	messageResponders []Responder
-	commandResponders []Responder
+	commandResponders map[string]Responder
 }
 
 func NewMargelet(token string) (*Margelet, error) {
@@ -26,15 +26,15 @@ func NewMargelet(token string) (*Margelet, error) {
 		return nil, err
 	}
 
-	return &Margelet{bot, []Responder{}, []Responder{}}, nil
+	return &Margelet{bot, []Responder{}, map[string]Responder{}}, nil
 }
 
 func (this *Margelet) AddMessageResponder(responder Responder) {
 	this.messageResponders = append(this.messageResponders, responder)
 }
 
-func (this *Margelet) AddCommandResponder(responder Responder) {
-	this.commandResponders = append(this.commandResponders, responder)
+func (this *Margelet) AddCommandResponder(command string, responder Responder) {
+	this.commandResponders[command] = responder
 }
 
 func (this *Margelet) Send(c tgbotapi.Chattable) (tgbotapi.Message, error) {
@@ -55,7 +55,9 @@ func (this *Margelet) Run() {
 		case update := <-this.bot.Updates:
 			message := update.Message
 			if message.IsCommand() {
-				this.handleMessage(message, this.commandResponders)
+				if responder, ok := this.commandResponders[message.Command()]; ok {
+					this.handleMessage(message, []Responder{responder})
+				}
 			} else {
 				this.handleMessage(message, this.messageResponders)
 			}
