@@ -5,8 +5,10 @@ import (
 )
 
 type Responder interface {
-	Response(bot *Margelet, message tgbotapi.Message) (tgbotapi.Chattable, error)
+	Response(bot *Margelet, message tgbotapi.Message) error
 }
+
+type CommandHandler Responder
 
 type TGBotAPI interface {
 	Send(c tgbotapi.Chattable) (tgbotapi.Message, error)

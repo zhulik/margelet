@@ -7,7 +7,7 @@ import (
 type Margelet struct {
 	bot               TGBotAPI
 	MessageResponders []Responder
-	CommandResponders map[string]Responder
+	CommandResponders map[string]CommandHandler
 	running           bool
 }
 
@@ -19,11 +19,11 @@ func NewMargelet(token string, verbose bool) (*Margelet, error) {
 
 	bot.Debug = verbose
 
-	return &Margelet{bot, []Responder{}, map[string]Responder{}, true}, nil
+	return &Margelet{bot, []Responder{}, map[string]CommandHandler{}, true}, nil
 }
 
 func NewMargeletFromBot(bot TGBotAPI) (*Margelet, error) {
-	return &Margelet{bot, []Responder{}, map[string]Responder{}, true}, nil
+	return &Margelet{bot, []Responder{}, map[string]CommandHandler{}, true}, nil
 }
 
 func (this *Margelet) AddMessageResponder(responder Responder) {
@@ -75,15 +75,10 @@ func (this *Margelet) Stop() {
 
 func (this *Margelet) handleMessage(message tgbotapi.Message, responders []Responder) {
 	for _, responder := range responders {
-		msg, err := responder.Response(this, message)
+		err := responder.Response(this, message)
 
 		if err != nil {
-			msg = tgbotapi.NewMessage(message.Chat.ID, "Error occured: "+err.Error())
-		}
-
-		_, err = this.Send(msg)
-		if err != nil {
-			msg = tgbotapi.NewMessage(message.Chat.ID, "Error occured: "+err.Error())
+			msg := tgbotapi.NewMessage(message.Chat.ID, "Error occured: "+err.Error())
 			this.Send(msg)
 		}
 	}
