@@ -57,6 +57,7 @@ func (this *Margelet) Run() error {
 		select {
 		case update := <-updates:
 			message := update.Message
+			Chat.AddChat(message.Chat.ID)
 			if message.IsCommand() {
 				if responder, ok := this.CommandResponders[message.Command()]; ok {
 					this.handleMessage(message, []Responder{responder})
