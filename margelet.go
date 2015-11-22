@@ -38,7 +38,7 @@ func (this *Margelet) Send(c tgbotapi.Chattable) (tgbotapi.Message, error) {
 	return this.bot.Send(c)
 }
 
-func (this *Margelet) GetFileDirectUrl(fileID string) (string, error) {
+func (this *Margelet) GetFileDirectURL(fileID string) (string, error) {
 	return this.bot.GetFileDirectURL(fileID)
 }
 

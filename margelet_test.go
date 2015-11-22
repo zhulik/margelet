@@ -66,7 +66,7 @@ func TestSend(t *testing.T) {
 
 func TestGetFileDirectUrl(t *testing.T) {
 	m := getMargelet()
-	_, err := m.GetFileDirectUrl("test")
+	_, err := m.GetFileDirectURL("test")
 
 	if err != nil {
 		t.Fail()

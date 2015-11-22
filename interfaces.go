@@ -5,14 +5,18 @@ import (
 )
 
 type Responder interface {
-	Response(bot *Margelet, message tgbotapi.Message) error
+	Response(bot MargeletAPI, message tgbotapi.Message) error
 }
 
 type CommandHandler Responder
 
-type TGBotAPI interface {
+type MargeletAPI interface {
 	Send(c tgbotapi.Chattable) (tgbotapi.Message, error)
 	GetFileDirectURL(fileID string) (string, error)
 	IsMessageToMe(message tgbotapi.Message) bool
+}
+
+type TGBotAPI interface {
+	MargeletAPI
 	GetUpdatesChan(config tgbotapi.UpdateConfig) (<-chan tgbotapi.Update, error)
 }
