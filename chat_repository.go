@@ -6,14 +6,14 @@ import (
 )
 
 type ChatRepository struct {
-	key string
+	key   string
 	redis *redis.Client
 }
 
 var Chat *ChatRepository
 
 func InitChatRepository(prefix string, redis *redis.Client) {
-	key := prefix+"margelet_chats"
+	key := prefix + "margelet_chats"
 	Chat = &ChatRepository{key, redis}
 }
 

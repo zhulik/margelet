@@ -2,8 +2,8 @@ package margelet_test
 
 import (
 	"github.com/zhulik/margelet"
-	"testing"
 	"reflect"
+	"testing"
 )
 
 func TestMain(m *testing.M) {
