@@ -1,7 +1,7 @@
 package margelet
 
 import (
-	"github.com/zhulik/telegram-bot-api"
+	"github.com/Syfaro/telegram-bot-api"
 )
 
 type EchoResponder struct {

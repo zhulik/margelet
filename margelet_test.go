@@ -2,7 +2,7 @@ package margelet_test
 
 import (
 	"github.com/zhulik/margelet"
-	"github.com/zhulik/telegram-bot-api"
+	"github.com/Syfaro/telegram-bot-api"
 	"testing"
 	"time"
 )
