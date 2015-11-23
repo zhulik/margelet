@@ -7,7 +7,7 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	margelet.InitRedis("127.0.0.1:6379", "password", 10)
+	margelet.InitRedis("127.0.0.1:6379", "", 0)
 	margelet.Redis.FlushDb()
 
 	margelet.InitChatRepository("", margelet.Redis)
