@@ -10,18 +10,18 @@ type ChatRepository struct {
 	redis *redis.Client
 }
 
-var Chat *ChatRepository
+var ChatRepo *ChatRepository
 
 func InitChatRepository(prefix string, redis *redis.Client) {
 	key := prefix + "margelet_chats"
-	Chat = &ChatRepository{key, redis}
+	ChatRepo = &ChatRepository{key, redis}
 }
 
-func (chat *ChatRepository) AddChat(id int) {
+func (chat *ChatRepository) Add(id int) {
 	chat.redis.SAdd(chat.key, strconv.Itoa(id))
 }
 
-func (chat *ChatRepository) RemoveChat(id int) {
+func (chat *ChatRepository) Remove(id int) {
 	chat.redis.SRem(chat.key, strconv.Itoa(id))
 }
 

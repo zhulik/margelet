@@ -11,13 +11,14 @@ func TestMain(m *testing.M) {
 	margelet.Redis.FlushDb()
 
 	margelet.InitChatRepository("", margelet.Redis)
+	margelet.InitSessionRepository("", margelet.Redis)
 	m.Run()
 }
 
 func TestAddChat(t *testing.T) {
-	margelet.Chat.AddChat(100500)
+	margelet.ChatRepo.Add(100500)
 
-	if !reflect.DeepEqual(margelet.Chat.All(), []int{100500}) {
+	if !reflect.DeepEqual(margelet.ChatRepo.All(), []int{100500}) {
 		t.Fail()
 	}
 }
@@ -25,11 +26,11 @@ func TestAddChat(t *testing.T) {
 func TestRemoveChat(t *testing.T) {
 	margelet.Redis.FlushDb()
 
-	margelet.Chat.AddChat(100500)
-	margelet.Chat.AddChat(100501)
-	margelet.Chat.RemoveChat(100500)
+	margelet.ChatRepo.Add(100500)
+	margelet.ChatRepo.Add(100501)
+	margelet.ChatRepo.Remove(100500)
 
-	if !reflect.DeepEqual(margelet.Chat.All(), []int{100501}) {
+	if !reflect.DeepEqual(margelet.ChatRepo.All(), []int{100501}) {
 		t.Fail()
 	}
 }
@@ -37,14 +38,14 @@ func TestRemoveChat(t *testing.T) {
 func TestAll(t *testing.T) {
 	margelet.Redis.FlushDb()
 
-	margelet.Chat.AddChat(100500)
-	margelet.Chat.AddChat(100501)
-	margelet.Chat.AddChat(100502)
-	margelet.Chat.AddChat(100503)
+	margelet.ChatRepo.Add(100500)
+	margelet.ChatRepo.Add(100501)
+	margelet.ChatRepo.Add(100502)
+	margelet.ChatRepo.Add(100503)
 
-	t.Log(margelet.Chat.All())
+	t.Log(margelet.ChatRepo.All())
 
-	if !reflect.DeepEqual(margelet.Chat.All(), []int{100500, 100501, 100502, 100503}) {
+	if !reflect.DeepEqual(margelet.ChatRepo.All(), []int{100500, 100501, 100502, 100503}) {
 		t.Fail()
 	}
 }
