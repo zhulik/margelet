@@ -10,6 +10,10 @@ type Responder interface {
 
 type CommandHandler Responder
 
+type SessionHandler interface {
+	HandleResponse(bot MargeletAPI, message tgbotapi.Message, responses []string) error
+}
+
 type MargeletAPI interface {
 	Send(c tgbotapi.Chattable) (tgbotapi.Message, error)
 	GetFileDirectURL(fileID string) (string, error)

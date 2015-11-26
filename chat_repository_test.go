@@ -43,8 +43,6 @@ func TestAll(t *testing.T) {
 	margelet.ChatRepo.Add(100502)
 	margelet.ChatRepo.Add(100503)
 
-	t.Log(margelet.ChatRepo.All())
-
 	if !reflect.DeepEqual(margelet.ChatRepo.All(), []int{100500, 100501, 100502, 100503}) {
 		t.Fail()
 	}

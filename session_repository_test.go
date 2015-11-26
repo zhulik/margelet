@@ -1,9 +1,9 @@
 package margelet_test
 
-import(
-	"testing"
+import (
 	"github.com/zhulik/margelet"
 	"reflect"
+	"testing"
 )
 
 func TestAddSession(t *testing.T) {

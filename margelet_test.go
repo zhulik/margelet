@@ -48,7 +48,7 @@ func TestAddMessageResponder(t *testing.T) {
 
 func TestAddCommandResponder(t *testing.T) {
 	m := getMargelet()
-	m.AddCommandResponder("/test", margelet.EchoResponder{})
+	m.AddCommandHandler("/test", margelet.EchoResponder{})
 
 	if len(m.CommandResponders) != 1 {
 		t.Fail()
@@ -84,7 +84,7 @@ func TestIsMessageToMe(t *testing.T) {
 
 func TestRun(t *testing.T) {
 	m := getMargelet()
-	m.AddCommandResponder("/test", margelet.EchoResponder{})
+	m.AddCommandHandler("/test", margelet.EchoResponder{})
 	m.AddMessageResponder(margelet.EchoResponder{})
 	go m.Run()
 	botMock.Updates <- tgbotapi.Update{Message: tgbotapi.Message{Text: "/test"}}
