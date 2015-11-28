@@ -5,27 +5,25 @@ import (
 	"strconv"
 )
 
-type ChatRepository struct {
+type chatRepository struct {
 	key   string
 	redis *redis.Client
 }
 
-var ChatRepo *ChatRepository
-
-func InitChatRepository(prefix string, redis *redis.Client) {
+func newChatRepository(prefix string, redis *redis.Client) *chatRepository {
 	key := prefix + "margelet_chats"
-	ChatRepo = &ChatRepository{key, redis}
+	return &chatRepository{key, redis}
 }
 
-func (chat *ChatRepository) Add(id int) {
+func (chat *chatRepository) Add(id int) {
 	chat.redis.SAdd(chat.key, strconv.Itoa(id))
 }
 
-func (chat *ChatRepository) Remove(id int) {
+func (chat *chatRepository) Remove(id int) {
 	chat.redis.SRem(chat.key, strconv.Itoa(id))
 }
 
-func (chat *ChatRepository) All() []int {
+func (chat *chatRepository) All() []int {
 	var result []int
 	strings, _ := chat.redis.SMembers(chat.key).Result()
 

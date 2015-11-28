@@ -4,10 +4,12 @@ import (
 	"github.com/Syfaro/telegram-bot-api"
 )
 
+// EchoResponder is simple responder example
 type EchoResponder struct {
 }
 
-func (this EchoResponder) Response(bot MargeletAPI, message tgbotapi.Message) error {
+// Response send message back to author
+func (responder EchoResponder) Response(bot MargeletAPI, message tgbotapi.Message) error {
 	_, err := bot.Send(tgbotapi.NewMessage(message.Chat.ID, message.Text))
 	return err
 }

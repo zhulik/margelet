@@ -5,6 +5,7 @@ import (
 	"gopkg.in/redis.v3"
 )
 
+// Margelet - main struct in package, handles all interactions
 type Margelet struct {
 	bot               TGBotAPI
 	MessageResponders []Responder
@@ -12,9 +13,12 @@ type Margelet struct {
 	SessionHandlers   map[string]SessionHandler
 	running           bool
 	Redis             *redis.Client
+	ChatRepository    *chatRepository
+	SessionRepository *sessionRepository
 }
 
-func NewMargelet(redis_host string, redis_password string, redis_db int64, token string, verbose bool) (*Margelet, error) {
+// NewMargelet creates new Margelet instance
+func NewMargelet(redisAddr string, redisPassword string, redisDB int64, token string, verbose bool) (*Margelet, error) {
 	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
 		return nil, err
@@ -22,111 +26,120 @@ func NewMargelet(redis_host string, redis_password string, redis_db int64, token
 
 	bot.Debug = verbose
 
-	return NewMargeletFromBot(redis_host, redis_password, redis_db, bot)
+	return NewMargeletFromBot(redisAddr, redisPassword, redisDB, bot)
 }
 
-func NewMargeletFromBot(redis_host string, redis_password string, redis_db int64, bot TGBotAPI) (*Margelet, error) {
+// NewMargeletFromBot creates new Margelet instance from existing TGBotAPI(tgbotapi.BotAPI)
+func NewMargeletFromBot(redisAddr string, redisPassword string, redisDB int64, bot TGBotAPI) (*Margelet, error) {
 	redis := redis.NewClient(&redis.Options{
-		Addr:     redis_host,
-		Password: redis_password,
-		DB:       redis_db,
+		Addr:     redisAddr,
+		Password: redisPassword,
+		DB:       redisDB,
 	})
 
-	InitChatRepository("go_recognizer_", redis)
-	InitSessionRepository("go_recognizer_", redis)
+	chatRepository := newChatRepository("go_recognizer_", redis)
+	sessionRepository := newSessionRepository("go_recognizer_", redis)
 
-	return &Margelet{bot, []Responder{}, map[string]CommandHandler{}, map[string]SessionHandler{}, true, redis}, nil
+	return &Margelet{bot, []Responder{}, map[string]CommandHandler{}, map[string]SessionHandler{}, true, redis, chatRepository, sessionRepository}, nil
 }
 
-func (this *Margelet) AddMessageResponder(responder Responder) {
-	this.MessageResponders = append(this.MessageResponders, responder)
+// AddMessageResponder - adds new MessageResponder to Margelet
+func (margelet *Margelet) AddMessageResponder(responder Responder) {
+	margelet.MessageResponders = append(margelet.MessageResponders, responder)
 }
 
-func (this *Margelet) AddCommandHandler(command string, responder CommandHandler) {
-	this.CommandResponders[command] = responder
+// AddCommandHandler - adds new CommandHandler to Margelet
+func (margelet *Margelet) AddCommandHandler(command string, responder CommandHandler) {
+	margelet.CommandResponders[command] = responder
 }
 
-func (this *Margelet) AddSessionHandler(command string, responder SessionHandler) {
-	this.SessionHandlers[command] = responder
+// AddSessionHandler - adds new SessionHandler to Margelet
+func (margelet *Margelet) AddSessionHandler(command string, responder SessionHandler) {
+	margelet.SessionHandlers[command] = responder
 }
 
-func (this *Margelet) Send(c tgbotapi.Chattable) (tgbotapi.Message, error) {
-	return this.bot.Send(c)
+// Send - send message to Telegram
+func (margelet *Margelet) Send(c tgbotapi.Chattable) (tgbotapi.Message, error) {
+	return margelet.bot.Send(c)
 }
 
-func (this *Margelet) GetFileDirectURL(fileID string) (string, error) {
-	return this.bot.GetFileDirectURL(fileID)
+// GetFileDirectURL - converts fileID to direct URL
+func (margelet *Margelet) GetFileDirectURL(fileID string) (string, error) {
+	return margelet.bot.GetFileDirectURL(fileID)
 }
 
-func (this *Margelet) IsMessageToMe(message tgbotapi.Message) bool {
-	return this.bot.IsMessageToMe(message)
+// IsMessageToMe - return true if message sent to this bot
+func (margelet *Margelet) IsMessageToMe(message tgbotapi.Message) bool {
+	return margelet.bot.IsMessageToMe(message)
 }
 
-func (this *Margelet) Run() error {
-	updates, err := this.bot.GetUpdatesChan(tgbotapi.UpdateConfig{Timeout: 60})
+// Run - starts message processing loop
+func (margelet *Margelet) Run() error {
+	updates, err := margelet.bot.GetUpdatesChan(tgbotapi.UpdateConfig{Timeout: 60})
 
 	if err != nil {
 		return err
 	}
 
-	for this.running {
+	for margelet.running {
 		select {
 		case update := <-updates:
 			message := update.Message
-			ChatRepo.Add(message.Chat.ID)
+			margelet.ChatRepository.Add(message.Chat.ID)
 
 			// If we have active session in this chat with this user, handle it first
-			if command := SessionRepo.Command(message.Chat.ID, message.From.ID); len(command) > 0 {
-				if handler, ok := this.SessionHandlers[command]; ok {
-					this.handleSession(message, handler)
+			if command := margelet.SessionRepository.Command(message.Chat.ID, message.From.ID); len(command) > 0 {
+				if handler, ok := margelet.SessionHandlers[command]; ok {
+					margelet.handleSession(message, handler)
 				}
 			} else if message.IsCommand() {
-				this.handleCommand(message)
+				margelet.handleCommand(message)
 			} else {
-				this.handleMessage(message, this.MessageResponders)
+				margelet.handleMessage(message, margelet.MessageResponders)
 			}
 		}
 	}
 	return nil
 }
 
-func (this *Margelet) Stop() {
-	this.running = false
+// Stop - stops message processing loop
+func (margelet *Margelet) Stop() {
+	margelet.running = false
 }
 
-func (this *Margelet) handleCommand(message tgbotapi.Message) {
+func (margelet *Margelet) handleCommand(message tgbotapi.Message) {
 
-	if responder, ok := this.CommandResponders[message.Command()]; ok {
-		this.handleMessage(message, []Responder{responder})
+	if responder, ok := margelet.CommandResponders[message.Command()]; ok {
+		margelet.handleMessage(message, []Responder{responder})
 		return
 	}
 
-	if handler, ok := this.SessionHandlers[message.Command()]; ok {
-		SessionRepo.Create(message.Chat.ID, message.From.ID, message.Command())
-		this.handleSession(message, handler)
+	if handler, ok := margelet.SessionHandlers[message.Command()]; ok {
+		margelet.SessionRepository.Create(message.Chat.ID, message.From.ID, message.Command())
+		margelet.handleSession(message, handler)
 		return
 	}
 }
 
-func (this *Margelet) handleMessage(message tgbotapi.Message, responders []Responder) {
+func (margelet *Margelet) handleMessage(message tgbotapi.Message, responders []Responder) {
 	for _, responder := range responders {
-		err := responder.Response(this, message)
+		err := responder.Response(margelet, message)
 
 		if err != nil {
 			msg := tgbotapi.NewMessage(message.Chat.ID, "Error occured: "+err.Error())
-			this.Send(msg)
+			margelet.Send(msg)
 		}
 	}
 }
 
-func (this *Margelet) handleSession(message tgbotapi.Message, handler SessionHandler) {
+func (margelet *Margelet) handleSession(message tgbotapi.Message, handler SessionHandler) {
 
-	finish, err := handler.HandleResponse(this, message, SessionRepo.Dialog(message.Chat.ID, message.From.ID))
+	finish, err := handler.HandleResponse(margelet, message, margelet.SessionRepository.Dialog(message.Chat.ID, message.From.ID))
 	if err == nil {
-		SessionRepo.Add(message.Chat.ID, message.From.ID, message.Text)
+		margelet.SessionRepository.Add(message.Chat.ID, message.From.ID, message.Text)
 	}
 
 	if finish {
-		SessionRepo.Remove(message.Chat.ID, message.From.ID)
+		margelet.SessionRepository.Remove(message.Chat.ID, message.From.ID)
 	}
 }

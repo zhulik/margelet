@@ -6,10 +6,12 @@ import (
 	"strconv"
 )
 
+// SumSession - simple example session, that cat sum numbers
 type SumSession struct {
 }
 
-func (this SumSession) HandleResponse(bot MargeletAPI, message tgbotapi.Message, responses []string) (bool, error) {
+// HandleResponse - Handlers user response
+func (session SumSession) HandleResponse(bot MargeletAPI, message tgbotapi.Message, responses []string) (bool, error) {
 	var msg tgbotapi.MessageConfig
 	switch len(responses) {
 	case 0:
@@ -22,23 +24,23 @@ func (this SumSession) HandleResponse(bot MargeletAPI, message tgbotapi.Message,
 				sum += n
 			}
 			msg = tgbotapi.MessageConfig{Text: fmt.Sprintf("Your sum: %d", sum)}
-			this.response(bot, message, msg)
+			session.response(bot, message, msg)
 			return true, nil
-		} else {
-			_, err := strconv.Atoi(message.Text)
-			if err != nil {
-				msg = tgbotapi.MessageConfig{Text: "Sorry, not a number"}
-				this.response(bot, message, msg)
-				return false, err
-			}
+		}
+
+		_, err := strconv.Atoi(message.Text)
+		if err != nil {
+			msg = tgbotapi.MessageConfig{Text: "Sorry, not a number"}
+			session.response(bot, message, msg)
+			return false, err
 		}
 	}
 
-	this.response(bot, message, msg)
+	session.response(bot, message, msg)
 	return false, nil
 }
 
-func (this SumSession) response(bot MargeletAPI, message tgbotapi.Message, msg tgbotapi.MessageConfig) {
+func (session SumSession) response(bot MargeletAPI, message tgbotapi.Message, msg tgbotapi.MessageConfig) {
 	msg.ChatID = message.Chat.ID
 	msg.ReplyToMessageID = message.MessageID
 	bot.Send(msg)

@@ -5,54 +5,52 @@ import (
 	"gopkg.in/redis.v3"
 )
 
-type SessionRepository struct {
+type sessionRepository struct {
 	key   string
 	redis *redis.Client
 }
 
-var SessionRepo *SessionRepository
-
-func InitSessionRepository(prefix string, redis *redis.Client) {
+func newSessionRepository(prefix string, redis *redis.Client) *sessionRepository {
 	key := prefix + "margelet_sessions"
-	SessionRepo = &SessionRepository{key, redis}
+	return &sessionRepository{key, redis}
 }
 
-func (session *SessionRepository) Create(chatId int, userId int, command string) {
-	key := session.keyFor(chatId, userId)
+func (session *sessionRepository) Create(chatID int, userID int, command string) {
+	key := session.keyFor(chatID, userID)
 	session.redis.Set(key, command, 0)
 }
 
-func (session *SessionRepository) Add(chatId int, userId int, userAnswer string) {
-	key := session.dialogKeyFor(chatId, userId)
+func (session *sessionRepository) Add(chatID int, userID int, userAnswer string) {
+	key := session.dialogKeyFor(chatID, userID)
 
 	session.redis.RPush(key, userAnswer)
 }
 
-func (session *SessionRepository) Remove(chatId int, userId int) {
-	key := session.keyFor(chatId, userId)
+func (session *sessionRepository) Remove(chatID int, userID int) {
+	key := session.keyFor(chatID, userID)
 	session.redis.Del(key)
 
-	key = session.dialogKeyFor(chatId, userId)
+	key = session.dialogKeyFor(chatID, userID)
 	session.redis.Del(key)
 }
 
-func (session *SessionRepository) Command(chatId int, userId int) string {
-	key := session.keyFor(chatId, userId)
+func (session *sessionRepository) Command(chatID int, userID int) string {
+	key := session.keyFor(chatID, userID)
 	value, _ := session.redis.Get(key).Result()
 	return value
 }
 
-func (session *SessionRepository) Dialog(chatId int, userId int) []string {
-	key := session.dialogKeyFor(chatId, userId)
+func (session *sessionRepository) Dialog(chatID int, userID int) []string {
+	key := session.dialogKeyFor(chatID, userID)
 
 	values, _ := session.redis.LRange(key, 0, -1).Result()
 	return values
 }
 
-func (session *SessionRepository) keyFor(chatId int, userId int) string {
-	return fmt.Sprintf("%s_%d_%d", session.key, chatId, userId)
+func (session *sessionRepository) keyFor(chatID int, userID int) string {
+	return fmt.Sprintf("%s_%d_%d", session.key, chatID, userID)
 }
 
-func (session *SessionRepository) dialogKeyFor(chatId int, userId int) string {
-	return fmt.Sprintf("%s_dialog", session.keyFor(chatId, userId))
+func (session *sessionRepository) dialogKeyFor(chatID int, userID int) string {
+	return fmt.Sprintf("%s_dialog", session.keyFor(chatID, userID))
 }
