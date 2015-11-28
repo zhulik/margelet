@@ -3,6 +3,7 @@ package margelet
 import (
 	"gopkg.in/redis.v3"
 	"strconv"
+	"strings"
 )
 
 type chatRepository struct {
@@ -11,7 +12,7 @@ type chatRepository struct {
 }
 
 func newChatRepository(prefix string, redis *redis.Client) *chatRepository {
-	key := prefix + "margelet_chats"
+	key := strings.Join([]string{prefix, "margelet_chats"}, "-")
 	return &chatRepository{key, redis}
 }
 

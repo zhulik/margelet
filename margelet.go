@@ -18,7 +18,7 @@ type Margelet struct {
 }
 
 // NewMargelet creates new Margelet instance
-func NewMargelet(redisAddr string, redisPassword string, redisDB int64, token string, verbose bool) (*Margelet, error) {
+func NewMargelet(botName string, redisAddr string, redisPassword string, redisDB int64, token string, verbose bool) (*Margelet, error) {
 	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
 		return nil, err
@@ -26,19 +26,19 @@ func NewMargelet(redisAddr string, redisPassword string, redisDB int64, token st
 
 	bot.Debug = verbose
 
-	return NewMargeletFromBot(redisAddr, redisPassword, redisDB, bot)
+	return NewMargeletFromBot(botName, redisAddr, redisPassword, redisDB, bot)
 }
 
 // NewMargeletFromBot creates new Margelet instance from existing TGBotAPI(tgbotapi.BotAPI)
-func NewMargeletFromBot(redisAddr string, redisPassword string, redisDB int64, bot TGBotAPI) (*Margelet, error) {
+func NewMargeletFromBot(botName string, redisAddr string, redisPassword string, redisDB int64, bot TGBotAPI) (*Margelet, error) {
 	redis := redis.NewClient(&redis.Options{
 		Addr:     redisAddr,
 		Password: redisPassword,
 		DB:       redisDB,
 	})
 
-	chatRepository := newChatRepository("go_recognizer_", redis)
-	sessionRepository := newSessionRepository("go_recognizer_", redis)
+	chatRepository := newChatRepository(botName, redis)
+	sessionRepository := newSessionRepository(botName, redis)
 
 	return &Margelet{bot, []Responder{}, map[string]CommandHandler{}, map[string]SessionHandler{}, true, redis, chatRepository, sessionRepository}, nil
 }

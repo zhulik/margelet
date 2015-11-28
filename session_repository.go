@@ -3,6 +3,7 @@ package margelet
 import (
 	"fmt"
 	"gopkg.in/redis.v3"
+	"strings"
 )
 
 type sessionRepository struct {
@@ -11,7 +12,7 @@ type sessionRepository struct {
 }
 
 func newSessionRepository(prefix string, redis *redis.Client) *sessionRepository {
-	key := prefix + "margelet_sessions"
+	key := strings.Join([]string{prefix, "margelet_sessions"}, "-")
 	return &sessionRepository{key, redis}
 }
 
