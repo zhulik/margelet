@@ -99,6 +99,7 @@ func (margelet *Margelet) Run() error {
 
 			// If we have active session in this chat with this user, handle it first
 			if command := margelet.SessionRepository.Command(message.Chat.ID, message.From.ID); len(command) > 0 {
+				// TODO: /cancel command should cancel any active session!
 				if handler, ok := margelet.SessionHandlers[command]; ok {
 					margelet.handleSession(message, handler)
 				}
