@@ -21,7 +21,7 @@ func TestMargelet(t *testing.T) {
 		})
 
 		Convey("When adding new command responder", func() {
-			m.AddCommandHandler("/test", margelet.EchoResponder{})
+			m.AddCommandHandler("/test", margelet.HelpResponder{})
 
 			Convey("It should be aded to command responders hash", func() {
 				So(m.CommandResponders, ShouldNotBeEmpty)
@@ -63,7 +63,6 @@ func TestMargelet(t *testing.T) {
 		})
 
 		Convey("Given configured margelet", func() {
-			m.AddCommandHandler("/test", margelet.EchoResponder{})
 			m.AddMessageResponder(margelet.EchoResponder{})
 			m.AddSessionHandler("/sum", margelet.SumSession{})
 

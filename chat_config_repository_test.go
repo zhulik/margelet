@@ -29,7 +29,7 @@ func TestChatConfigRepository(t *testing.T) {
 		})
 
 		Convey("When trying to get missing chatID", func() {
-			Convey("Response should be empty", func(){
+			Convey("Response should be empty", func() {
 				So(m.ChatConfigRepository.Get(100500), ShouldBeEmpty)
 			})
 		})

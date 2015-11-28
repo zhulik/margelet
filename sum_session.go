@@ -48,3 +48,8 @@ func (session SumSession) response(bot MargeletAPI, message tgbotapi.Message, ms
 	msg.ReplyToMessageID = message.MessageID
 	bot.Send(msg)
 }
+
+// HelpMessage return help string for SumSession
+func (session SumSession) HelpMessage() string {
+	return "Sum your numbers and print result"
+}

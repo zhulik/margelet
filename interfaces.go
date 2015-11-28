@@ -10,11 +10,15 @@ type Responder interface {
 }
 
 // CommandHandler - interface for command handlers
-type CommandHandler Responder
+type CommandHandler interface {
+	Responder
+	HelpMessage() string
+}
 
 // SessionHandler - interface for session handlers
 type SessionHandler interface {
 	HandleResponse(bot MargeletAPI, message tgbotapi.Message, responses []string) (bool, error)
+	HelpMessage() string
 }
 
 // MargeletAPI - interface, that describes margelet API

@@ -38,11 +38,19 @@ func NewMargeletFromBot(botName string, redisAddr string, redisPassword string, 
 		DB:       redisDB,
 	})
 
+	if _, err := redis.Ping().Result(); err != nil {
+		return &Margelet{}, err
+	}
+
 	chatRepository := newChatRepository(botName, redis)
 	sessionRepository := newSessionRepository(botName, redis)
 	chatConfigRepository := newChatConfigRepository(botName, redis)
 
-	return &Margelet{bot, []Responder{}, map[string]CommandHandler{}, map[string]SessionHandler{}, true, redis, chatRepository, sessionRepository, chatConfigRepository}, nil
+	margelet := Margelet{bot, []Responder{}, map[string]CommandHandler{}, map[string]SessionHandler{}, true, redis, chatRepository, sessionRepository, chatConfigRepository}
+
+	margelet.AddCommandHandler("/help", HelpResponder{&margelet})
+
+	return &margelet, nil
 }
 
 // AddMessageResponder - adds new MessageResponder to Margelet
