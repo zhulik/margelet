@@ -7,36 +7,6 @@ import (
 	"time"
 )
 
-type BotMock struct {
-	Updates chan tgbotapi.Update
-}
-
-func (this BotMock) Send(c tgbotapi.Chattable) (tgbotapi.Message, error) {
-	return tgbotapi.Message{}, nil
-}
-
-func (this BotMock) GetFileDirectURL(fileID string) (string, error) {
-	return "https://example.com/test.txt", nil
-}
-
-func (this BotMock) IsMessageToMe(message tgbotapi.Message) bool {
-	return false
-}
-
-func (this BotMock) GetUpdatesChan(config tgbotapi.UpdateConfig) (<-chan tgbotapi.Update, error) {
-	return this.Updates, nil
-}
-
-var (
-	botMock = BotMock{}
-)
-
-func getMargelet() *margelet.Margelet {
-	botMock.Updates = make(chan tgbotapi.Update, 10)
-	m, _ := margelet.NewMargeletFromBot(&botMock)
-	return m
-}
-
 func TestAddMessageResponder(t *testing.T) {
 	m := getMargelet()
 	m.AddMessageResponder(margelet.EchoResponder{})

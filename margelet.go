@@ -2,6 +2,7 @@ package margelet
 
 import (
 	"github.com/Syfaro/telegram-bot-api"
+	"gopkg.in/redis.v3"
 )
 
 type Margelet struct {
@@ -10,9 +11,10 @@ type Margelet struct {
 	CommandResponders map[string]CommandHandler
 	SessionHandlers   map[string]SessionHandler
 	running           bool
+	Redis             *redis.Client
 }
 
-func NewMargelet(token string, verbose bool) (*Margelet, error) {
+func NewMargelet(redis_host string, redis_password string, redis_db int64, token string, verbose bool) (*Margelet, error) {
 	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
 		return nil, err
@@ -20,11 +22,20 @@ func NewMargelet(token string, verbose bool) (*Margelet, error) {
 
 	bot.Debug = verbose
 
-	return &Margelet{bot, []Responder{}, map[string]CommandHandler{}, map[string]SessionHandler{}, true}, nil
+	return NewMargeletFromBot(redis_host, redis_password, redis_db, bot)
 }
 
-func NewMargeletFromBot(bot TGBotAPI) (*Margelet, error) {
-	return &Margelet{bot, []Responder{}, map[string]CommandHandler{}, map[string]SessionHandler{}, true}, nil
+func NewMargeletFromBot(redis_host string, redis_password string, redis_db int64, bot TGBotAPI) (*Margelet, error) {
+	redis := redis.NewClient(&redis.Options{
+		Addr:     redis_host,
+		Password: redis_password,
+		DB:       redis_db,
+	})
+
+	InitChatRepository("go_recognizer_", redis)
+	InitSessionRepository("go_recognizer_", redis)
+
+	return &Margelet{bot, []Responder{}, map[string]CommandHandler{}, map[string]SessionHandler{}, true, redis}, nil
 }
 
 func (this *Margelet) AddMessageResponder(responder Responder) {
@@ -63,8 +74,11 @@ func (this *Margelet) Run() error {
 		case update := <-updates:
 			message := update.Message
 			ChatRepo.Add(message.Chat.ID)
-//			If we have active session with in this chat with this user, handle it first
-			if len(SessionRepo.Find(message.Chat.ID, message.From.ID)) > 0 {
+			//			If we have active session in this chat with this user, handle it first
+			if command := SessionRepo.Command(message.Chat.ID, message.From.ID); len(command) > 0 {
+				if handler, ok := this.SessionHandlers[command]; ok {
+					this.handleSession(message, handler)
+				}
 			} else if message.IsCommand() {
 				this.handleCommand(message)
 			} else {
@@ -86,6 +100,7 @@ func (this *Margelet) handleCommand(message tgbotapi.Message) {
 	}
 
 	if handler, ok := this.SessionHandlers[message.Command()]; ok {
+		SessionRepo.Create(message.Chat.ID, message.From.ID, message.Command())
 		this.handleSession(message, handler)
 		return
 	}
@@ -104,8 +119,12 @@ func (this *Margelet) handleMessage(message tgbotapi.Message, responders []Respo
 
 func (this *Margelet) handleSession(message tgbotapi.Message, handler SessionHandler) {
 
-	if err := handler.HandleResponse(this, message, SessionRepo.Find(message.Chat.ID, message.From.ID)); err == nil {
-		//		SessionRepo.Add(message.Chat.ID, message.From.ID, message.Text, )
-		//		SessionRepo.Remove(message.Chat.ID, message.From.ID)
+	finish, err := handler.HandleResponse(this, message, SessionRepo.Dialog(message.Chat.ID, message.From.ID))
+	if err == nil {
+		SessionRepo.Add(message.Chat.ID, message.From.ID, message.Text)
+	}
+
+	if finish {
+		SessionRepo.Remove(message.Chat.ID, message.From.ID)
 	}
 }

@@ -9,9 +9,8 @@ import (
 type SumSession struct {
 }
 
-func (this SumSession) HandleResponse(bot MargeletAPI, message tgbotapi.Message, responses []string) error {
+func (this SumSession) HandleResponse(bot MargeletAPI, message tgbotapi.Message, responses []string) (bool, error) {
 	var msg tgbotapi.MessageConfig
-
 	switch len(responses) {
 	case 0:
 		msg = tgbotapi.MessageConfig{Text: "Hello, please, write one number per message, after some iterations write 'end'."}
@@ -23,18 +22,20 @@ func (this SumSession) HandleResponse(bot MargeletAPI, message tgbotapi.Message,
 				sum += n
 			}
 			msg = tgbotapi.MessageConfig{Text: fmt.Sprintf("Your sum: %d", sum)}
+			this.response(bot, message, msg)
+			return true, nil
 		} else {
 			_, err := strconv.Atoi(message.Text)
 			if err != nil {
 				msg = tgbotapi.MessageConfig{Text: "Sorry, not a number"}
 				this.response(bot, message, msg)
-				return err
+				return false, err
 			}
 		}
 	}
 
 	this.response(bot, message, msg)
-	return nil
+	return false, nil
 }
 
 func (this SumSession) response(bot MargeletAPI, message tgbotapi.Message, msg tgbotapi.MessageConfig) {

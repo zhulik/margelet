@@ -6,16 +6,8 @@ import (
 	"testing"
 )
 
-func TestMain(m *testing.M) {
-	margelet.InitRedis("127.0.0.1:6379", "", 0)
-	margelet.Redis.FlushDb()
-
-	margelet.InitChatRepository("", margelet.Redis)
-	margelet.InitSessionRepository("", margelet.Redis)
-	m.Run()
-}
-
 func TestAddChat(t *testing.T) {
+	getMargelet()
 	margelet.ChatRepo.Add(100500)
 
 	if !reflect.DeepEqual(margelet.ChatRepo.All(), []int{100500}) {
@@ -24,7 +16,7 @@ func TestAddChat(t *testing.T) {
 }
 
 func TestRemoveChat(t *testing.T) {
-	margelet.Redis.FlushDb()
+	getMargelet()
 
 	margelet.ChatRepo.Add(100500)
 	margelet.ChatRepo.Add(100501)
@@ -36,7 +28,7 @@ func TestRemoveChat(t *testing.T) {
 }
 
 func TestAll(t *testing.T) {
-	margelet.Redis.FlushDb()
+	getMargelet()
 
 	margelet.ChatRepo.Add(100500)
 	margelet.ChatRepo.Add(100501)
