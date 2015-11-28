@@ -83,6 +83,11 @@ func (margelet *Margelet) IsMessageToMe(message tgbotapi.Message) bool {
 	return margelet.bot.IsMessageToMe(message)
 }
 
+func (margelet *Margelet) GetConfigRepository() *chatConfigRepository {
+	return margelet.ChatConfigRepository
+}
+
+
 // Run - starts message processing loop
 func (margelet *Margelet) Run() error {
 	updates, err := margelet.bot.GetUpdatesChan(tgbotapi.UpdateConfig{Timeout: 60})
