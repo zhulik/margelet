@@ -1,45 +1,44 @@
 package margelet_test
 
 import (
+	. "github.com/smartystreets/goconvey/convey"
 	"github.com/zhulik/margelet"
-	"reflect"
 	"testing"
 )
 
-func TestCreateSession(t *testing.T) {
-	getMargelet()
+func TestSessionRepository(t *testing.T) {
+	Convey("Given session repository", t, func() {
+		getMargelet()
 
-	margelet.SessionRepo.Create(100, 500, "/test")
+		Convey("When creating new session", func() {
+			margelet.SessionRepo.Create(100, 500, "/test")
 
-	if margelet.SessionRepo.Command(100, 500) != "/test" {
-		t.Fail()
-	}
-}
+			Convey("New session should be found in repo", func() {
+				So(margelet.SessionRepo.Command(100, 500), ShouldEqual, "/test")
+			})
+		})
 
-func TestAddDialog(t *testing.T) {
-	getMargelet()
-	margelet.SessionRepo.Add(100, 500, "Test")
+		Convey("When adding new dialog", func() {
+			margelet.SessionRepo.Add(100, 500, "Test")
 
-	if !reflect.DeepEqual(margelet.SessionRepo.Dialog(100, 500), []string{"Test"}) {
-		t.Fail()
-	}
-}
+			Convey("It shound be found in repo", func() {
+				So(margelet.SessionRepo.Dialog(100, 500), ShouldResemble, []string{"Test"})
+			})
+		})
 
-func TestAddDialogWithWrongIds(t *testing.T) {
-	getMargelet()
-	margelet.SessionRepo.Add(100, 500, "Test")
+		Convey("When dialogs exists", func() {
+			margelet.SessionRepo.Add(100, 500, "Test")
 
-	if !reflect.DeepEqual(margelet.SessionRepo.Dialog(100, 501), []string{}) {
-		t.Fail()
-	}
-}
+			Convey("Trying to get dialog for non-exists session shound return empty array", func() {
+				margelet.SessionRepo.Add(100, 500, "Test")
+				So(margelet.SessionRepo.Dialog(100, 501), ShouldResemble, []string{})
 
-func TestRemoveSession(t *testing.T) {
-	getMargelet()
-	margelet.SessionRepo.Add(100, 500, "Test")
-	margelet.SessionRepo.Remove(100, 500)
+			})
 
-	if !reflect.DeepEqual(margelet.SessionRepo.Dialog(100, 500), []string{}) {
-		t.Fail()
-	}
+			Convey("Removed session shound not be found in repo", func() {
+				margelet.SessionRepo.Remove(100, 500)
+				So(margelet.SessionRepo.Dialog(100, 500), ShouldResemble, []string{})
+			})
+		})
+	})
 }

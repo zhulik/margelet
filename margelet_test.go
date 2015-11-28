@@ -2,63 +2,100 @@ package margelet_test
 
 import (
 	"github.com/Syfaro/telegram-bot-api"
+	. "github.com/smartystreets/goconvey/convey"
 	"github.com/zhulik/margelet"
 	"testing"
 	"time"
 )
 
-func TestAddMessageResponder(t *testing.T) {
-	m := getMargelet()
-	m.AddMessageResponder(margelet.EchoResponder{})
+func TestMargelet(t *testing.T) {
+	Convey("When given margelet", t, func() {
+		m := getMargelet()
 
-	if len(m.MessageResponders) != 1 {
-		t.Fail()
-	}
-}
+		Convey("When adding new message responder", func() {
+			m.AddMessageResponder(margelet.EchoResponder{})
 
-func TestAddCommandResponder(t *testing.T) {
-	m := getMargelet()
-	m.AddCommandHandler("/test", margelet.EchoResponder{})
+			Convey("It should be aded to message responders array", func() {
+				So(m.MessageResponders, ShouldNotBeEmpty)
+			})
+		})
 
-	if len(m.CommandResponders) != 1 {
-		t.Fail()
-	}
-}
+		Convey("When adding new command responder", func() {
+			m.AddCommandHandler("/test", margelet.EchoResponder{})
 
-func TestSend(t *testing.T) {
-	m := getMargelet()
-	_, err := m.Send(tgbotapi.NewMessage(0, "TEST"))
+			Convey("It should be aded to command responders hash", func() {
+				So(m.CommandResponders, ShouldNotBeEmpty)
+			})
 
-	if err != nil {
-		t.Fail()
-	}
-}
+		})
 
-func TestGetFileDirectUrl(t *testing.T) {
-	m := getMargelet()
-	_, err := m.GetFileDirectURL("test")
+		Convey("When adding new session handler", func() {
+			m.AddSessionHandler("/test", margelet.SumSession{})
 
-	if err != nil {
-		t.Fail()
-	}
-}
+			Convey("It should be aded to command responders array", func() {
+				So(m.SessionHandlers, ShouldNotBeEmpty)
+			})
 
-func TestIsMessageToMe(t *testing.T) {
-	m := getMargelet()
-	m.IsMessageToMe(tgbotapi.Message{})
+		})
 
-	if m.IsMessageToMe(tgbotapi.Message{}) != false {
-		t.Fail()
-	}
-}
+		Convey("When sending message", func() {
+			_, err := m.Send(tgbotapi.NewMessage(0, "TEST"))
 
-func TestRun(t *testing.T) {
-	m := getMargelet()
-	m.AddCommandHandler("/test", margelet.EchoResponder{})
-	m.AddMessageResponder(margelet.EchoResponder{})
-	go m.Run()
-	botMock.Updates <- tgbotapi.Update{Message: tgbotapi.Message{Text: "/test"}}
-	botMock.Updates <- tgbotapi.Update{Message: tgbotapi.Message{Text: "Test"}}
-	time.Sleep(1 * time.Second)
-	m.Stop()
+			Convey("Error should be nil", func() {
+				So(err, ShouldBeNil)
+			})
+		})
+
+		Convey("When getting file direct URL", func() {
+			_, err := m.GetFileDirectURL("test")
+
+			Convey("Error should be nil", func() {
+				So(err, ShouldBeNil)
+			})
+		})
+
+		Convey("When asking is message sent to me", func() {
+			msg := tgbotapi.Message{}
+			res := m.IsMessageToMe(msg)
+			Convey("It should return false", func() {
+				So(res, ShouldBeFalse)
+			})
+		})
+
+		Convey("Given configured margelet", func() {
+			m.AddCommandHandler("/test", margelet.EchoResponder{})
+			m.AddMessageResponder(margelet.EchoResponder{})
+			m.AddSessionHandler("/sum", margelet.SumSession{})
+
+			Convey("When running should handle message without panic", func() {
+				go m.Run()
+
+				botMock.Updates <- tgbotapi.Update{Message: tgbotapi.Message{Text: "Test"}}
+				time.Sleep(10 * time.Millisecond)
+				m.Stop()
+			})
+
+			Convey("When running should handle command without panic", func() {
+				go m.Run()
+
+				botMock.Updates <- tgbotapi.Update{Message: tgbotapi.Message{Text: "/test"}}
+
+				time.Sleep(10 * time.Millisecond)
+				m.Stop()
+			})
+
+			Convey("When running should handle session without panic", func() {
+				go m.Run()
+
+				botMock.Updates <- tgbotapi.Update{Message: tgbotapi.Message{Text: "/sum"}}
+				botMock.Updates <- tgbotapi.Update{Message: tgbotapi.Message{Text: "10"}}
+				botMock.Updates <- tgbotapi.Update{Message: tgbotapi.Message{Text: "20"}}
+				botMock.Updates <- tgbotapi.Update{Message: tgbotapi.Message{Text: "test"}}
+				botMock.Updates <- tgbotapi.Update{Message: tgbotapi.Message{Text: "end"}}
+
+				time.Sleep(100 * time.Millisecond)
+				m.Stop()
+			})
+		})
+	})
 }

@@ -3,11 +3,7 @@ package margelet_test
 import (
 	"github.com/Syfaro/telegram-bot-api"
 	"github.com/zhulik/margelet"
-	"gopkg.in/redis.v3"
-	"testing"
 )
-
-var redisClient *redis.Client
 
 type BotMock struct {
 	Updates chan tgbotapi.Update
@@ -39,9 +35,4 @@ func getMargelet() *margelet.Margelet {
 
 	m.Redis.FlushDb()
 	return m
-}
-
-func TestMain(m *testing.M) {
-
-	m.Run()
 }

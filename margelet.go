@@ -74,7 +74,8 @@ func (this *Margelet) Run() error {
 		case update := <-updates:
 			message := update.Message
 			ChatRepo.Add(message.Chat.ID)
-			//			If we have active session in this chat with this user, handle it first
+
+			// If we have active session in this chat with this user, handle it first
 			if command := SessionRepo.Command(message.Chat.ID, message.From.ID); len(command) > 0 {
 				if handler, ok := this.SessionHandlers[command]; ok {
 					this.handleSession(message, handler)
@@ -94,6 +95,7 @@ func (this *Margelet) Stop() {
 }
 
 func (this *Margelet) handleCommand(message tgbotapi.Message) {
+
 	if responder, ok := this.CommandResponders[message.Command()]; ok {
 		this.handleMessage(message, []Responder{responder})
 		return
