@@ -7,14 +7,15 @@ import (
 
 // Margelet - main struct in package, handles all interactions
 type Margelet struct {
-	bot               TGBotAPI
-	MessageResponders []Responder
-	CommandResponders map[string]CommandHandler
-	SessionHandlers   map[string]SessionHandler
-	running           bool
-	Redis             *redis.Client
-	ChatRepository    *chatRepository
-	SessionRepository *sessionRepository
+	bot                  TGBotAPI
+	MessageResponders    []Responder
+	CommandResponders    map[string]CommandHandler
+	SessionHandlers      map[string]SessionHandler
+	running              bool
+	Redis                *redis.Client
+	ChatRepository       *chatRepository
+	SessionRepository    *sessionRepository
+	ChatConfigRepository *chatConfigRepository
 }
 
 // NewMargelet creates new Margelet instance
@@ -39,8 +40,9 @@ func NewMargeletFromBot(botName string, redisAddr string, redisPassword string, 
 
 	chatRepository := newChatRepository(botName, redis)
 	sessionRepository := newSessionRepository(botName, redis)
+	chatConfigRepository := newChatConfigRepository(botName, redis)
 
-	return &Margelet{bot, []Responder{}, map[string]CommandHandler{}, map[string]SessionHandler{}, true, redis, chatRepository, sessionRepository}, nil
+	return &Margelet{bot, []Responder{}, map[string]CommandHandler{}, map[string]SessionHandler{}, true, redis, chatRepository, sessionRepository, chatConfigRepository}, nil
 }
 
 // AddMessageResponder - adds new MessageResponder to Margelet
