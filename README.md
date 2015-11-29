@@ -21,13 +21,13 @@ import (
 )
 
 func main() {
-    margelet, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<redis password>", 0, "your bot token", false)
+    bot, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<redis password>", 0, "your bot token", false)
     
     if err != nil {
         panic(err)
     }
     
-    margelet.Run()
+    bot.Run()
 }
 ```
 
@@ -58,3 +58,13 @@ func (responder EchoResponder) Response(bot MargeletAPI, message tgbotapi.Messag
 	return err
 }
 ```
+
+This responder will repeat any user's message back to chat.
+
+Message responders can be added to margelet with `AddMessageResponder` function:
+```go
+bot, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<redis password>", 0, "your bot token", false)
+bot.AddMessageResponder(EchoResponder{})
+bot.Run()
+```
+
