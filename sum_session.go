@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-// SumSession - simple example session, that cat sum numbers
+// SumSession - simple example session, that can sum numbers
 type SumSession struct {
 }
 
