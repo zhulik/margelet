@@ -36,7 +36,7 @@ Out of box, margelet support only `/help` command, it respond some like this
 `/help - Show bot help`
 
 ## Concept
-Margelet uses some base concepts:
+Margelet based on some concepts:
 * Message responders
 * Command handlers
 * Session handlers
@@ -99,3 +99,12 @@ func (responder HelpResponder) HelpMessage() string {
 	return "Show bot help"
 }
 ```
+
+Command handlers can be added to margelet with `AddSessionHandler` function:
+```go
+bot, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<redis password>", 0, "your bot token", false)
+bot.AddSessionHandler("/help", HelpResponder{bot})
+bot.Run()
+```
+
+### Session handlers
