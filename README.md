@@ -1,16 +1,16 @@
 [![Build Status](https://travis-ci.org/zhulik/margelet.svg?branch=master)](https://travis-ci.org/zhulik/margelet)
 # Margelet
-Telegram Bot Framework for Go based on [telegram-bot-api](https://github.com/Syfaro/telegram-bot-api)
+Telegram Bot Framework for Go is based on [telegram-bot-api](https://github.com/Syfaro/telegram-bot-api)
 
-It uses Redis for storing it's states, configs and so on. 
+It uses Redis to store it's states, configs and so on.
 
-Any low-level interactions with Telegram Bot API(downloading files, keyboards and so on) should be performed through 
-[telegram-bot-api](https://github.com/Syfaro/telegram-bot-api). 
+Any low-level interactions with Telegram Bot API(downloading files, keyboards and so on) should be performed through
+[telegram-bot-api](https://github.com/Syfaro/telegram-bot-api).
 
-Margelet it just thin layer, that allows you to solve
-base bot tasks quickly and easy.
+Margelet is just a thin layer, that allows you to solve
+basic bot tasks quickly and easy.
 
-**Note: margelet in early beta now. Any advices and suggestions is required**
+**Note: margelet is in early beta now. Any advices and suggestions are welcome**
 
 ## Installation
 `go get https://github.com/zhulik/margelet`
@@ -23,29 +23,29 @@ import (
 
 func main() {
     bot, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<redis password>", 0, "your bot token", false)
-    
+
     if err != nil {
         panic(err)
     }
-    
+
     bot.Run()
 }
 ```
 
-Out of box, margelet support only `/help` command, it respond some like this
+Out of the box, margelet supports only `/help` command, it responds something like this
 
 `/help - Show bot help`
 
 ## Concept
-Margelet based on some concepts:
+Margelet is based on some concepts:
 * Message responders
 * Command handlers
 * Session handlers
 * Chat configs
 
 ### Message responders
-Message responder is struct that implements Responder interface. It receives all chat messages dependant on bot's
-[Privacy mode](https://core.telegram.org/bots#privacy-mode). It don't receive commands.
+Message responder is a struct that implements Responder interface. It receives all chat messages dependant on bot's
+[Privacy mode](https://core.telegram.org/bots#privacy-mode). It doesn't receive commands.
 
 Simple example:
 ```go
@@ -55,8 +55,8 @@ type EchoResponder struct {
 
 // Response send message back to author
 func (responder EchoResponder) Response(bot MargeletAPI, message tgbotapi.Message) error {
-	_, err := bot.Send(tgbotapi.NewMessage(message.Chat.ID, message.Text))
-	return err
+    _, err := bot.Send(tgbotapi.NewMessage(message.Chat.ID, message.Text))
+    return err
 }
 ```
 
@@ -77,27 +77,27 @@ Simple example:
 ```go
 // HelpResponder Default responder for /help command. Margelet will add this automatically
 type HelpResponder struct {
-	Margelet *Margelet
+    Margelet *Margelet
 }
 
 // Response sends default help message
 func (responder HelpResponder) Response(bot MargeletAPI, message tgbotapi.Message) error {
-	lines := []string{}
-	for command, responder := range responder.Margelet.CommandResponders {
-		lines = append(lines, fmt.Sprintf("%s - %s", command, responder.HelpMessage()))
-	}
+    lines := []string{}
+    for command, responder := range responder.Margelet.CommandResponders {
+        lines = append(lines, fmt.Sprintf("%s - %s", command, responder.HelpMessage()))
+    }
 
-	for command, responder := range responder.Margelet.SessionHandlers {
-		lines = append(lines, fmt.Sprintf("%s - %s", command, responder.HelpMessage()))
-	}
+    for command, responder := range responder.Margelet.SessionHandlers {
+        lines = append(lines, fmt.Sprintf("%s - %s", command, responder.HelpMessage()))
+    }
 
-	_, err := bot.Send(tgbotapi.NewMessage(message.Chat.ID, strings.Join(lines, "\n")))
-	return err
+    _, err := bot.Send(tgbotapi.NewMessage(message.Chat.ID, strings.Join(lines, "\n")))
+    return err
 }
 
 // HelpMessage return help string for HelpResponder
 func (responder HelpResponder) HelpMessage() string {
-	return "Show bot help"
+    return "Show bot help"
 }
 ```
 
@@ -109,7 +109,7 @@ bot.Run()
 ```
 
 ### Session handlers
-Session here is interactive dialog with user, like [@BotFather](https://telegram.me/botfather) do. User runs session
+Session here is an interactive dialog with user, like [@BotFather](https://telegram.me/botfather) does. User runs session
 with a command and then response to bot's questions until bot collects all needed information. It can be used for bot
 configuration, for example.
 
@@ -123,46 +123,46 @@ type SumSession struct {
 
 // HandleResponse - Handlers user response
 func (session SumSession) HandleResponse(bot MargeletAPI, message tgbotapi.Message, responses []string) (bool, error) {
-	var msg tgbotapi.MessageConfig
-	switch len(responses) {
-	case 0:
-		msg = tgbotapi.MessageConfig{Text: "Hello, please, write one number per message, after some iterations write 'end'."}
-		msg.ReplyMarkup = tgbotapi.ForceReply{true, true}
-	default:
-		if message.Text == "end" {
-			var sum int
-			for _, a := range responses {
-				n, _ := strconv.Atoi(a)
-				sum += n
-			}
-			msg = tgbotapi.MessageConfig{Text: fmt.Sprintf("Your sum: %d", sum)}
-			session.response(bot, message, msg)
-			msg.ReplyMarkup = tgbotapi.ForceReply{false, true}
-			return true, nil
-		}
+    var msg tgbotapi.MessageConfig
+    switch len(responses) {
+    case 0:
+        msg = tgbotapi.MessageConfig{Text: "Hello, please, write one number per message, after some iterations write 'end'."}
+        msg.ReplyMarkup = tgbotapi.ForceReply{true, true}
+    default:
+        if message.Text == "end" {
+            var sum int
+            for _, a := range responses {
+                n, _ := strconv.Atoi(a)
+                sum += n
+            }
+            msg = tgbotapi.MessageConfig{Text: fmt.Sprintf("Your sum: %d", sum)}
+            session.response(bot, message, msg)
+            msg.ReplyMarkup = tgbotapi.ForceReply{false, true}
+            return true, nil
+        }
 
-		_, err := strconv.Atoi(message.Text)
-		if err != nil {
-			msg = tgbotapi.MessageConfig{Text: "Sorry, not a number"}
-			session.response(bot, message, msg)
-			msg.ReplyMarkup = tgbotapi.ForceReply{true, true}
-			return false, err
-		}
-	}
+        _, err := strconv.Atoi(message.Text)
+        if err != nil {
+            msg = tgbotapi.MessageConfig{Text: "Sorry, not a number"}
+            session.response(bot, message, msg)
+            msg.ReplyMarkup = tgbotapi.ForceReply{true, true}
+            return false, err
+        }
+    }
 
-	session.response(bot, message, msg)
-	return false, nil
+    session.response(bot, message, msg)
+    return false, nil
 }
 
 func (session SumSession) response(bot MargeletAPI, message tgbotapi.Message, msg tgbotapi.MessageConfig) {
-	msg.ChatID = message.Chat.ID
-	msg.ReplyToMessageID = message.MessageID
-	bot.Send(msg)
+    msg.ChatID = message.Chat.ID
+    msg.ReplyToMessageID = message.MessageID
+    bot.Send(msg)
 }
 
 // HelpMessage return help string for SumSession
 func (session SumSession) HelpMessage() string {
-	return "Sum your numbers and print result"
+    return "Sum your numbers and print result"
 }
 ```
 Command handlers can be added to margelet with `AddSessionHandler` function:
@@ -173,13 +173,13 @@ bot.Run()
 ```
 
 On each user response it receives all previous user responses, so you can restore session state. HandleResponse return values
-it important: 
+it important:
 * first(bool), means that margelet should finish session, so return true if you receive all needed info from user, false otherwise
 * second(err), means that bot cannot handle user's message. This message will not be added to session dialog history.
 Return any error if you can handle user's message and return nil if message is accepted.
 
 ### Chat configs
-Bots can store any config string(you can use serialized JSON) for any chat. It can be used for storing user's 
+Bots can store any config string(you can use serialized JSON) for any chat. It can be used for storing user's
 configurations and other user-related information. Simple example:
 ```go
 bot, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<redis password>", 0, "your bot token", false)
@@ -192,4 +192,4 @@ Chat config repository can be accessed from session handlers.
 
 ## Example project
 Simple and clean example project can be found [here](https://github.com/zhulik/cat_bot). It provides command handling
-and configuration session.
+and session configuration.
