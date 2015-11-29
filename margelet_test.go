@@ -77,7 +77,7 @@ func TestMargelet(t *testing.T) {
 			Convey("When running should handle command without panic", func() {
 				go m.Run()
 
-				botMock.Updates <- tgbotapi.Update{Message: tgbotapi.Message{Text: "/test"}}
+				botMock.Updates <- tgbotapi.Update{Message: tgbotapi.Message{Text: "/help"}}
 
 				time.Sleep(10 * time.Millisecond)
 				m.Stop()
