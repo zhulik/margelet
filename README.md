@@ -167,5 +167,21 @@ func (session SumSession) HelpMessage() string {
 On each user response it receives all previous responses, so you can restore session state. HandleResponse return values
 it important: 
 * first(bool), means that margelet should finish session, so return true if you receive all needed info from user, false otherwise
-* second(err), means that bot cannot handle user's message. This message will not added to session dialog history.
-Return any error if you can handle user's message and return nil if it's accepted.
+* second(err), means that bot cannot handle user's message. This message will not be added to session dialog history.
+Return any error if you can handle user's message and return nil if message is accepted.
+
+### Chat configs
+Bots can store any config string(you can use serialized JSON) for any chat. It can be used for storing user's 
+configurations and other user-related information. Simple example:
+```go
+bot, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<redis password>", 0, "your bot token", false)
+...
+bot.GetConfigRepository().Set(<chatID>, "<info>")
+...
+info := bot.GetConfigRepository().Get(<chatID>)
+```
+Chat config repository can be accessed from session handlers.
+
+## Example project
+Simple and clean example project can be found [here](https://github.com/zhulik/cat_bot). It provides command handling
+and configuration session.
