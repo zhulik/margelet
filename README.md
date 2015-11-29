@@ -38,7 +38,7 @@ Out of box, margelet support only `/help` command, it respond some like this
 ## Concept
 Margelet uses some base concepts:
 * Message responders
-* Command responders
+* Command handlers
 * Session handlers
 * Chat configs
 
@@ -68,3 +68,34 @@ bot.AddMessageResponder(EchoResponder{})
 bot.Run()
 ```
 
+### Command handlers
+Command is struct that implements CommandHandler interface. CommandHandler can be subscribed on any command you need
+and will receive all message messages with this command.
+
+Simple example:
+```go
+// HelpResponder Default responder for /help command. Margelet will add this automatically
+type HelpResponder struct {
+	Margelet *Margelet
+}
+
+// Response sends default help message
+func (responder HelpResponder) Response(bot MargeletAPI, message tgbotapi.Message) error {
+	lines := []string{}
+	for command, responder := range responder.Margelet.CommandResponders {
+		lines = append(lines, fmt.Sprintf("%s - %s", command, responder.HelpMessage()))
+	}
+
+	for command, responder := range responder.Margelet.SessionHandlers {
+		lines = append(lines, fmt.Sprintf("%s - %s", command, responder.HelpMessage()))
+	}
+
+	_, err := bot.Send(tgbotapi.NewMessage(message.Chat.ID, strings.Join(lines, "\n")))
+	return err
+}
+
+// HelpMessage return help string for HelpResponder
+func (responder HelpResponder) HelpMessage() string {
+	return "Show bot help"
+}
+```
