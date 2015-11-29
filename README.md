@@ -163,6 +163,9 @@ func (session SumSession) response(bot MargeletAPI, message tgbotapi.Message, ms
 func (session SumSession) HelpMessage() string {
 	return "Sum your numbers and print result"
 }
-
 ```
-
+On each user response it receives all previous responses, so you can restore session state. HandleResponse return values
+it important: 
+* first(bool), means that margelet should finish session, so return true if you receive all needed info from user, false otherwise
+* second(err), means that bot cannot handle user's message. This message will not added to session dialog history.
+Return any error if you can handle user's message and return nil if it's accepted.
