@@ -1,6 +1,8 @@
 # margelet
 Telegram Bot Framework for Go based on [telegram-bot-api](https://github.com/Syfaro/telegram-bot-api)
 
+It uses Redis for storing it's states, configs and so on
+
 **Note: margelet in early beta now. Any advices and 
 suggestions is required**
 
@@ -27,3 +29,10 @@ func main() {
 Out of box, margelet support only `/help` command, it respond some like this
 
 `/help - Show bot help`
+
+## Concept
+Margelet uses some base concepts:
+* Message responders
+* Command responders
+* Session handlers
+* Chat configs
