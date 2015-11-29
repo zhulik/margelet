@@ -101,10 +101,10 @@ func (responder HelpResponder) HelpMessage() string {
 }
 ```
 
-Command handlers can be added to margelet with `AddSessionHandler` function:
+Command handlers can be added to margelet with `AddCommandHandler` function:
 ```go
 bot, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<redis password>", 0, "your bot token", false)
-bot.AddSessionHandler("/help", HelpResponder{bot})
+bot.AddCommandHandler("/help", HelpResponder{bot})
 bot.Run()
 ```
 
@@ -165,7 +165,14 @@ func (session SumSession) HelpMessage() string {
 	return "Sum your numbers and print result"
 }
 ```
-On each user response it receives all previous responses, so you can restore session state. HandleResponse return values
+Command handlers can be added to margelet with `AddSessionHandler` function:
+```go
+bot, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<redis password>", 0, "your bot token", false)
+bot.AddSessionHandler("/help", MyAwesomeSessionHandler{})
+bot.Run()
+```
+
+On each user response it receives all previous user responses, so you can restore session state. HandleResponse return values
 it important: 
 * first(bool), means that margelet should finish session, so return true if you receive all needed info from user, false otherwise
 * second(err), means that bot cannot handle user's message. This message will not be added to session dialog history.
