@@ -36,3 +36,13 @@ func getMargelet() *margelet.Margelet {
 	m.Redis.FlushDb()
 	return m
 }
+
+func ExampleUsage() {
+	margelet, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<redis password>", 0, "your bot token", false)
+
+	if err != nil {
+		panic(err)
+	}
+
+	margelet.Run()
+}
