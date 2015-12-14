@@ -24,6 +24,7 @@ type SessionHandler interface {
 // MargeletAPI - interface, that describes margelet API
 type MargeletAPI interface {
 	Send(c tgbotapi.Chattable) (tgbotapi.Message, error)
+	QuickSend(chatID int, message string) (tgbotapi.Message, error)
 	GetFileDirectURL(fileID string) (string, error)
 	IsMessageToMe(message tgbotapi.Message) bool
 	GetConfigRepository() *chatConfigRepository
