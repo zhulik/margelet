@@ -73,6 +73,11 @@ func (margelet *Margelet) Send(c tgbotapi.Chattable) (tgbotapi.Message, error) {
 	return margelet.bot.Send(c)
 }
 
+// QuickSend - quick send text message to chatID
+func (margelet *Margelet) QuickSend(chatID int, message string) (tgbotapi.Message, error) {
+	return margelet.bot.QuickSend(chatID, message)
+}
+
 // GetFileDirectURL - converts fileID to direct URL
 func (margelet *Margelet) GetFileDirectURL(fileID string) (string, error) {
 	return margelet.bot.GetFileDirectURL(fileID)
@@ -86,7 +91,6 @@ func (margelet *Margelet) IsMessageToMe(message tgbotapi.Message) bool {
 func (margelet *Margelet) GetConfigRepository() *chatConfigRepository {
 	return margelet.ChatConfigRepository
 }
-
 
 // Run - starts message processing loop
 func (margelet *Margelet) Run() error {

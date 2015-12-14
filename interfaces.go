@@ -32,6 +32,7 @@ type MargeletAPI interface {
 // TGBotAPI - interface, thar describe telegram-bot-api API
 type TGBotAPI interface {
 	Send(c tgbotapi.Chattable) (tgbotapi.Message, error)
+	QuickSend(chatID int, message string) (tgbotapi.Message, error)
 	GetFileDirectURL(fileID string) (string, error)
 	IsMessageToMe(message tgbotapi.Message) bool
 	GetUpdatesChan(config tgbotapi.UpdateConfig) (<-chan tgbotapi.Update, error)
