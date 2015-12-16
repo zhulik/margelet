@@ -46,6 +46,14 @@ func TestMargelet(t *testing.T) {
 			})
 		})
 
+		Convey("When quick sending message", func() {
+			_, err := m.QuickSend(0, "TEST")
+
+			Convey("Error should be nil", func() {
+				So(err, ShouldBeNil)
+			})
+		})
+
 		Convey("When getting file direct URL", func() {
 			_, err := m.GetFileDirectURL("test")
 
@@ -59,6 +67,13 @@ func TestMargelet(t *testing.T) {
 			res := m.IsMessageToMe(msg)
 			Convey("It should return false", func() {
 				So(res, ShouldBeFalse)
+			})
+		})
+
+		Convey("When trying to get config repository", func() {
+			repo := m.GetConfigRepository()
+			Convey("It should not return nil", func() {
+				So(repo, ShouldNotBeNil)
 			})
 		})
 

@@ -75,7 +75,7 @@ func (margelet *Margelet) Send(c tgbotapi.Chattable) (tgbotapi.Message, error) {
 
 // QuickSend - quick send text message to chatID
 func (margelet *Margelet) QuickSend(chatID int, message string) (tgbotapi.Message, error) {
-	return margelet.bot.QuickSend(chatID, message)
+	return margelet.bot.Send(tgbotapi.NewMessage(chatID, message))
 }
 
 // GetFileDirectURL - converts fileID to direct URL
