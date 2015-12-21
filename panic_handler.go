@@ -1,7 +1,6 @@
 package margelet
 
 import (
-	"fmt"
 	"github.com/Syfaro/telegram-bot-api"
 )
 
