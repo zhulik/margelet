@@ -79,6 +79,7 @@ func TestMargelet(t *testing.T) {
 
 		Convey("Given configured margelet", func() {
 			m.AddMessageResponder(margelet.EchoResponder{})
+			m.AddMessageResponder(margelet.PanicResponder{})
 			m.AddSessionHandler("/sum", margelet.SumSession{})
 
 			Convey("When running should handle message without panic", func() {
@@ -93,6 +94,15 @@ func TestMargelet(t *testing.T) {
 				go m.Run()
 
 				botMock.Updates <- tgbotapi.Update{Message: tgbotapi.Message{Text: "/help"}}
+
+				time.Sleep(10 * time.Millisecond)
+				m.Stop()
+			})
+
+			Convey("When running panic should not crash bot", func() {
+				go m.Run()
+
+				botMock.Updates <- tgbotapi.Update{Message: tgbotapi.Message{Text: "/panic"}}
 
 				time.Sleep(10 * time.Millisecond)
 				m.Stop()

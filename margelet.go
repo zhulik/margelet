@@ -101,23 +101,7 @@ func (margelet *Margelet) Run() error {
 	}
 
 	for margelet.running {
-		select {
-		case update := <-updates:
-			message := update.Message
-			margelet.ChatRepository.Add(message.Chat.ID)
-
-			// If we have active session in this chat with this user, handle it first
-			if command := margelet.SessionRepository.Command(message.Chat.ID, message.From.ID); len(command) > 0 {
-				// TODO: /cancel command should cancel any active session!
-				if handler, ok := margelet.SessionHandlers[command]; ok {
-					margelet.handleSession(message, handler)
-				}
-			} else if message.IsCommand() {
-				margelet.handleCommand(message)
-			} else {
-				margelet.handleMessage(message, margelet.MessageResponders)
-			}
-		}
+		margelet.handleUpdate(<-updates)
 	}
 	return nil
 }
@@ -127,8 +111,30 @@ func (margelet *Margelet) Stop() {
 	margelet.running = false
 }
 
-func (margelet *Margelet) handleCommand(message tgbotapi.Message) {
+func (margelet *Margelet) handleUpdate(update tgbotapi.Update) {
+	defer func() {
+		if err := recover(); err != nil {
+			margelet.QuickSend(update.Message.Chat.ID, "Panic occured!")
+		}
+	}()
 
+	message := update.Message
+	margelet.ChatRepository.Add(message.Chat.ID)
+
+	// If we have active session in this chat with this user, handle it first
+	if command := margelet.SessionRepository.Command(message.Chat.ID, message.From.ID); len(command) > 0 {
+		// TODO: /cancel command should cancel any active session!
+		if handler, ok := margelet.SessionHandlers[command]; ok {
+			margelet.handleSession(message, handler)
+		}
+	} else if message.IsCommand() {
+		margelet.handleCommand(message)
+	} else {
+		margelet.handleMessage(message, margelet.MessageResponders)
+	}
+}
+
+func (margelet *Margelet) handleCommand(message tgbotapi.Message) {
 	if responder, ok := margelet.CommandResponders[message.Command()]; ok {
 		margelet.handleMessage(message, []Responder{responder})
 		return
@@ -146,14 +152,12 @@ func (margelet *Margelet) handleMessage(message tgbotapi.Message, responders []R
 		err := responder.Response(margelet, message)
 
 		if err != nil {
-			msg := tgbotapi.NewMessage(message.Chat.ID, "Error occured: "+err.Error())
-			margelet.Send(msg)
+			margelet.QuickSend(message.Chat.ID, "Error occured: "+err.Error())
 		}
 	}
 }
 
 func (margelet *Margelet) handleSession(message tgbotapi.Message, handler SessionHandler) {
-
 	finish, err := handler.HandleResponse(margelet, message, margelet.SessionRepository.Dialog(message.Chat.ID, message.From.ID))
 	if err == nil {
 		margelet.SessionRepository.Add(message.Chat.ID, message.From.ID, message.Text)
