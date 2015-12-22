@@ -14,8 +14,8 @@ type Margelet struct {
 	running              bool
 	Redis                *redis.Client
 	ChatRepository       *chatRepository
-	SessionRepository    *sessionRepository
-	ChatConfigRepository *chatConfigRepository
+	SessionRepository    *SessionRepository
+	ChatConfigRepository *ChatConfigRepository
 }
 
 // NewMargelet creates new Margelet instance
@@ -88,8 +88,14 @@ func (margelet *Margelet) IsMessageToMe(message tgbotapi.Message) bool {
 	return margelet.bot.IsMessageToMe(message)
 }
 
-func (margelet *Margelet) GetConfigRepository() *chatConfigRepository {
+// GetConfigRepository - returns chat config repository
+func (margelet *Margelet) GetConfigRepository() *ChatConfigRepository {
 	return margelet.ChatConfigRepository
+}
+
+// GetSessionRepository - returns session repository
+func (margelet *Margelet) GetSessionRepository() *SessionRepository {
+	return margelet.SessionRepository
 }
 
 // Run - starts message processing loop

@@ -27,7 +27,8 @@ type MargeletAPI interface {
 	QuickSend(chatID int, message string) (tgbotapi.Message, error)
 	GetFileDirectURL(fileID string) (string, error)
 	IsMessageToMe(message tgbotapi.Message) bool
-	GetConfigRepository() *chatConfigRepository
+	GetConfigRepository() *ChatConfigRepository
+	GetSessionRepository() *SessionRepository
 }
 
 // TGBotAPI - interface, thar describe telegram-bot-api API
