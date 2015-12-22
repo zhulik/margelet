@@ -2,6 +2,7 @@ package margelet
 
 import (
 	"github.com/Syfaro/telegram-bot-api"
+	"gopkg.in/redis.v3"
 )
 
 // Responder - interface for message responders
@@ -29,6 +30,7 @@ type MargeletAPI interface {
 	IsMessageToMe(message tgbotapi.Message) bool
 	GetConfigRepository() *ChatConfigRepository
 	GetSessionRepository() *SessionRepository
+	GetRedis() *redis.Client
 }
 
 // TGBotAPI - interface, thar describe telegram-bot-api API

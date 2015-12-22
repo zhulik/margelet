@@ -98,6 +98,11 @@ func (margelet *Margelet) GetSessionRepository() *SessionRepository {
 	return margelet.SessionRepository
 }
 
+// GetRedis - returns margelet's redis client
+func (margelet *Margelet) GetRedis() *redis.Client {
+	return margelet.Redis
+}
+
 // Run - starts message processing loop
 func (margelet *Margelet) Run() error {
 	updates, err := margelet.bot.GetUpdatesChan(tgbotapi.UpdateConfig{Timeout: 60})
