@@ -134,7 +134,6 @@ func (margelet *Margelet) HandleSession(message tgbotapi.Message, handler Sessio
 	}
 }
 
-
 func (margelet *Margelet) handleUpdate(update tgbotapi.Update) {
 	defer func() {
 		if err := recover(); err != nil {
