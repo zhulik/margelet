@@ -122,6 +122,19 @@ func (margelet *Margelet) Stop() {
 	margelet.running = false
 }
 
+// HandleSession - handles any message as session message with handler
+func (margelet *Margelet) HandleSession(message tgbotapi.Message, handler SessionHandler) {
+	finish, err := handler.HandleResponse(margelet, message, margelet.SessionRepository.Dialog(message.Chat.ID, message.From.ID))
+	if err == nil {
+		margelet.SessionRepository.Add(message.Chat.ID, message.From.ID, message.Text)
+	}
+
+	if finish {
+		margelet.SessionRepository.Remove(message.Chat.ID, message.From.ID)
+	}
+}
+
+
 func (margelet *Margelet) handleUpdate(update tgbotapi.Update) {
 	defer func() {
 		if err := recover(); err != nil {
@@ -136,7 +149,7 @@ func (margelet *Margelet) handleUpdate(update tgbotapi.Update) {
 	if command := margelet.SessionRepository.Command(message.Chat.ID, message.From.ID); len(command) > 0 {
 		// TODO: /cancel command should cancel any active session!
 		if handler, ok := margelet.SessionHandlers[command]; ok {
-			margelet.handleSession(message, handler)
+			margelet.HandleSession(message, handler)
 		}
 	} else if message.IsCommand() {
 		margelet.handleCommand(message)
@@ -153,7 +166,7 @@ func (margelet *Margelet) handleCommand(message tgbotapi.Message) {
 
 	if handler, ok := margelet.SessionHandlers[message.Command()]; ok {
 		margelet.SessionRepository.Create(message.Chat.ID, message.From.ID, message.Command())
-		margelet.handleSession(message, handler)
+		margelet.HandleSession(message, handler)
 		return
 	}
 }
@@ -165,16 +178,5 @@ func (margelet *Margelet) handleMessage(message tgbotapi.Message, responders []R
 		if err != nil {
 			margelet.QuickSend(message.Chat.ID, "Error occured: "+err.Error())
 		}
-	}
-}
-
-func (margelet *Margelet) handleSession(message tgbotapi.Message, handler SessionHandler) {
-	finish, err := handler.HandleResponse(margelet, message, margelet.SessionRepository.Dialog(message.Chat.ID, message.From.ID))
-	if err == nil {
-		margelet.SessionRepository.Add(message.Chat.ID, message.From.ID, message.Text)
-	}
-
-	if finish {
-		margelet.SessionRepository.Remove(message.Chat.ID, message.From.ID)
 	}
 }
