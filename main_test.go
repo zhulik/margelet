@@ -9,19 +9,19 @@ type BotMock struct {
 	Updates chan tgbotapi.Update
 }
 
-func (this BotMock) Send(c tgbotapi.Chattable) (tgbotapi.Message, error) {
+func (bot BotMock) Send(c tgbotapi.Chattable) (tgbotapi.Message, error) {
 	return tgbotapi.Message{}, nil
 }
 
-func (this BotMock) GetFileDirectURL(fileID string) (string, error) {
+func (bot BotMock) GetFileDirectURL(fileID string) (string, error) {
 	return "https://example.com/test.txt", nil
 }
 
-func (this BotMock) IsMessageToMe(message tgbotapi.Message) bool {
+func (bot BotMock) IsMessageToMe(message tgbotapi.Message) bool {
 	return false
 }
 
-func (this BotMock) GetUpdatesChan(config tgbotapi.UpdateConfig) (<-chan tgbotapi.Update, error) {
+func (bot BotMock) GetUpdatesChan(config tgbotapi.UpdateConfig) (<-chan tgbotapi.Update, error) {
 	return this.Updates, nil
 }
 
