@@ -22,7 +22,7 @@ func (bot BotMock) IsMessageToMe(message tgbotapi.Message) bool {
 }
 
 func (bot BotMock) GetUpdatesChan(config tgbotapi.UpdateConfig) (<-chan tgbotapi.Update, error) {
-	return this.Updates, nil
+	return bot.Updates, nil
 }
 
 var (
