@@ -54,6 +54,14 @@ func TestMargelet(t *testing.T) {
 			})
 		})
 
+		Convey("When quick replying message", func() {
+			_, err := m.QuickReply(0, 100500, "TEST")
+
+			Convey("Error should be nil", func() {
+				So(err, ShouldBeNil)
+			})
+		})
+
 		Convey("When getting file direct URL", func() {
 			_, err := m.GetFileDirectURL("test")
 
