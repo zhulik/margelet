@@ -132,12 +132,12 @@ func (margelet *Margelet) Stop() {
 // HandleSession - handles any message as session message with handler
 func (margelet *Margelet) HandleSession(message tgbotapi.Message, handler SessionHandler) {
 	finish, err := handler.HandleResponse(margelet, message, margelet.SessionRepository.Dialog(message.Chat.ID, message.From.ID))
-	if err == nil {
-		margelet.SessionRepository.Add(message.Chat.ID, message.From.ID, message)
-	}
-
 	if finish {
 		margelet.SessionRepository.Remove(message.Chat.ID, message.From.ID)
+	}
+	
+	if err == nil {
+		margelet.SessionRepository.Add(message.Chat.ID, message.From.ID, message)
 	}
 }
 
