@@ -37,7 +37,7 @@ func getMargelet() *margelet.Margelet {
 	return m
 }
 
-func ExampleUsage() {
+func ExampleMargelet() {
 	bot, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<redis password>", 0, "your bot token", false)
 
 	if err != nil {

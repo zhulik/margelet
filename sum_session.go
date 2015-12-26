@@ -16,7 +16,7 @@ func (session SumSession) HandleResponse(bot MargeletAPI, message tgbotapi.Messa
 	switch len(responses) {
 	case 0:
 		msg = tgbotapi.MessageConfig{Text: "Hello, please, write one number per message, after some iterations write 'end'."}
-		msg.ReplyMarkup = tgbotapi.ForceReply{true, true}
+		msg.ReplyMarkup = tgbotapi.ForceReply{ForceReply: true, Selective: true}
 	default:
 		if message.Text == "end" {
 			var sum int
@@ -26,7 +26,7 @@ func (session SumSession) HandleResponse(bot MargeletAPI, message tgbotapi.Messa
 			}
 			msg = tgbotapi.MessageConfig{Text: fmt.Sprintf("Your sum: %d", sum)}
 			session.response(bot, message, msg)
-			msg.ReplyMarkup = tgbotapi.ForceReply{false, true}
+			msg.ReplyMarkup = tgbotapi.ForceReply{ForceReply: true, Selective: true}
 			return true, nil
 		}
 
@@ -34,7 +34,7 @@ func (session SumSession) HandleResponse(bot MargeletAPI, message tgbotapi.Messa
 		if err != nil {
 			msg = tgbotapi.MessageConfig{Text: "Sorry, not a number"}
 			session.response(bot, message, msg)
-			msg.ReplyMarkup = tgbotapi.ForceReply{true, true}
+			msg.ReplyMarkup = tgbotapi.ForceReply{ForceReply: true, Selective: true}
 			return false, err
 		}
 	}
