@@ -13,7 +13,7 @@ func TestMargelet(t *testing.T) {
 		m := getMargelet()
 
 		Convey("When adding new message responder", func() {
-			m.AddMessageResponder(margelet.EchoResponder{})
+			m.AddMessageResponder(EchoResponder{})
 
 			Convey("It should be aded to message responders array", func() {
 				So(m.MessageResponders, ShouldNotBeEmpty)
@@ -30,7 +30,7 @@ func TestMargelet(t *testing.T) {
 		})
 
 		Convey("When adding new session handler", func() {
-			m.AddSessionHandler("/test", margelet.SumSession{})
+			m.AddSessionHandler("/test", SumSession{})
 
 			Convey("It should be aded to command responders array", func() {
 				So(m.SessionHandlers, ShouldNotBeEmpty)
@@ -86,9 +86,9 @@ func TestMargelet(t *testing.T) {
 		})
 
 		Convey("Given configured margelet", func() {
-			m.AddMessageResponder(margelet.EchoResponder{})
-			m.AddMessageResponder(margelet.PanicResponder{})
-			m.AddSessionHandler("/sum", margelet.SumSession{})
+			m.AddMessageResponder(EchoResponder{})
+			m.AddMessageResponder(PanicResponder{})
+			m.AddSessionHandler("/sum", SumSession{})
 
 			Convey("When running should handle message without panic", func() {
 				go m.Run()

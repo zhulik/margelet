@@ -1,9 +1,10 @@
-package margelet
+package margelet_test
 
 import (
 	"fmt"
 	"github.com/Syfaro/telegram-bot-api"
 	"strconv"
+	"github.com/zhulik/margelet"
 )
 
 // SumSession - simple example session, that can sum numbers
@@ -11,7 +12,7 @@ type SumSession struct {
 }
 
 // HandleResponse - Handlers user response
-func (session SumSession) HandleResponse(bot MargeletAPI, message tgbotapi.Message, responses []tgbotapi.Message) (bool, error) {
+func (session SumSession) HandleResponse(bot margelet.MargeletAPI, message tgbotapi.Message, responses []tgbotapi.Message) (bool, error) {
 	var msg tgbotapi.MessageConfig
 	switch len(responses) {
 	case 0:
@@ -43,7 +44,7 @@ func (session SumSession) HandleResponse(bot MargeletAPI, message tgbotapi.Messa
 	return false, nil
 }
 
-func (session SumSession) response(bot MargeletAPI, message tgbotapi.Message, msg tgbotapi.MessageConfig) {
+func (session SumSession) response(bot margelet.MargeletAPI, message tgbotapi.Message, msg tgbotapi.MessageConfig) {
 	msg.ChatID = message.Chat.ID
 	msg.ReplyToMessageID = message.MessageID
 	bot.Send(msg)

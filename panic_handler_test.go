@@ -1,16 +1,17 @@
-package margelet
+package margelet_test
 
 import (
 	"github.com/Syfaro/telegram-bot-api"
+	"github.com/zhulik/margelet"
 )
 
 // PanicResponder - test responder that panics
 type PanicResponder struct {
-	Margelet *Margelet
+	Margelet *margelet.Margelet
 }
 
 // Response sends default help message
-func (responder PanicResponder) Response(bot MargeletAPI, message tgbotapi.Message) error {
+func (responder PanicResponder) Response(bot margelet.MargeletAPI, message tgbotapi.Message) error {
 	panic("TEST")
 	return nil
 }
