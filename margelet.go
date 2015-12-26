@@ -134,8 +134,9 @@ func (margelet *Margelet) HandleSession(message tgbotapi.Message, handler Sessio
 	finish, err := handler.HandleResponse(margelet, message, margelet.SessionRepository.Dialog(message.Chat.ID, message.From.ID))
 	if finish {
 		margelet.SessionRepository.Remove(message.Chat.ID, message.From.ID)
+		return
 	}
-	
+
 	if err == nil {
 		margelet.SessionRepository.Add(message.Chat.ID, message.From.ID, message)
 	}
