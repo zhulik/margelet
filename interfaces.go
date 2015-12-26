@@ -18,7 +18,7 @@ type CommandHandler interface {
 
 // SessionHandler - interface for session handlers
 type SessionHandler interface {
-	HandleResponse(bot MargeletAPI, message tgbotapi.Message, responses []string) (bool, error)
+	HandleResponse(bot MargeletAPI, message tgbotapi.Message, responses []tgbotapi.Message) (bool, error)
 	HelpMessage() string
 }
 

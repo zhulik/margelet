@@ -11,7 +11,7 @@ type SumSession struct {
 }
 
 // HandleResponse - Handlers user response
-func (session SumSession) HandleResponse(bot MargeletAPI, message tgbotapi.Message, responses []string) (bool, error) {
+func (session SumSession) HandleResponse(bot MargeletAPI, message tgbotapi.Message, responses []tgbotapi.Message) (bool, error) {
 	var msg tgbotapi.MessageConfig
 	switch len(responses) {
 	case 0:
@@ -20,8 +20,8 @@ func (session SumSession) HandleResponse(bot MargeletAPI, message tgbotapi.Messa
 	default:
 		if message.Text == "end" {
 			var sum int
-			for _, a := range responses {
-				n, _ := strconv.Atoi(a)
+			for _, m := range responses {
+				n, _ := strconv.Atoi(m.Text)
 				sum += n
 			}
 			msg = tgbotapi.MessageConfig{Text: fmt.Sprintf("Your sum: %d", sum)}

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"gopkg.in/redis.v3"
 	"strings"
+	"github.com/Syfaro/telegram-bot-api"
+	"encoding/json"
 )
 
 // SessionRepository - repository for sessions
@@ -24,10 +26,12 @@ func (session *SessionRepository) Create(chatID int, userID int, command string)
 }
 
 // Add - adds user's answer to existing session
-func (session *SessionRepository) Add(chatID int, userID int, userAnswer string) {
+func (session *SessionRepository) Add(chatID int, userID int, message tgbotapi.Message) {
 	key := session.dialogKeyFor(chatID, userID)
 
-	session.redis.RPush(key, userAnswer)
+	json, _ := json.Marshal(message)
+
+	session.redis.RPush(key, string(json))
 }
 
 // Remove - removes session
@@ -48,11 +52,16 @@ func (session *SessionRepository) Command(chatID int, userID int) string {
 }
 
 // Dialog returns all user's answers history for chatID and userID
-func (session *SessionRepository) Dialog(chatID int, userID int) []string {
+func (session *SessionRepository) Dialog(chatID int, userID int) (messages []tgbotapi.Message) {
 	key := session.dialogKeyFor(chatID, userID)
 
-	values, _ := session.redis.LRange(key, 0, -1).Result()
-	return values
+	values := session.redis.LRange(key, 0, -1).Val()
+	for _, value := range values {
+		msg := tgbotapi.Message{}
+		json.Unmarshal([]byte(value), &msg)
+		messages = append(messages, msg)
+	}
+	return
 }
 
 func (session *SessionRepository) keyFor(chatID int, userID int) string {
