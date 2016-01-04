@@ -1,7 +1,7 @@
 package margelet
 
 import (
-	"github.com/Syfaro/telegram-bot-api"
+	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"gopkg.in/redis.v3"
 )
 

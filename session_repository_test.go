@@ -3,7 +3,7 @@ package margelet_test
 import (
 	. "github.com/smartystreets/goconvey/convey"
 	"testing"
-	"github.com/Syfaro/telegram-bot-api"
+	"github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
 func TestSessionRepository(t *testing.T) {
