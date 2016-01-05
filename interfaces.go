@@ -30,7 +30,7 @@ type MargeletAPI interface {
 	GetFileDirectURL(fileID string) (string, error)
 	IsMessageToMe(message tgbotapi.Message) bool
 	GetConfigRepository() *ChatConfigRepository
-	GetSessionRepository() *SessionRepository
+	GetSessionRepository() SessionRepository
 	GetRedis() *redis.Client
 	HandleSession(message tgbotapi.Message, handler SessionHandler)
 }

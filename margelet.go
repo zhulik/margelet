@@ -14,7 +14,7 @@ type Margelet struct {
 	running              bool
 	Redis                *redis.Client
 	ChatRepository       *chatRepository
-	SessionRepository    *SessionRepository
+	SessionRepository    SessionRepository
 	ChatConfigRepository *ChatConfigRepository
 }
 
@@ -101,7 +101,7 @@ func (margelet *Margelet) GetConfigRepository() *ChatConfigRepository {
 }
 
 // GetSessionRepository - returns session repository
-func (margelet *Margelet) GetSessionRepository() *SessionRepository {
+func (margelet *Margelet) GetSessionRepository() SessionRepository {
 	return margelet.SessionRepository
 }
 
