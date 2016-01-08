@@ -5,14 +5,30 @@ import (
 	"gopkg.in/redis.v3"
 )
 
+type policies []AuthorizationPolicy
+
+func (p policies) Allow(message tgbotapi.Message) error {
+	if len(p) == 0 {
+		return nil
+	}
+
+	for _, policy := range p {
+		if err := policy.Allow(message); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 type authorizedCommandHandler struct {
-	handler  CommandHandler
-	policies []AuthorizationPolicy
+	policies
+	handler CommandHandler
 }
 
 type authorizedSessionHandler struct {
-	handler  SessionHandler
-	policies []AuthorizationPolicy
+	policies
+	handler SessionHandler
 }
 
 // Margelet - main struct in package, handles all interactions
@@ -82,12 +98,12 @@ func (margelet *Margelet) AddMessageHandler(handler MessageHandler) {
 
 // AddCommandHandler - adds new CommandHandler to Margelet
 func (margelet *Margelet) AddCommandHandler(command string, handler CommandHandler, auth ...AuthorizationPolicy) {
-	margelet.CommandHandlers[command] = authorizedCommandHandler{handler, auth}
+	margelet.CommandHandlers[command] = authorizedCommandHandler{auth, handler}
 }
 
 // AddSessionHandler - adds new SessionHandler to Margelet
 func (margelet *Margelet) AddSessionHandler(command string, handler SessionHandler, auth ...AuthorizationPolicy) {
-	margelet.SessionHandlers[command] = authorizedSessionHandler{handler, auth}
+	margelet.SessionHandlers[command] = authorizedSessionHandler{auth, handler}
 }
 
 // Send - send message to Telegram
@@ -141,7 +157,7 @@ func (margelet *Margelet) Run() error {
 	}
 
 	for margelet.running {
-		margelet.handleUpdate(<-updates)
+		handleUpdate(margelet, <-updates)
 	}
 	return nil
 }
@@ -152,67 +168,9 @@ func (margelet *Margelet) Stop() {
 }
 
 // HandleSession - handles any message as session message with handler
-func (margelet *Margelet) HandleSession(message tgbotapi.Message, handler SessionHandler) {
-	finish, err := handler.HandleSession(margelet, message, margelet.SessionRepository.Dialog(message.Chat.ID, message.From.ID))
-	if finish {
-		margelet.SessionRepository.Remove(message.Chat.ID, message.From.ID)
-		return
-	}
-
-	if err == nil {
-		margelet.SessionRepository.Add(message.Chat.ID, message.From.ID, message)
-	}
-}
-
-func (margelet *Margelet) handleUpdate(update tgbotapi.Update) {
-	defer func() {
-		if err := recover(); err != nil {
-			margelet.QuickSend(update.Message.Chat.ID, "Panic occured!")
-		}
-	}()
-
-	message := update.Message
-	margelet.ChatRepository.Add(message.Chat.ID)
-
-	if message.IsCommand() {
-		// If we have active session in this chat with this user, handle it first
-		if command := margelet.SessionRepository.Command(message.Chat.ID, message.From.ID); len(command) > 0 {
-			// TODO: /cancel command should cancel any active session!
-			if authHandler, ok := margelet.SessionHandlers[command]; ok {
-				margelet.HandleSession(message, authHandler.handler)
-			}
-		} else {
-			margelet.handleCommand(message)
-		}
-	} else {
-		margelet.handleMessage(message, margelet.MessageHandlers)
-	}
-
-}
-
-func (margelet *Margelet) handleCommand(message tgbotapi.Message) {
-	if authHandler, ok := margelet.CommandHandlers[message.Command()]; ok {
-		err := authHandler.handler.HandleCommand(margelet, message)
-
-		if err != nil {
-			margelet.QuickSend(message.Chat.ID, "Error occured: "+err.Error())
-		}
-		return
-	}
-
+func (margelet *Margelet) HandleSession(message tgbotapi.Message, command string) {
 	if authHandler, ok := margelet.SessionHandlers[message.Command()]; ok {
-		margelet.SessionRepository.Create(message.Chat.ID, message.From.ID, message.Command())
-		margelet.HandleSession(message, authHandler.handler)
+		handleSession(margelet, message, authHandler)
 		return
-	}
-}
-
-func (margelet *Margelet) handleMessage(message tgbotapi.Message, handlers []MessageHandler) {
-	for _, handler := range handlers {
-		err := handler.HandleMessage(margelet, message)
-
-		if err != nil {
-			margelet.QuickSend(message.Chat.ID, "Error occured: "+err.Error())
-		}
 	}
 }

@@ -32,7 +32,7 @@ type MargeletAPI interface {
 	GetConfigRepository() *ChatConfigRepository
 	GetSessionRepository() SessionRepository
 	GetRedis() *redis.Client
-	HandleSession(message tgbotapi.Message, handler SessionHandler)
+	HandleSession(message tgbotapi.Message, command string)
 }
 
 // TGBotAPI - interface, that describe telegram-bot-api API
