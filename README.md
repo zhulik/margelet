@@ -49,15 +49,16 @@ Message handler is a struct that implements Handler interface. It receives all c
 
 Simple example:
 ```go
-// EchoResponder is simple responder example
-type EchoResponder struct {
+// EchoHandler is simple handler example
+type EchoHandler struct {
 }
 
 // Response send message back to author
-func (responder EchoResponder) Response(bot MargeletAPI, message tgbotapi.Message) error {
-    _, err := bot.Send(tgbotapi.NewMessage(message.Chat.ID, message.Text))
-    return err
+func (handler EchoHandler) HandleMessage(bot margelet.MargeletAPI, message tgbotapi.Message) error {
+	_, err := bot.Send(tgbotapi.NewMessage(message.Chat.ID, message.Text))
+	return err
 }
+
 ```
 
 This handler will repeat any user's message back to chat.
@@ -75,36 +76,36 @@ and will receive all message messages with this command, only if there is no act
 
 Simple example:
 ```go
-// HelpResponder Default responder for /help command. Margelet will add this automatically
-type HelpResponder struct {
-    Margelet *Margelet
+// HelpHandler Default handler for /help command. Margelet will add this automatically
+type HelpHandler struct {
+	Margelet *Margelet
 }
 
-// Response sends default help message
-func (responder HelpResponder) Response(bot MargeletAPI, message tgbotapi.Message) error {
-    lines := []string{}
-    for command, responder := range responder.Margelet.CommandResponders {
-        lines = append(lines, fmt.Sprintf("%s - %s", command, responder.HelpMessage()))
-    }
+// Handle sends default help message
+func (handler HelpHandler) HandleCommand(bot MargeletAPI, message tgbotapi.Message) error {
+	lines := []string{}
+	for command, h := range handler.Margelet.CommandHandlers {
+		lines = append(lines, fmt.Sprintf("%s - %s", command, h.handler.HelpMessage()))
+	}
 
-    for command, responder := range responder.Margelet.SessionHandlers {
-        lines = append(lines, fmt.Sprintf("%s - %s", command, responder.HelpMessage()))
-    }
+	for command, h := range handler.Margelet.SessionHandlers {
+		lines = append(lines, fmt.Sprintf("%s - %s", command, h.handler.HelpMessage()))
+	}
 
-    _, err := bot.Send(tgbotapi.NewMessage(message.Chat.ID, strings.Join(lines, "\n")))
-    return err
+	_, err := bot.Send(tgbotapi.NewMessage(message.Chat.ID, strings.Join(lines, "\n")))
+	return err
 }
 
-// HelpMessage return help string for HelpResponder
-func (responder HelpResponder) HelpMessage() string {
-    return "Show bot help"
+// HelpMessage return help string for HelpHandler
+func (handler HelpHandler) HelpMessage() string {
+	return "Show bot help"
 }
 ```
 
 Command handlers can be added to margelet with `AddCommandHandler` function:
 ```go
 bot, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<redis password>", 0, "your bot token", false)
-bot.AddCommandHandler("/help", HelpResponder{bot})
+bot.AddCommandHandler("/help", HelpHandler{bot})
 bot.Run()
 ```
 
