@@ -45,5 +45,5 @@ type TGBotAPI interface {
 
 // AuthorizationPolicy - interface, that describes authorization policy for command or session
 type AuthorizationPolicy interface {
-	Allow(message tgbotapi.Message, command string) error
+	Allow(message tgbotapi.Message) error
 }
