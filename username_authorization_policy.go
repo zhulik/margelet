@@ -10,6 +10,8 @@ type UsernameAuthorizationPolicy struct {
 	Usernames []string
 }
 
+// Allow check message author's username and returns nil if it in Usernames
+// otherwise, returns an authorization error message
 func (p UsernameAuthorizationPolicy) Allow(message tgbotapi.Message) error {
 	for _, username := range p.Usernames {
 		if message.From.UserName == username {

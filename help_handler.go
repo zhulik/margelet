@@ -11,7 +11,7 @@ type HelpHandler struct {
 	Margelet *Margelet
 }
 
-// Handle sends default help message
+// HandleCommand sends default help message
 func (handler HelpHandler) HandleCommand(bot MargeletAPI, message tgbotapi.Message) error {
 	lines := []string{}
 	for command, h := range handler.Margelet.CommandHandlers {

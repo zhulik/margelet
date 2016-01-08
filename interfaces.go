@@ -5,7 +5,7 @@ import (
 	"gopkg.in/redis.v3"
 )
 
-// Handler - interface for message handlers
+// MessageHandler - interface for message handlers
 type MessageHandler interface {
 	HandleMessage(bot MargeletAPI, message tgbotapi.Message) error
 }
