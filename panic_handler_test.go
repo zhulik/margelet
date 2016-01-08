@@ -5,18 +5,18 @@ import (
 	"github.com/zhulik/margelet"
 )
 
-// PanicResponder - test responder that panics
-type PanicResponder struct {
+// PanicHandler - test handler that panics
+type PanicHandler struct {
 	Margelet *margelet.Margelet
 }
 
-// Response sends default help message
-func (responder PanicResponder) Response(bot margelet.MargeletAPI, message tgbotapi.Message) error {
+// Handle sends default help message
+func (handler PanicHandler) HandleMessage(bot margelet.MargeletAPI, message tgbotapi.Message) error {
 	panic("TEST")
 	return nil
 }
 
-// HelpMessage return help string for HelpResponder
-func (responder PanicResponder) HelpMessage() string {
+// HelpMessage return help string for PanicHandler
+func (handler PanicHandler) HelpMessage() string {
 	return "Panic!"
 }

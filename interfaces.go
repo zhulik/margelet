@@ -5,20 +5,20 @@ import (
 	"gopkg.in/redis.v3"
 )
 
-// Responder - interface for message responders
-type Responder interface {
-	Response(bot MargeletAPI, message tgbotapi.Message) error
+// Handler - interface for message handlers
+type MessageHandler interface {
+	HandleMessage(bot MargeletAPI, message tgbotapi.Message) error
 }
 
 // CommandHandler - interface for command handlers
 type CommandHandler interface {
-	Responder
+	HandleCommand(bot MargeletAPI, message tgbotapi.Message) error
 	HelpMessage() string
 }
 
 // SessionHandler - interface for session handlers
 type SessionHandler interface {
-	HandleResponse(bot MargeletAPI, message tgbotapi.Message, responses []tgbotapi.Message) (bool, error)
+	HandleSession(bot MargeletAPI, message tgbotapi.Message, responses []tgbotapi.Message) (bool, error)
 	HelpMessage() string
 }
 
@@ -35,10 +35,15 @@ type MargeletAPI interface {
 	HandleSession(message tgbotapi.Message, handler SessionHandler)
 }
 
-// TGBotAPI - interface, thar describe telegram-bot-api API
+// TGBotAPI - interface, that describe telegram-bot-api API
 type TGBotAPI interface {
 	Send(c tgbotapi.Chattable) (tgbotapi.Message, error)
 	GetFileDirectURL(fileID string) (string, error)
 	IsMessageToMe(message tgbotapi.Message) bool
 	GetUpdatesChan(config tgbotapi.UpdateConfig) (<-chan tgbotapi.Update, error)
+}
+
+// AuthorizationPolicy - interface, that describes authorization policy for command or session
+type AuthorizationPolicy interface {
+	Allow(message tgbotapi.Message, command string) error
 }

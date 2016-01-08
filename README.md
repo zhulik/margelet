@@ -38,13 +38,13 @@ Out of the box, margelet supports only `/help` command, it responds something li
 
 ## Concept
 Margelet is based on some concepts:
-* Message responders
+* Message handlers
 * Command handlers
 * Session handlers
 * Chat configs
 
-### Message responders
-Message responder is a struct that implements Responder interface. It receives all chat messages dependant on bot's
+### Message handlers
+Message handler is a struct that implements Handler interface. It receives all chat messages dependant on bot's
 [Privacy mode](https://core.telegram.org/bots#privacy-mode). It doesn't receive commands.
 
 Simple example:
@@ -60,12 +60,12 @@ func (responder EchoResponder) Response(bot MargeletAPI, message tgbotapi.Messag
 }
 ```
 
-This responder will repeat any user's message back to chat.
+This handler will repeat any user's message back to chat.
 
-Message responders can be added to margelet with `AddMessageResponder` function:
+Message helpers can be added to margelet with `AddMessageHandler` function:
 ```go
 bot, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<redis password>", 0, "your bot token", false)
-bot.AddMessageResponder(EchoResponder{})
+bot.AddMessageHandler(EchoHandler{})
 bot.Run()
 ```
 

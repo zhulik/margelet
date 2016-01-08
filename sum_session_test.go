@@ -3,8 +3,8 @@ package margelet_test
 import (
 	"fmt"
 	"github.com/go-telegram-bot-api/telegram-bot-api"
-	"strconv"
 	"github.com/zhulik/margelet"
+	"strconv"
 )
 
 // SumSession - simple example session, that can sum numbers
@@ -12,7 +12,7 @@ type SumSession struct {
 }
 
 // HandleResponse - Handlers user response
-func (session SumSession) HandleResponse(bot margelet.MargeletAPI, message tgbotapi.Message, responses []tgbotapi.Message) (bool, error) {
+func (session SumSession) HandleSession(bot margelet.MargeletAPI, message tgbotapi.Message, responses []tgbotapi.Message) (bool, error) {
 	var msg tgbotapi.MessageConfig
 	switch len(responses) {
 	case 0:

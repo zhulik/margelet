@@ -5,12 +5,12 @@ import (
 	"github.com/zhulik/margelet"
 )
 
-// EchoResponder is simple responder example
-type EchoResponder struct {
+// EchoHandler is simple handler example
+type EchoHandler struct {
 }
 
 // Response send message back to author
-func (responder EchoResponder) Response(bot margelet.MargeletAPI, message tgbotapi.Message) error {
+func (handler EchoHandler) HandleMessage(bot margelet.MargeletAPI, message tgbotapi.Message) error {
 	_, err := bot.Send(tgbotapi.NewMessage(message.Chat.ID, message.Text))
 	return err
 }

@@ -1,11 +1,11 @@
 package margelet
 
 import (
+	"encoding/json"
 	"fmt"
+	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"gopkg.in/redis.v3"
 	"strings"
-	"github.com/go-telegram-bot-api/telegram-bot-api"
-	"encoding/json"
 )
 
 // SessionRepository - public interface for session repository
