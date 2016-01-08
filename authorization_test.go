@@ -15,7 +15,7 @@ func TestAuthorization(t *testing.T) {
 		Convey("with registered command with auth policy", func() {
 			m.AddCommandHandler("/test", margelet.HelpHandler{}, margelet.UsernameAuthorizationPolicy{Usernames: []string{"test"}})
 
-			Convey("sending message from allowed user", func(){
+			Convey("sending message from allowed user", func() {
 				from := tgbotapi.User{UserName: "test"}
 
 				go m.Run()
@@ -25,7 +25,7 @@ func TestAuthorization(t *testing.T) {
 				m.Stop()
 			})
 
-			Convey("sending message from disallowed user", func(){
+			Convey("sending message from disallowed user", func() {
 				from := tgbotapi.User{UserName: "another_user"}
 
 				go m.Run()
