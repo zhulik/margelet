@@ -174,17 +174,20 @@ func (margelet *Margelet) handleUpdate(update tgbotapi.Update) {
 	message := update.Message
 	margelet.ChatRepository.Add(message.Chat.ID)
 
-	// If we have active session in this chat with this user, handle it first
-	if command := margelet.SessionRepository.Command(message.Chat.ID, message.From.ID); len(command) > 0 {
-		// TODO: /cancel command should cancel any active session!
-		if authHandler, ok := margelet.SessionHandlers[command]; ok {
-			margelet.HandleSession(message, authHandler.handler)
+	if message.IsCommand() {
+		// If we have active session in this chat with this user, handle it first
+		if command := margelet.SessionRepository.Command(message.Chat.ID, message.From.ID); len(command) > 0 {
+			// TODO: /cancel command should cancel any active session!
+			if authHandler, ok := margelet.SessionHandlers[command]; ok {
+				margelet.HandleSession(message, authHandler.handler)
+			}
+		} else {
+			margelet.handleCommand(message)
 		}
-	} else if message.IsCommand() {
-		margelet.handleCommand(message)
 	} else {
 		margelet.handleMessage(message, margelet.MessageHandlers)
 	}
+
 }
 
 func (margelet *Margelet) handleCommand(message tgbotapi.Message) {
