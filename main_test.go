@@ -13,6 +13,10 @@ func (bot BotMock) Send(c tgbotapi.Chattable) (tgbotapi.Message, error) {
 	return tgbotapi.Message{}, nil
 }
 
+func (bot BotMock) AnswerInlineQuery(config tgbotapi.InlineConfig) (tgbotapi.APIResponse, error) {
+	return tgbotapi.APIResponse{}, nil
+}
+
 func (bot BotMock) GetFileDirectURL(fileID string) (string, error) {
 	return "https://example.com/test.txt", nil
 }
