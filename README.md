@@ -17,6 +17,8 @@ basic bot tasks quickly and easy.
 
 ## Simple usage
 ```go
+package main
+
 import (
     "github.com/zhulik/margelet"
 )
