@@ -89,6 +89,7 @@ func TestMargelet(t *testing.T) {
 			m.AddMessageHandler(EchoHandler{})
 			m.AddMessageHandler(PanicHandler{})
 			m.AddSessionHandler("/sum", SumSession{})
+			m.InlineHandler = &InlineImage{}
 
 			Convey("When running should handle message without panic", func() {
 				go m.Run()
@@ -124,6 +125,15 @@ func TestMargelet(t *testing.T) {
 				botMock.Updates <- tgbotapi.Update{Message: tgbotapi.Message{Text: "20"}}
 				botMock.Updates <- tgbotapi.Update{Message: tgbotapi.Message{Text: "test"}}
 				botMock.Updates <- tgbotapi.Update{Message: tgbotapi.Message{Text: "end"}}
+
+				time.Sleep(100 * time.Millisecond)
+				m.Stop()
+			})
+
+			Convey("When running should handle inline query without panic", func() {
+				go m.Run()
+
+				botMock.Updates <-  tgbotapi.Update{InlineQuery: tgbotapi.InlineQuery{ID: "test_id", Query: "test"}}
 
 				time.Sleep(100 * time.Millisecond)
 				m.Stop()
