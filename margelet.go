@@ -38,6 +38,7 @@ type Margelet struct {
 	MessageHandlers []MessageHandler
 	CommandHandlers map[string]authorizedCommandHandler
 	SessionHandlers map[string]authorizedSessionHandler
+	InlineHandler   InlineHandler
 
 	running              bool
 	Redis                *redis.Client
@@ -75,15 +76,16 @@ func NewMargeletFromBot(botName string, redisAddr string, redisPassword string, 
 	chatConfigRepository := newChatConfigRepository(botName, redis)
 
 	margelet := Margelet{
-		bot,
-		[]MessageHandler{},
-		map[string]authorizedCommandHandler{},
-		map[string]authorizedSessionHandler{},
-		true,
-		redis,
-		chatRepository,
-		sessionRepository,
-		chatConfigRepository,
+		bot:                  bot,
+		MessageHandlers:      []MessageHandler{},
+		CommandHandlers:      map[string]authorizedCommandHandler{},
+		SessionHandlers:      map[string]authorizedSessionHandler{},
+		InlineHandler:        nil,
+		running:              true,
+		Redis:                redis,
+		ChatRepository:       chatRepository,
+		SessionRepository:    sessionRepository,
+		ChatConfigRepository: chatConfigRepository,
 	}
 
 	margelet.AddCommandHandler("/help", HelpHandler{&margelet})
@@ -109,6 +111,11 @@ func (margelet *Margelet) AddSessionHandler(command string, handler SessionHandl
 // Send - send message to Telegram
 func (margelet *Margelet) Send(c tgbotapi.Chattable) (tgbotapi.Message, error) {
 	return margelet.bot.Send(c)
+}
+
+// AnswerInlineQuery  - send answer to InlineQuery
+func (margelet *Margelet) AnswerInlineQuery(config tgbotapi.InlineConfig) (tgbotapi.APIResponse, error) {
+	return margelet.bot.AnswerInlineQuery(config)
 }
 
 // QuickSend - quick send text message to chatID

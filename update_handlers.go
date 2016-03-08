@@ -11,21 +11,31 @@ func handleUpdate(margelet *Margelet, update tgbotapi.Update) {
 		}
 	}()
 
-	message := update.Message
-	margelet.ChatRepository.Add(message.Chat.ID)
+	if message := update.Message; message.Text != "" {
+		margelet.ChatRepository.Add(message.Chat.ID)
 
-	if message.IsCommand() {
-		// If we have active session in this chat with this user, handle it first
-		if command := margelet.SessionRepository.Command(message.Chat.ID, message.From.ID); len(command) > 0 {
-			// TODO: /cancel command should cancel any active session!
-			margelet.HandleSession(message, command)
+		if message.IsCommand() {
+			// If we have active session in this chat with this user, handle it first
+			if command := margelet.SessionRepository.Command(message.Chat.ID, message.From.ID); len(command) > 0 {
+				// TODO: /cancel command should cancel any active session!
+				margelet.HandleSession(message, command)
+			} else {
+				handleCommand(margelet, message)
+			}
 		} else {
-			handleCommand(margelet, message)
+			handleMessage(margelet, message)
 		}
 	} else {
-		handleMessage(margelet, message, margelet.MessageHandlers)
+		handleInline(margelet, update.InlineQuery)
 	}
+}
 
+func handleInline(margelet *Margelet, query tgbotapi.InlineQuery) {
+	handler := margelet.InlineHandler
+
+	if handler != nil {
+		handler.HandleInline(margelet, query)
+	}
 }
 
 func handleCommand(margelet *Margelet, message tgbotapi.Message) {
@@ -49,8 +59,8 @@ func handleCommand(margelet *Margelet, message tgbotapi.Message) {
 	}
 }
 
-func handleMessage(margelet *Margelet, message tgbotapi.Message, handlers []MessageHandler) {
-	for _, handler := range handlers {
+func handleMessage(margelet *Margelet, message tgbotapi.Message) {
+	for _, handler := range margelet.MessageHandlers {
 		err := handler.HandleMessage(margelet, message)
 
 		if err != nil {
