@@ -181,6 +181,48 @@ it important:
 * second(err), means that bot cannot handle user's message. This message will not be added to session dialog history.
 Return any error if you can handle user's message and return nil if message is accepted.
 
+### Inline handlers
+Inline handler is struct that implements InlineHandler interface. InlineHandler can be subscribed on any inline queries.
+
+Simple example:
+```go
+
+package margelet_test
+
+import (
+	"github.com/zhulik/margelet"
+	"gopkg.in/telegram-bot-api.v2"
+)
+
+type InlineImage struct {
+}
+
+func (handler InlineImage) HandleInline(bot margelet.MargeletAPI, query tgbotapi.InlineQuery) error {
+	testPhotoQuery := tgbotapi.NewInlineQueryResultPhoto(query.ID, "https://telegram.org/img/t_logo.png")
+	testPhotoQuery.ThumbURL = "https://telegram.org/img/t_logo.png"
+
+	config := tgbotapi.InlineConfig{
+		InlineQueryID: query.ID,
+		CacheTime:     2,
+		IsPersonal:    false,
+		Results:       []interface{}{testPhotoQuery},
+		NextOffset:    "",
+	}
+
+	bot.AnswerInlineQuery(config)
+	return nil
+}
+
+
+```
+
+Inline handler can be added to margelet by `InlineHandler` assignment:
+```go
+bot, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<redis password>", 0, "your bot token", false)
+m.InlineHandler = &InlineImage{}
+bot.Run()
+```
+
 ### Chat configs
 Bots can store any config string(you can use serialized JSON) for any chat. It can be used for storing user's
 configurations and other user-related information. Simple example:
