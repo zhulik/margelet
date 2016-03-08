@@ -1,8 +1,8 @@
 package margelet
 
 import (
-	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"gopkg.in/redis.v3"
+	"gopkg.in/telegram-bot-api.v2"
 )
 
 // MessageHandler - interface for message handlers

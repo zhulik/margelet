@@ -1,8 +1,8 @@
 package margelet_test
 
 import (
-	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/zhulik/margelet"
+	"gopkg.in/telegram-bot-api.v2"
 )
 
 // PanicHandler - test handler that panics

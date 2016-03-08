@@ -3,8 +3,8 @@ package margelet
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/go-telegram-bot-api/telegram-bot-api"
 	"gopkg.in/redis.v3"
+	"gopkg.in/telegram-bot-api.v2"
 	"strings"
 )
 

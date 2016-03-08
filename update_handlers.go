@@ -1,7 +1,7 @@
 package margelet
 
 import (
-	"github.com/go-telegram-bot-api/telegram-bot-api"
+	"gopkg.in/telegram-bot-api.v2"
 )
 
 func handleUpdate(margelet *Margelet, update tgbotapi.Update) {
