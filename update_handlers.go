@@ -14,16 +14,16 @@ func handleUpdate(margelet *Margelet, update tgbotapi.Update) {
 	if message := update.Message; message.Text != "" {
 		margelet.ChatRepository.Add(message.Chat.ID)
 
-		if message.IsCommand() {
-			// If we have active session in this chat with this user, handle it first
-			if command := margelet.SessionRepository.Command(message.Chat.ID, message.From.ID); len(command) > 0 {
-				// TODO: /cancel command should cancel any active session!
-				margelet.HandleSession(message, command)
-			} else {
-				handleCommand(margelet, message)
-			}
+		// If we have active session in this chat with this user, handle it first
+		if command := margelet.SessionRepository.Command(message.Chat.ID, message.From.ID); len(command) > 0 {
+			// TODO: /cancel command should cancel any active session!
+			margelet.HandleSession(message, command)
 		} else {
-			handleMessage(margelet, message)
+			if message.IsCommand() {
+				handleCommand(margelet, message)
+			} else {
+				handleMessage(margelet, message)
+			}
 		}
 	} else {
 		handleInline(margelet, update.InlineQuery)
