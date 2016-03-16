@@ -176,7 +176,7 @@ func (margelet *Margelet) Stop() {
 
 // HandleSession - handles any message as session message with handler
 func (margelet *Margelet) HandleSession(message tgbotapi.Message, command string) {
-	if authHandler, ok := margelet.SessionHandlers[message.Command()]; ok {
+	if authHandler, ok := margelet.SessionHandlers[command]; ok {
 		handleSession(margelet, message, authHandler)
 		return
 	}
