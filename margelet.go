@@ -88,7 +88,7 @@ func NewMargeletFromBot(botName string, redisAddr string, redisPassword string, 
 		ChatConfigRepository: chatConfigRepository,
 	}
 
-	margelet.AddCommandHandler("/help", HelpHandler{&margelet})
+	margelet.AddCommandHandler("help", HelpHandler{&margelet})
 
 	return &margelet, nil
 }
