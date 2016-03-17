@@ -107,7 +107,7 @@ func (handler HelpHandler) HelpMessage() string {
 Command handlers can be added to margelet with `AddCommandHandler` function:
 ```go
 bot, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<redis password>", 0, "your bot token", false)
-bot.AddCommandHandler("/help", HelpHandler{bot})
+bot.AddCommandHandler("help", HelpHandler{bot})
 bot.Run()
 ```
 
@@ -171,7 +171,7 @@ func (session SumSession) HelpMessage() string {
 Command handlers can be added to margelet with `AddSessionHandler` function:
 ```go
 bot, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<redis password>", 0, "your bot token", false)
-bot.AddSessionHandler("/help", SumSession{})
+bot.AddSessionHandler("help", SumSession{})
 bot.Run()
 ```
 
