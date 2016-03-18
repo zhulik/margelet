@@ -41,7 +41,7 @@ func TestChatConfigRepository(t *testing.T) {
 
 		Convey("When adding new config using Struct", func() {
 			testStruct := testConfig{FavColor: "Green"}
-			m.ChatConfigRepository.SetWithStruct(100500, &testStruct)
+			m.ChatConfigRepository.SetWithStruct(100500, testStruct)
 
 			Convey("It can be found in repository", func() {
 				var testStruct2 testConfig
