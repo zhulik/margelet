@@ -88,7 +88,7 @@ func NewMargeletFromBot(botName string, redisAddr string, redisPassword string, 
 		ChatConfigRepository: chatConfigRepository,
 	}
 
-	margelet.AddCommandHandler("/help", HelpHandler{&margelet})
+	margelet.AddCommandHandler("help", HelpHandler{&margelet})
 
 	return &margelet, nil
 }
@@ -176,7 +176,7 @@ func (margelet *Margelet) Stop() {
 
 // HandleSession - handles any message as session message with handler
 func (margelet *Margelet) HandleSession(message tgbotapi.Message, command string) {
-	if authHandler, ok := margelet.SessionHandlers[message.Command()]; ok {
+	if authHandler, ok := margelet.SessionHandlers[command]; ok {
 		handleSession(margelet, message, authHandler)
 		return
 	}
