@@ -1,6 +1,6 @@
 [![Build Status](https://travis-ci.org/zhulik/margelet.svg?branch=master)](https://travis-ci.org/zhulik/margelet)
 # Margelet
-Telegram Bot Framework for Go is based on [telegram-bot-api](https://"gopkg.in/telegram-bot-api.v2")
+Telegram Bot Framework for Go is based on [telegram-bot-api](https://gopkg.in/telegram-bot-api.v2)
 
 It uses Redis to store it's states, configs and so on.
 
@@ -44,6 +44,7 @@ Margelet is based on some concepts:
 * Command handlers
 * Session handlers
 * Chat configs
+* Inline handlers
 
 ### Message handlers
 Message handler is a struct that implements Handler interface. It receives all chat messages dependant on bot's
