@@ -1,6 +1,8 @@
 package margelet
 
 import (
+	"strings"
+
 	"gopkg.in/telegram-bot-api.v2"
 )
 
@@ -39,7 +41,7 @@ func handleInline(margelet *Margelet, query tgbotapi.InlineQuery) {
 }
 
 func handleCommand(margelet *Margelet, message tgbotapi.Message) {
-	if authHandler, ok := margelet.CommandHandlers[message.Command()]; ok {
+	if authHandler, ok := margelet.CommandHandlers[strings.TrimSpace(message.Command())]; ok {
 		if err := authHandler.Allow(message); err != nil {
 			margelet.QuickSend(message.Chat.ID, "Authorization error: "+err.Error())
 			return
@@ -52,8 +54,8 @@ func handleCommand(margelet *Margelet, message tgbotapi.Message) {
 		return
 	}
 
-	if authHandler, ok := margelet.SessionHandlers[message.Command()]; ok {
-		margelet.SessionRepository.Create(message.Chat.ID, message.From.ID, message.Command())
+	if authHandler, ok := margelet.SessionHandlers[strings.TrimSpace(message.Command())]; ok {
+		margelet.SessionRepository.Create(message.Chat.ID, message.From.ID, strings.TrimSpace(message.Command()))
 		handleSession(margelet, message, authHandler)
 		return
 	}
