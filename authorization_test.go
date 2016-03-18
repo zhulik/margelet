@@ -1,11 +1,13 @@
 package margelet_test
 
 import (
-	. "github.com/smartystreets/goconvey/convey"
-	"github.com/zhulik/margelet"
-	"gopkg.in/telegram-bot-api.v2"
 	"testing"
 	"time"
+
+	"../margelet"
+
+	. "github.com/smartystreets/goconvey/convey"
+	"gopkg.in/telegram-bot-api.v2"
 )
 
 func TestAuthorization(t *testing.T) {

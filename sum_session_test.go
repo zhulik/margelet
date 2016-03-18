@@ -2,9 +2,10 @@ package margelet_test
 
 import (
 	"fmt"
-	"github.com/zhulik/margelet"
-	"gopkg.in/telegram-bot-api.v2"
 	"strconv"
+
+	"../margelet"
+	"gopkg.in/telegram-bot-api.v2"
 )
 
 // SumSession - simple example session, that can sum numbers

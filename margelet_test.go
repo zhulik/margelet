@@ -1,11 +1,12 @@
 package margelet_test
 
 import (
-	. "github.com/smartystreets/goconvey/convey"
-	"github.com/zhulik/margelet"
-	"gopkg.in/telegram-bot-api.v2"
 	"testing"
 	"time"
+
+	"../margelet"
+	. "github.com/smartystreets/goconvey/convey"
+	"gopkg.in/telegram-bot-api.v2"
 )
 
 func TestMargelet(t *testing.T) {
@@ -133,7 +134,7 @@ func TestMargelet(t *testing.T) {
 			Convey("When running should handle inline query without panic", func() {
 				go m.Run()
 
-				botMock.Updates <-  tgbotapi.Update{InlineQuery: tgbotapi.InlineQuery{ID: "test_id", Query: "test"}}
+				botMock.Updates <- tgbotapi.Update{InlineQuery: tgbotapi.InlineQuery{ID: "test_id", Query: "test"}}
 
 				time.Sleep(100 * time.Millisecond)
 				m.Stop()
