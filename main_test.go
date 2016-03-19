@@ -1,7 +1,8 @@
 package margelet_test
 
 import (
-	"github.com/zhulik/margelet"
+	"../margelet"
+
 	"gopkg.in/telegram-bot-api.v2"
 )
 

@@ -233,6 +233,19 @@ bot, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<re
 bot.GetConfigRepository().Set(<chatID>, "<info>")
 ...
 info := bot.GetConfigRepository().Get(<chatID>)
+
+OR
+
+type userInfo struct{
+  FavColor string // First character has to be Capital otherwise it wont be saved
+}
+...
+user := userInfo{FavColor: "Green"}
+bot.GetConfigRepository().SetWithStruct(<chatID>, user)
+...
+var user userInfo
+bot.GetConfigRepository().GetWithStruct(<chatID>, &user)
+
 ```
 Chat config repository can be accessed from session handlers.
 

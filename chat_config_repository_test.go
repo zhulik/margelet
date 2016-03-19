@@ -1,8 +1,9 @@
 package margelet_test
 
 import (
-	. "github.com/smartystreets/goconvey/convey"
 	"testing"
+
+	. "github.com/smartystreets/goconvey/convey"
 )
 
 func TestChatConfigRepository(t *testing.T) {
@@ -31,6 +32,21 @@ func TestChatConfigRepository(t *testing.T) {
 		Convey("When trying to get missing chatID", func() {
 			Convey("Response should be empty", func() {
 				So(m.ChatConfigRepository.Get(100500), ShouldBeEmpty)
+			})
+		})
+
+		type testConfig struct {
+			FavColor string
+		}
+
+		Convey("When adding new config using Struct", func() {
+			testStruct := testConfig{FavColor: "Green"}
+			m.ChatConfigRepository.SetWithStruct(100500, testStruct)
+
+			Convey("It can be found in repository", func() {
+				var testStruct2 testConfig
+				m.ChatConfigRepository.GetWithStruct(100500, &testStruct2)
+				So(testStruct2.FavColor, ShouldEqual, testStruct.FavColor)
 			})
 		})
 	})
