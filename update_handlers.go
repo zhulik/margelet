@@ -18,7 +18,6 @@ func handleUpdate(margelet *Margelet, update tgbotapi.Update) {
 
 		// If we have active session in this chat with this user, handle it first
 		if command := margelet.SessionRepository.Command(message.Chat.ID, message.From.ID); len(command) > 0 {
-			// TODO: /cancel command should cancel any active session!
 			margelet.HandleSession(message, command)
 		} else {
 			if message.IsCommand() {
@@ -76,7 +75,14 @@ func handleSession(margelet *Margelet, message tgbotapi.Message, authHandler aut
 		margelet.QuickSend(message.Chat.ID, "Authorization error: "+err.Error())
 		return
 	}
+	if strings.TrimSpace(message.Command()) == "/cancel" {
+		authHandler.handler.CancelSession(margelet, message, margelet.SessionRepository.Dialog(message.Chat.ID, message.From.ID))
+		margelet.SessionRepository.Remove(message.Chat.ID, message.From.ID)
+		return
+	}
+
 	finish, err := authHandler.handler.HandleSession(margelet, message, margelet.SessionRepository.Dialog(message.Chat.ID, message.From.ID))
+
 	if finish {
 		margelet.SessionRepository.Remove(message.Chat.ID, message.From.ID)
 		return
@@ -85,4 +91,5 @@ func handleSession(margelet *Margelet, message tgbotapi.Message, authHandler aut
 	if err == nil {
 		margelet.SessionRepository.Add(message.Chat.ID, message.From.ID, message)
 	}
+
 }
