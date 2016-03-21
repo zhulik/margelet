@@ -159,7 +159,7 @@ func (session SumSession) HandleResponse(bot MargeletAPI, message tgbotapi.Messa
 }
 
 // CancelResponse - Chance to clean up everything
-func (session SumSession) CancelResponse(bot MargeletAPI, message tgbotapi.Message, responses []tgbotapi.Message){
+func (session SumSession) CancelSession(bot MargeletAPI, message tgbotapi.Message, responses []tgbotapi.Message){
   //Clean up all variables only used in the session
 
 }
