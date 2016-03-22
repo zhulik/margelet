@@ -131,6 +131,18 @@ func TestMargelet(t *testing.T) {
 				m.Stop()
 			})
 
+			Convey("When running should handle session with early cancel without panic", func() {
+				go m.Run()
+
+				botMock.Updates <- tgbotapi.Update{Message: tgbotapi.Message{Text: "/sum"}}
+				botMock.Updates <- tgbotapi.Update{Message: tgbotapi.Message{Text: "10"}}
+				botMock.Updates <- tgbotapi.Update{Message: tgbotapi.Message{Text: "20"}}
+				botMock.Updates <- tgbotapi.Update{Message: tgbotapi.Message{Text: "/cancel"}}
+
+				time.Sleep(100 * time.Millisecond)
+				m.Stop()
+			})
+
 			Convey("When running should handle inline query without panic", func() {
 				go m.Run()
 
