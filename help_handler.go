@@ -2,7 +2,7 @@ package margelet
 
 import (
 	"fmt"
-	"gopkg.in/telegram-bot-api.v2"
+	"gopkg.in/telegram-bot-api.v3"
 	"strings"
 )
 

@@ -2,7 +2,7 @@ package margelet_test
 
 import (
 	"../margelet"
-	"gopkg.in/telegram-bot-api.v2"
+	"gopkg.in/telegram-bot-api.v3"
 )
 
 type InlineImage struct {

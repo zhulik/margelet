@@ -6,7 +6,7 @@ import (
 
 	"../margelet"
 	. "github.com/smartystreets/goconvey/convey"
-	"gopkg.in/telegram-bot-api.v2"
+	"gopkg.in/telegram-bot-api.v3"
 )
 
 func TestMargelet(t *testing.T) {

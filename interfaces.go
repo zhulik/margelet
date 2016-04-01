@@ -2,7 +2,7 @@ package margelet
 
 import (
 	"gopkg.in/redis.v3"
-	"gopkg.in/telegram-bot-api.v2"
+	"gopkg.in/telegram-bot-api.v3"
 )
 
 // MessageHandler - interface for message handlers
@@ -32,8 +32,8 @@ type SessionHandler interface {
 type MargeletAPI interface {
 	Send(c tgbotapi.Chattable) (tgbotapi.Message, error)
 	AnswerInlineQuery(config tgbotapi.InlineConfig) (tgbotapi.APIResponse, error)
-	QuickSend(chatID int, message string) (tgbotapi.Message, error)
-	QuickReply(chatID, messageID int, message string) (tgbotapi.Message, error)
+	QuickSend(chatID int64, message string) (tgbotapi.Message, error)
+	QuickReply(chatID int64, messageID int, message string) (tgbotapi.Message, error)
 	GetFileDirectURL(fileID string) (string, error)
 	IsMessageToMe(message tgbotapi.Message) bool
 	GetConfigRepository() *ChatConfigRepository

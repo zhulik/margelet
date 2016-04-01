@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"../margelet"
-	"gopkg.in/telegram-bot-api.v2"
+	"gopkg.in/telegram-bot-api.v3"
 )
 
 // SumSession - simple example session, that can sum numbers

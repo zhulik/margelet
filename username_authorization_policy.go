@@ -2,7 +2,7 @@ package margelet
 
 import (
 	"fmt"
-	"gopkg.in/telegram-bot-api.v2"
+	"gopkg.in/telegram-bot-api.v3"
 )
 
 // UsernameAuthorizationPolicy - simple authorization policy, that checks sender's username

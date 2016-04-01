@@ -2,7 +2,7 @@ package margelet
 
 import (
 	"gopkg.in/redis.v3"
-	"gopkg.in/telegram-bot-api.v2"
+	"gopkg.in/telegram-bot-api.v3"
 )
 
 type policies []AuthorizationPolicy
@@ -119,12 +119,12 @@ func (margelet *Margelet) AnswerInlineQuery(config tgbotapi.InlineConfig) (tgbot
 }
 
 // QuickSend - quick send text message to chatID
-func (margelet *Margelet) QuickSend(chatID int, message string) (tgbotapi.Message, error) {
+func (margelet *Margelet) QuickSend(chatID int64, message string) (tgbotapi.Message, error) {
 	return margelet.bot.Send(tgbotapi.NewMessage(chatID, message))
 }
 
 // QuickReply - quick send text reply to message
-func (margelet *Margelet) QuickReply(chatID, messageID int, message string) (tgbotapi.Message, error) {
+func (margelet *Margelet) QuickReply(chatID int64, messageID int, message string) (tgbotapi.Message, error) {
 	msg := tgbotapi.NewMessage(chatID, message)
 	msg.ReplyToMessageID = messageID
 	return margelet.bot.Send(msg)
