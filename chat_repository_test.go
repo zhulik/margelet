@@ -12,7 +12,7 @@ func TestChatRepository(t *testing.T) {
 		Convey("When new chat added", func() {
 			m.ChatRepository.Add(100500)
 			Convey("New chat should be found in repo", func() {
-				So(m.ChatRepository.All(), ShouldResemble, []int{100500})
+				So(m.ChatRepository.All(), ShouldResemble, []int64{100500})
 			})
 		})
 
@@ -26,12 +26,12 @@ func TestChatRepository(t *testing.T) {
 				m.ChatRepository.Remove(100500)
 
 				Convey("Removed chat should not be found in repo", func() {
-					So(m.ChatRepository.All(), ShouldResemble, []int{100501, 100502, 100503})
+					So(m.ChatRepository.All(), ShouldResemble, []int64{100501, 100502, 100503})
 				})
 			})
 
 			Convey("Repo should return all chats", func() {
-				So(m.ChatRepository.All(), ShouldResemble, []int{100500, 100501, 100502, 100503})
+				So(m.ChatRepository.All(), ShouldResemble, []int64{100500, 100501, 100502, 100503})
 			})
 		})
 	})
