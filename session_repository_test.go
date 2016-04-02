@@ -2,7 +2,7 @@ package margelet_test
 
 import (
 	. "github.com/smartystreets/goconvey/convey"
-	"gopkg.in/telegram-bot-api.v2"
+	"gopkg.in/telegram-bot-api.v3"
 	"testing"
 )
 

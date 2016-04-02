@@ -1,11 +1,11 @@
 [![Build Status](https://travis-ci.org/zhulik/margelet.svg?branch=master)](https://travis-ci.org/zhulik/margelet)
 # Margelet
-Telegram Bot Framework for Go is based on [telegram-bot-api](https://gopkg.in/telegram-bot-api.v2)
+Telegram Bot Framework for Go is based on [telegram-bot-api](https://gopkg.in/telegram-bot-api.v3)
 
 It uses Redis to store it's states, configs and so on.
 
 Any low-level interactions with Telegram Bot API(downloading files, keyboards and so on) should be performed through
-[telegram-bot-api](https://"gopkg.in/telegram-bot-api.v2").
+[telegram-bot-api](https://"gopkg.in/telegram-bot-api.v3").
 
 Margelet is just a thin layer, that allows you to solve
 basic bot tasks quickly and easy.
@@ -198,7 +198,7 @@ package margelet_test
 
 import (
 	"github.com/zhulik/margelet"
-	"gopkg.in/telegram-bot-api.v2"
+	"gopkg.in/telegram-bot-api.v3"
 )
 
 type InlineImage struct {

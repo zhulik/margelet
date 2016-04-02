@@ -16,20 +16,20 @@ func newChatRepository(prefix string, redis *redis.Client) *chatRepository {
 	return &chatRepository{key, redis}
 }
 
-func (chat *chatRepository) Add(id int) {
-	chat.redis.SAdd(chat.key, strconv.Itoa(id))
+func (chat *chatRepository) Add(id int64) {
+	chat.redis.SAdd(chat.key, strconv.FormatInt(id, 10))
 }
 
-func (chat *chatRepository) Remove(id int) {
-	chat.redis.SRem(chat.key, strconv.Itoa(id))
+func (chat *chatRepository) Remove(id int64) {
+	chat.redis.SRem(chat.key, strconv.FormatInt(id, 10))
 }
 
-func (chat *chatRepository) All() []int {
-	var result []int
+func (chat *chatRepository) All() []int64 {
+	var result []int64
 	strings, _ := chat.redis.SMembers(chat.key).Result()
 
 	for _, str := range strings {
-		if c, err := strconv.Atoi(str); err == nil {
+		if c, err := strconv.ParseInt(str, 10, 64); err == nil {
 			result = append(result, c)
 		}
 	}

@@ -3,7 +3,7 @@ package margelet
 import (
 	"strings"
 
-	"gopkg.in/telegram-bot-api.v2"
+	"gopkg.in/telegram-bot-api.v3"
 )
 
 func handleUpdate(margelet *Margelet, update tgbotapi.Update) {
