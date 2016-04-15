@@ -96,7 +96,6 @@ func TestMargelet(t *testing.T) {
 			Convey("When running should handle message without panic", func() {
 				go m.Run()
 
-
 				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "Test", Chat: &chat}}
 				time.Sleep(10 * time.Millisecond)
 				m.Stop()
