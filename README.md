@@ -5,12 +5,10 @@ Telegram Bot Framework for Go is based on [telegram-bot-api](https://gopkg.in/te
 It uses Redis to store it's states, configs and so on.
 
 Any low-level interactions with Telegram Bot API(downloading files, keyboards and so on) should be performed through
-[telegram-bot-api](https://"gopkg.in/telegram-bot-api.v4").
+[telegram-bot-api](https://gopkg.in/telegram-bot-api.v4).
 
 Margelet is just a thin layer, that allows you to solve
 basic bot tasks quickly and easy.
-
-**Note: margelet is in early beta now. Any advices and suggestions are welcome**
 
 ## Installation
 `go get https://github.com/zhulik/margelet`
