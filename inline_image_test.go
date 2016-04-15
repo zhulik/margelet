@@ -2,13 +2,13 @@ package margelet_test
 
 import (
 	"../margelet"
-	"gopkg.in/telegram-bot-api.v3"
+	"gopkg.in/telegram-bot-api.v4"
 )
 
 type InlineImage struct {
 }
 
-func (handler InlineImage) HandleInline(bot margelet.MargeletAPI, query tgbotapi.InlineQuery) error {
+func (handler InlineImage) HandleInline(bot margelet.MargeletAPI, query *tgbotapi.InlineQuery) error {
 	testPhotoQuery := tgbotapi.NewInlineQueryResultPhoto(query.ID, "https://telegram.org/img/t_logo.png")
 	testPhotoQuery.ThumbURL = "https://telegram.org/img/t_logo.png"
 

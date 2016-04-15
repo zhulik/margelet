@@ -2,7 +2,7 @@ package margelet_test
 
 import (
 	"../margelet"
-	"gopkg.in/telegram-bot-api.v3"
+	"gopkg.in/telegram-bot-api.v4"
 )
 
 // PanicHandler - test handler that panics
@@ -11,7 +11,7 @@ type PanicHandler struct {
 }
 
 // Handle sends default help message
-func (handler PanicHandler) HandleMessage(bot margelet.MargeletAPI, message tgbotapi.Message) error {
+func (handler PanicHandler) HandleMessage(bot margelet.MargeletAPI, message *tgbotapi.Message) error {
 	panic("TEST")
 	return nil
 }

@@ -3,7 +3,7 @@ package margelet
 import (
 	"strings"
 
-	"gopkg.in/telegram-bot-api.v3"
+	"gopkg.in/telegram-bot-api.v4"
 )
 
 func handleUpdate(margelet *Margelet, update tgbotapi.Update) {
@@ -13,7 +13,7 @@ func handleUpdate(margelet *Margelet, update tgbotapi.Update) {
 		}
 	}()
 
-	if message := update.Message; message.Text != "" {
+	if message := update.Message; message != nil {
 		margelet.ChatRepository.Add(message.Chat.ID)
 
 		// If we have active session in this chat with this user, handle it first
@@ -31,7 +31,7 @@ func handleUpdate(margelet *Margelet, update tgbotapi.Update) {
 	}
 }
 
-func handleInline(margelet *Margelet, query tgbotapi.InlineQuery) {
+func handleInline(margelet *Margelet, query *tgbotapi.InlineQuery) {
 	handler := margelet.InlineHandler
 
 	if handler != nil {
@@ -39,7 +39,7 @@ func handleInline(margelet *Margelet, query tgbotapi.InlineQuery) {
 	}
 }
 
-func handleCommand(margelet *Margelet, message tgbotapi.Message) {
+func handleCommand(margelet *Margelet, message *tgbotapi.Message) {
 	if authHandler, ok := margelet.CommandHandlers[strings.TrimSpace(message.Command())]; ok {
 		if err := authHandler.Allow(message); err != nil {
 			margelet.QuickSend(message.Chat.ID, "Authorization error: "+err.Error())
@@ -60,7 +60,7 @@ func handleCommand(margelet *Margelet, message tgbotapi.Message) {
 	}
 }
 
-func handleMessage(margelet *Margelet, message tgbotapi.Message) {
+func handleMessage(margelet *Margelet, message *tgbotapi.Message) {
 	for _, handler := range margelet.MessageHandlers {
 		err := handler.HandleMessage(margelet, message)
 
@@ -70,7 +70,7 @@ func handleMessage(margelet *Margelet, message tgbotapi.Message) {
 	}
 }
 
-func handleSession(margelet *Margelet, message tgbotapi.Message, authHandler authorizedSessionHandler) {
+func handleSession(margelet *Margelet, message *tgbotapi.Message, authHandler authorizedSessionHandler) {
 	if err := authHandler.Allow(message); err != nil {
 		margelet.QuickSend(message.Chat.ID, "Authorization error: "+err.Error())
 		return

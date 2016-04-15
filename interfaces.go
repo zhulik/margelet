@@ -2,29 +2,29 @@ package margelet
 
 import (
 	"gopkg.in/redis.v3"
-	"gopkg.in/telegram-bot-api.v3"
+	"gopkg.in/telegram-bot-api.v4"
 )
 
 // MessageHandler - interface for message handlers
 type MessageHandler interface {
-	HandleMessage(bot MargeletAPI, message tgbotapi.Message) error
+	HandleMessage(bot MargeletAPI, message *tgbotapi.Message) error
 }
 
 // InlineHandler - interface for message handlers
 type InlineHandler interface {
-	HandleInline(bot MargeletAPI, query tgbotapi.InlineQuery) error
+	HandleInline(bot MargeletAPI, query *tgbotapi.InlineQuery) error
 }
 
 // CommandHandler - interface for command handlers
 type CommandHandler interface {
-	HandleCommand(bot MargeletAPI, message tgbotapi.Message) error
+	HandleCommand(bot MargeletAPI, message *tgbotapi.Message) error
 	HelpMessage() string
 }
 
 // SessionHandler - interface for session handlers
 type SessionHandler interface {
-	HandleSession(bot MargeletAPI, message tgbotapi.Message, responses []tgbotapi.Message) (bool, error)
-	CancelSession(bot MargeletAPI, message tgbotapi.Message, responses []tgbotapi.Message)
+	HandleSession(bot MargeletAPI, message *tgbotapi.Message, responses []tgbotapi.Message) (bool, error)
+	CancelSession(bot MargeletAPI, message *tgbotapi.Message, responses []tgbotapi.Message)
 	HelpMessage() string
 }
 
@@ -39,7 +39,7 @@ type MargeletAPI interface {
 	GetConfigRepository() *ChatConfigRepository
 	GetSessionRepository() SessionRepository
 	GetRedis() *redis.Client
-	HandleSession(message tgbotapi.Message, command string)
+	HandleSession(message *tgbotapi.Message, command string)
 }
 
 // TGBotAPI - interface, that describe telegram-bot-api API
@@ -53,5 +53,5 @@ type TGBotAPI interface {
 
 // AuthorizationPolicy - interface, that describes authorization policy for command or session
 type AuthorizationPolicy interface {
-	Allow(message tgbotapi.Message) error
+	Allow(message *tgbotapi.Message) error
 }

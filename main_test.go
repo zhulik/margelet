@@ -3,7 +3,7 @@ package margelet_test
 import (
 	"../margelet"
 
-	"gopkg.in/telegram-bot-api.v3"
+	"gopkg.in/telegram-bot-api.v4"
 )
 
 type BotMock struct {

@@ -2,7 +2,7 @@ package margelet
 
 import (
 	"fmt"
-	"gopkg.in/telegram-bot-api.v3"
+	"gopkg.in/telegram-bot-api.v4"
 	"strings"
 )
 
@@ -12,7 +12,7 @@ type HelpHandler struct {
 }
 
 // HandleCommand sends default help message
-func (handler HelpHandler) HandleCommand(bot MargeletAPI, message tgbotapi.Message) error {
+func (handler HelpHandler) HandleCommand(bot MargeletAPI, message *tgbotapi.Message) error {
 	lines := []string{}
 	for command, h := range handler.Margelet.CommandHandlers {
 		lines = append(lines, fmt.Sprintf("%s - %s", command, h.handler.HelpMessage()))

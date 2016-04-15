@@ -2,7 +2,7 @@ package margelet_test
 
 import (
 	. "github.com/smartystreets/goconvey/convey"
-	"gopkg.in/telegram-bot-api.v3"
+	"gopkg.in/telegram-bot-api.v4"
 	"testing"
 )
 
@@ -21,7 +21,7 @@ func TestSessionRepository(t *testing.T) {
 		})
 
 		Convey("When adding new dialog", func() {
-			m.SessionRepository.Add(100, 500, msg)
+			m.SessionRepository.Add(100, 500, &msg)
 
 			Convey("It shound be found in repo", func() {
 				So(m.SessionRepository.Dialog(100, 500)[0].Text, ShouldEqual, "Test")
@@ -29,10 +29,10 @@ func TestSessionRepository(t *testing.T) {
 		})
 
 		Convey("When dialogs exists", func() {
-			m.SessionRepository.Add(100, 500, msg)
+			m.SessionRepository.Add(100, 500, &msg)
 
 			Convey("Trying to get dialog for non-exists session shound return empty array", func() {
-				m.SessionRepository.Add(100, 500, msg)
+				m.SessionRepository.Add(100, 500, &msg)
 				So(m.SessionRepository.Dialog(100, 501), ShouldBeEmpty)
 
 			})

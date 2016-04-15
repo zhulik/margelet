@@ -2,7 +2,7 @@ package margelet
 
 import (
 	"fmt"
-	"gopkg.in/telegram-bot-api.v3"
+	"gopkg.in/telegram-bot-api.v4"
 )
 
 // UsernameAuthorizationPolicy - simple authorization policy, that checks sender's username
@@ -12,7 +12,7 @@ type UsernameAuthorizationPolicy struct {
 
 // Allow check message author's username and returns nil if it in Usernames
 // otherwise, returns an authorization error message
-func (p UsernameAuthorizationPolicy) Allow(message tgbotapi.Message) error {
+func (p UsernameAuthorizationPolicy) Allow(message *tgbotapi.Message) error {
 	for _, username := range p.Usernames {
 		if message.From.UserName == username {
 			return nil

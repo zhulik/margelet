@@ -2,12 +2,12 @@ package margelet
 
 import (
 	"gopkg.in/redis.v3"
-	"gopkg.in/telegram-bot-api.v3"
+	"gopkg.in/telegram-bot-api.v4"
 )
 
 type policies []AuthorizationPolicy
 
-func (p policies) Allow(message tgbotapi.Message) error {
+func (p policies) Allow(message *tgbotapi.Message) error {
 	if len(p) == 0 {
 		return nil
 	}
@@ -175,7 +175,7 @@ func (margelet *Margelet) Stop() {
 }
 
 // HandleSession - handles any message as session message with handler
-func (margelet *Margelet) HandleSession(message tgbotapi.Message, command string) {
+func (margelet *Margelet) HandleSession(message *tgbotapi.Message, command string) {
 	if authHandler, ok := margelet.SessionHandlers[command]; ok {
 		handleSession(margelet, message, authHandler)
 		return

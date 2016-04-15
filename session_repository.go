@@ -4,14 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"gopkg.in/redis.v3"
-	"gopkg.in/telegram-bot-api.v3"
+	"gopkg.in/telegram-bot-api.v4"
 	"strings"
 )
 
 // SessionRepository - public interface for session repository
 type SessionRepository interface {
 	Create(chatID int64, userID int, command string)
-	Add(chatID int64, userID int, message tgbotapi.Message)
+	Add(chatID int64, userID int, message *tgbotapi.Message)
 	Remove(chatID int64, userID int)
 	Command(chatID int64, userID int) string
 	Dialog(chatID int64, userID int) (messages []tgbotapi.Message)
@@ -34,7 +34,7 @@ func (session *sessionRepository) Create(chatID int64, userID int, command strin
 }
 
 // Add - adds user's answer to existing session
-func (session *sessionRepository) Add(chatID int64, userID int, message tgbotapi.Message) {
+func (session *sessionRepository) Add(chatID int64, userID int, message *tgbotapi.Message) {
 	key := session.dialogKeyFor(chatID, userID)
 
 	json, _ := json.Marshal(message)

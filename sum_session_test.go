@@ -5,7 +5,7 @@ import (
 	"strconv"
 
 	"../margelet"
-	"gopkg.in/telegram-bot-api.v3"
+	"gopkg.in/telegram-bot-api.v4"
 )
 
 // SumSession - simple example session, that can sum numbers
@@ -13,7 +13,7 @@ type SumSession struct {
 }
 
 // HandleResponse - Handlers user response
-func (session SumSession) HandleSession(bot margelet.MargeletAPI, message tgbotapi.Message, responses []tgbotapi.Message) (bool, error) {
+func (session SumSession) HandleSession(bot margelet.MargeletAPI, message *tgbotapi.Message, responses []tgbotapi.Message) (bool, error) {
 	var msg tgbotapi.MessageConfig
 	switch len(responses) {
 	case 0:
@@ -46,12 +46,12 @@ func (session SumSession) HandleSession(bot margelet.MargeletAPI, message tgbota
 }
 
 // CancelResponse - Chance to clean up everything
-func (session SumSession) CancelSession(bot margelet.MargeletAPI, message tgbotapi.Message, responses []tgbotapi.Message) {
+func (session SumSession) CancelSession(bot margelet.MargeletAPI, message *tgbotapi.Message, responses []tgbotapi.Message) {
 	//Clean up all variables only used in the session
 
 }
 
-func (session SumSession) response(bot margelet.MargeletAPI, message tgbotapi.Message, msg tgbotapi.MessageConfig) {
+func (session SumSession) response(bot margelet.MargeletAPI, message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
 	msg.ChatID = message.Chat.ID
 	msg.ReplyToMessageID = message.MessageID
 	bot.Send(msg)
