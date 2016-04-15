@@ -15,11 +15,11 @@ type HelpHandler struct {
 func (handler HelpHandler) HandleCommand(bot MargeletAPI, message *tgbotapi.Message) error {
 	lines := []string{}
 	for command, h := range handler.Margelet.CommandHandlers {
-		lines = append(lines, fmt.Sprintf("%s - %s", command, h.handler.HelpMessage()))
+		lines = append(lines, fmt.Sprintf("/%s - %s", command, h.handler.HelpMessage()))
 	}
 
 	for command, h := range handler.Margelet.SessionHandlers {
-		lines = append(lines, fmt.Sprintf("%s - %s", command, h.handler.HelpMessage()))
+		lines = append(lines, fmt.Sprintf("/%s - %s", command, h.handler.HelpMessage()))
 	}
 
 	_, err := bot.Send(tgbotapi.NewMessage(message.Chat.ID, strings.Join(lines, "\n")))
