@@ -37,6 +37,7 @@ type SessionHandler interface {
 type MargeletAPI interface {
 	Send(c tgbotapi.Chattable) (tgbotapi.Message, error)
 	AnswerInlineQuery(config tgbotapi.InlineConfig) (tgbotapi.APIResponse, error)
+	AnswerCallbackQuery(config tgbotapi.CallbackConfig) (tgbotapi.APIResponse, error)
 	QuickSend(chatID int64, message string) (tgbotapi.Message, error)
 	QuickReply(chatID int64, messageID int, message string) (tgbotapi.Message, error)
 	GetFileDirectURL(fileID string) (string, error)
@@ -51,6 +52,7 @@ type MargeletAPI interface {
 type TGBotAPI interface {
 	Send(c tgbotapi.Chattable) (tgbotapi.Message, error)
 	AnswerInlineQuery(config tgbotapi.InlineConfig) (tgbotapi.APIResponse, error)
+	AnswerCallbackQuery(config tgbotapi.CallbackConfig) (tgbotapi.APIResponse, error)
 	GetFileDirectURL(fileID string) (string, error)
 	IsMessageToMe(message tgbotapi.Message) bool
 	GetUpdatesChan(config tgbotapi.UpdateConfig) (<-chan tgbotapi.Update, error)

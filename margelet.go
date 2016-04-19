@@ -119,6 +119,11 @@ func (margelet *Margelet) AnswerInlineQuery(config tgbotapi.InlineConfig) (tgbot
 	return margelet.bot.AnswerInlineQuery(config)
 }
 
+// AnswerCallbackQuery  - send answer to CallbackQuery
+func (margelet *Margelet) AnswerCallbackQuery(config tgbotapi.CallbackConfig) (tgbotapi.APIResponse, error) {
+	return margelet.bot.AnswerCallbackQuery(config)
+}
+
 // QuickSend - quick send text message to chatID
 func (margelet *Margelet) QuickSend(chatID int64, message string) (tgbotapi.Message, error) {
 	return margelet.bot.Send(tgbotapi.NewMessage(chatID, message))

@@ -228,6 +228,44 @@ m.InlineHandler = &InlineImage{}
 bot.Run()
 ```
 
+### Callback handlers
+Callback handler is struct that implements CallbackHandler interface. CallbackHandler can be subscribed on any callback queries.
+
+Simple example:
+```go
+
+package margelet_test
+
+import (
+	"github.com/zhulik/margelet"
+	"gopkg.in/telegram-bot-api.v4"
+)
+
+type CallbackMessage struct {
+}
+
+func (handler CallbackMessage) HandleCallback(bot margelet.MargeletAPI, query *tgbotapi.CallbackQuery) error {
+
+	config := tgbotapi.CallbackConfig{
+		CallbackQueryID: query.ID,
+		Text:            "Done!",
+		ShowAlert:       false,
+	}
+
+	bot.AnswerCallbackQuery(config)
+	return nil
+}
+
+
+```
+
+Callback handler can be added to margelet by `CallbackHandler` assignment:
+```go
+bot, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<redis password>", 0, "your bot token", false)
+m.CallbackHandler = &CallbackMessage{}
+bot.Run()
+```
+
 ### Chat configs
 Bots can store any config string(you can use serialized JSON) for any chat. It can be used for storing user's
 configurations and other user-related information. Simple example:
