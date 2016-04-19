@@ -91,6 +91,7 @@ func TestMargelet(t *testing.T) {
 			m.AddMessageHandler(PanicHandler{})
 			m.AddSessionHandler("/sum", SumSession{})
 			m.InlineHandler = &InlineImage{}
+			m.CallbackHandler = &CallbackMessage{}
 			chat := tgbotapi.Chat{ID: 1}
 
 			Convey("When running should handle message without panic", func() {
