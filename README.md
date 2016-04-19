@@ -18,17 +18,20 @@ basic bot tasks quickly and easy.
 package main
 
 import (
-    "github.com/zhulik/margelet"
+	"github.com/zhulik/margelet"
 )
 
 func main() {
-    bot, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<redis password>", 0, "your bot token", false)
+	bot, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<redis password>", 0, "your bot token", false)
 
-    if err != nil {
-        panic(err)
-    }
+	if err != nil {
+		panic(err)
+	}
 
-    bot.Run()
+	err = bot.Run()
+	if err != nil {
+		panic(err)
+	}
 }
 ```
 
@@ -50,6 +53,13 @@ Message handler is a struct that implements Handler interface. It receives all c
 
 Simple example:
 ```go
+package margelet_test
+
+import (
+	"github.com/zhulik/margelet"
+	"gopkg.in/telegram-bot-api.v4"
+)
+
 // EchoHandler is simple handler example
 type EchoHandler struct {
 }
@@ -59,7 +69,6 @@ func (handler EchoHandler) HandleMessage(bot margelet.MargeletAPI, message tgbot
 	_, err := bot.Send(tgbotapi.NewMessage(message.Chat.ID, message.Text))
 	return err
 }
-
 ```
 
 This handler will repeat any user's message back to chat.
@@ -83,14 +92,14 @@ type HelpHandler struct {
 }
 
 // Handle sends default help message
-func (handler HelpHandler) HandleCommand(bot MargeletAPI, message tgbotapi.Message) error {
+func (handler HelpHandler) HandleCommand(bot MargeletAPI, message *tgbotapi.Message) error {
 	lines := []string{}
 	for command, h := range handler.Margelet.CommandHandlers {
-		lines = append(lines, fmt.Sprintf("%s - %s", command, h.handler.HelpMessage()))
+		lines = append(lines, fmt.Sprintf("/%s - %s", command, h.handler.HelpMessage()))
 	}
 
 	for command, h := range handler.Margelet.SessionHandlers {
-		lines = append(lines, fmt.Sprintf("%s - %s", command, h.handler.HelpMessage()))
+		lines = append(lines, fmt.Sprintf("/%s - %s", command, h.handler.HelpMessage()))
 	}
 
 	_, err := bot.Send(tgbotapi.NewMessage(message.Chat.ID, strings.Join(lines, "\n")))
@@ -119,12 +128,21 @@ configuration, for example.
 
 Session handler is struct that implements SessionHandler interface. Simple example:
 ```go
+package margelet_test
+
+import (
+	"strconv"
+	"fmt"
+	"github.com/zhulik/margelet"
+	"gopkg.in/telegram-bot-api.v4"
+)
+
 // SumSession - simple example session, that can sum numbers
 type SumSession struct {
 }
 
 // HandleResponse - Handlers user response
-func (session SumSession) HandleResponse(bot MargeletAPI, message tgbotapi.Message, responses []tgbotapi.Message) (bool, error) {
+func (session SumSession) HandleResponse(bot margelet.MargeletAPI, message *tgbotapi.Message, responses []tgbotapi.Message) (bool, error) {
 	var msg tgbotapi.MessageConfig
 	switch len(responses) {
 	case 0:
@@ -157,12 +175,11 @@ func (session SumSession) HandleResponse(bot MargeletAPI, message tgbotapi.Messa
 }
 
 // CancelResponse - Chance to clean up everything
-func (session SumSession) CancelSession(bot MargeletAPI, message tgbotapi.Message, responses []tgbotapi.Message){
+func (session SumSession) CancelSession(bot margelet.MargeletAPI, message *tgbotapi.Message, responses []tgbotapi.Message){
   //Clean up all variables only used in the session
-
 }
 
-func (session SumSession) response(bot MargeletAPI, message tgbotapi.Message, msg tgbotapi.MessageConfig) {
+func (session SumSession) response(bot margelet.MargeletAPI, message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
 	msg.ChatID = message.Chat.ID
 	msg.ReplyToMessageID = message.MessageID
 	bot.Send(msg)
@@ -173,6 +190,7 @@ func (session SumSession) HelpMessage() string {
 	return "Sum your numbers and print result"
 }
 ```
+
 Command handlers can be added to margelet with `AddSessionHandler` function:
 ```go
 bot, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<redis password>", 0, "your bot token", false)
@@ -191,7 +209,6 @@ Inline handler is struct that implements InlineHandler interface. InlineHandler 
 
 Simple example:
 ```go
-
 package margelet_test
 
 import (
@@ -202,7 +219,7 @@ import (
 type InlineImage struct {
 }
 
-func (handler InlineImage) HandleInline(bot margelet.MargeletAPI, query tgbotapi.InlineQuery) error {
+func (handler InlineImage) HandleInline(bot margelet.MargeletAPI, query *tgbotapi.InlineQuery) error {
 	testPhotoQuery := tgbotapi.NewInlineQueryResultPhoto(query.ID, "https://telegram.org/img/t_logo.png")
 	testPhotoQuery.ThumbURL = "https://telegram.org/img/t_logo.png"
 
@@ -217,8 +234,6 @@ func (handler InlineImage) HandleInline(bot margelet.MargeletAPI, query tgbotapi
 	bot.AnswerInlineQuery(config)
 	return nil
 }
-
-
 ```
 
 Inline handler can be added to margelet by `InlineHandler` assignment:
@@ -249,7 +264,6 @@ bot.GetConfigRepository().SetWithStruct(<chatID>, user)
 ...
 var user userInfo
 bot.GetConfigRepository().GetWithStruct(<chatID>, &user)
-
 ```
 Chat config repository can be accessed from session handlers.
 
