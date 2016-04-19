@@ -15,6 +15,11 @@ type InlineHandler interface {
 	HandleInline(bot MargeletAPI, query *tgbotapi.InlineQuery) error
 }
 
+// CallbackHandler - interface for message handlers
+type CallbackHandler interface {
+	HandleCallback(bot MargeletAPI, query *tgbotapi.CallbackQuery) error
+}
+
 // CommandHandler - interface for command handlers
 type CommandHandler interface {
 	HandleCommand(bot MargeletAPI, message *tgbotapi.Message) error
