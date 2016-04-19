@@ -13,7 +13,7 @@ func handleUpdate(margelet *Margelet, update tgbotapi.Update) {
 		}
 	}()
 
-	switch  {
+	switch {
 	case update.Message != nil:
 		message := update.Message
 		margelet.ChatRepository.Add(message.Chat.ID)

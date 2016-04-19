@@ -39,7 +39,7 @@ type Margelet struct {
 	CommandHandlers map[string]authorizedCommandHandler
 	SessionHandlers map[string]authorizedSessionHandler
 	InlineHandler   InlineHandler
-	CallbackHandler   CallbackHandler
+	CallbackHandler CallbackHandler
 
 	running              bool
 	Redis                *redis.Client
