@@ -42,6 +42,7 @@ type Margelet struct {
 	CallbackHandler CallbackHandler
 
 	running              bool
+	verbose              bool
 	Redis                *redis.Client
 	ChatRepository       *chatRepository
 	SessionRepository    SessionRepository
@@ -57,11 +58,11 @@ func NewMargelet(botName string, redisAddr string, redisPassword string, redisDB
 
 	bot.Debug = verbose
 
-	return NewMargeletFromBot(botName, redisAddr, redisPassword, redisDB, bot)
+	return NewMargeletFromBot(botName, redisAddr, redisPassword, redisDB, bot, verbose)
 }
 
 // NewMargeletFromBot creates new Margelet instance from existing TGBotAPI(tgbotapi.BotAPI)
-func NewMargeletFromBot(botName string, redisAddr string, redisPassword string, redisDB int64, bot TGBotAPI) (*Margelet, error) {
+func NewMargeletFromBot(botName string, redisAddr string, redisPassword string, redisDB int64, bot TGBotAPI, verbose bool) (*Margelet, error) {
 	redis := redis.NewClient(&redis.Options{
 		Addr:     redisAddr,
 		Password: redisPassword,
@@ -83,6 +84,7 @@ func NewMargeletFromBot(botName string, redisAddr string, redisPassword string, 
 		SessionHandlers:      map[string]authorizedSessionHandler{},
 		InlineHandler:        nil,
 		running:              true,
+		verbose:              verbose,
 		Redis:                redis,
 		ChatRepository:       chatRepository,
 		SessionRepository:    sessionRepository,

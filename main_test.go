@@ -40,7 +40,7 @@ var (
 
 func getMargelet() *margelet.Margelet {
 	botMock.Updates = make(chan tgbotapi.Update, 10)
-	m, _ := margelet.NewMargeletFromBot("test", "127.0.0.1:6379", "", 10, &botMock)
+	m, _ := margelet.NewMargeletFromBot("test", "127.0.0.1:6379", "", 10, &botMock, false)
 
 	m.Redis.FlushDb()
 	return m
