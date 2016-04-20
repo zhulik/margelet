@@ -39,6 +39,7 @@ type Margelet struct {
 	CommandHandlers map[string]authorizedCommandHandler
 	SessionHandlers map[string]authorizedSessionHandler
 	InlineHandler   InlineHandler
+	CallbackHandler CallbackHandler
 
 	running              bool
 	Redis                *redis.Client
@@ -116,6 +117,11 @@ func (margelet *Margelet) Send(c tgbotapi.Chattable) (tgbotapi.Message, error) {
 // AnswerInlineQuery  - send answer to InlineQuery
 func (margelet *Margelet) AnswerInlineQuery(config tgbotapi.InlineConfig) (tgbotapi.APIResponse, error) {
 	return margelet.bot.AnswerInlineQuery(config)
+}
+
+// AnswerCallbackQuery  - send answer to CallbackQuery
+func (margelet *Margelet) AnswerCallbackQuery(config tgbotapi.CallbackConfig) (tgbotapi.APIResponse, error) {
+	return margelet.bot.AnswerCallbackQuery(config)
 }
 
 // QuickSend - quick send text message to chatID

@@ -13,7 +13,9 @@ func handleUpdate(margelet *Margelet, update tgbotapi.Update) {
 		}
 	}()
 
-	if message := update.Message; message != nil {
+	switch {
+	case update.Message != nil:
+		message := update.Message
 		margelet.ChatRepository.Add(message.Chat.ID)
 
 		// If we have active session in this chat with this user, handle it first
@@ -26,8 +28,10 @@ func handleUpdate(margelet *Margelet, update tgbotapi.Update) {
 				handleMessage(margelet, message)
 			}
 		}
-	} else {
+	case update.InlineQuery != nil:
 		handleInline(margelet, update.InlineQuery)
+	case update.CallbackQuery != nil:
+		handleCallback(margelet, update.CallbackQuery)
 	}
 }
 
@@ -36,6 +40,14 @@ func handleInline(margelet *Margelet, query *tgbotapi.InlineQuery) {
 
 	if handler != nil {
 		handler.HandleInline(margelet, query)
+	}
+}
+
+func handleCallback(margelet *Margelet, query *tgbotapi.CallbackQuery) {
+	handler := margelet.CallbackHandler
+
+	if handler != nil {
+		handler.HandleCallback(margelet, query)
 	}
 }
 

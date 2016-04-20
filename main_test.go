@@ -18,6 +18,10 @@ func (bot BotMock) AnswerInlineQuery(config tgbotapi.InlineConfig) (tgbotapi.API
 	return tgbotapi.APIResponse{}, nil
 }
 
+func (bot BotMock) AnswerCallbackQuery(config tgbotapi.CallbackConfig) (tgbotapi.APIResponse, error) {
+	return tgbotapi.APIResponse{}, nil
+}
+
 func (bot BotMock) GetFileDirectURL(fileID string) (string, error) {
 	return "https://example.com/test.txt", nil
 }
