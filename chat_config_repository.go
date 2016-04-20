@@ -21,7 +21,7 @@ func newChatConfigRepository(prefix string, redis *redis.Client) *ChatConfigRepo
 
 // Set - stores any config for chatID
 func (chatConfig *ChatConfigRepository) Set(chatID int64, JSON string) {
-	chatConfig.redis.Set(chatConfig.ketFor(chatID), JSON, 0)
+	chatConfig.redis.Set(chatConfig.keyFor(chatID), JSON, 0)
 }
 
 // SetWithStruct - stores any config for chatID using a struct
@@ -33,12 +33,12 @@ func (chatConfig *ChatConfigRepository) SetWithStruct(chatID int64, obj interfac
 
 // Remove - removes config for chatID
 func (chatConfig *ChatConfigRepository) Remove(chatID int64) {
-	chatConfig.redis.Del(chatConfig.ketFor(chatID))
+	chatConfig.redis.Del(chatConfig.keyFor(chatID))
 }
 
 // Get - returns config for chatID
 func (chatConfig *ChatConfigRepository) Get(chatID int64) string {
-	json, _ := chatConfig.redis.Get(chatConfig.ketFor(chatID)).Result()
+	json, _ := chatConfig.redis.Get(chatConfig.keyFor(chatID)).Result()
 	return json
 }
 
@@ -48,6 +48,6 @@ func (chatConfig *ChatConfigRepository) GetWithStruct(chatID int64, obj interfac
 	json.Unmarshal([]byte(valueString), obj)
 }
 
-func (chatConfig *ChatConfigRepository) ketFor(chatID int64) string {
+func (chatConfig *ChatConfigRepository) keyFor(chatID int64) string {
 	return fmt.Sprintf("%s_%d", chatConfig.key, chatID)
 }
