@@ -42,6 +42,12 @@ func (chatConfig *ChatConfigRepository) Get(chatID int64) string {
 	return json
 }
 
+// Exists - returns if key exists for chatID
+func (chatConfig *ChatConfigRepository) Exists(chatID int64) bool {
+	exist, _ := chatConfig.redis.Exists(chatConfig.keyFor(chatID)).Result()
+	return exist
+}
+
 // GetWithStruct - returns config for chatID using a struct
 func (chatConfig *ChatConfigRepository) GetWithStruct(chatID int64, obj interface{}) {
 	valueString := chatConfig.Get(chatID)
