@@ -1,15 +1,24 @@
 package margelet
 
 import (
-	"strings"
-
+	"fmt"
 	"gopkg.in/telegram-bot-api.v4"
+	"strings"
 )
 
 func handleUpdate(margelet *Margelet, update tgbotapi.Update) {
 	defer func() {
 		if err := recover(); err != nil {
-			margelet.QuickSend(update.Message.Chat.ID, "Panic occured!")
+
+			var panicMessage string
+
+			if margelet.verbose {
+				panicMessage = fmt.Sprintf("Panic occured: %v", err)
+			} else {
+				panicMessage = "Panic occured!"
+			}
+
+			margelet.QuickSend(update.Message.Chat.ID, panicMessage)
 		}
 	}()
 
