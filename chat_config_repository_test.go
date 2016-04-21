@@ -49,5 +49,19 @@ func TestChatConfigRepository(t *testing.T) {
 				So(testStruct2.FavColor, ShouldEqual, testStruct.FavColor)
 			})
 		})
+
+		Convey("With existing chatID", func() {
+			m.ChatConfigRepository.Set(100500, "{\"a\": 100}")
+			Convey("Response should be true", func() {
+				So(m.ChatConfigRepository.Exists(100500), ShouldBeTrue)
+
+				Convey("With not existing chatID", func() {
+					m.ChatConfigRepository.Remove(100500)
+					Convey("Response should be false", func() {
+						So(m.ChatConfigRepository.Exists(100500), ShouldBeFalse)
+					})
+				})
+			})
+		})
 	})
 }
