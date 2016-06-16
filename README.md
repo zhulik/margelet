@@ -11,7 +11,7 @@ Margelet is just a thin layer, that allows you to solve
 basic bot tasks quickly and easy.
 
 ## Installation
-`go get https://github.com/zhulik/margelet`
+`go get github.com/zhulik/margelet`
 
 ## Simple usage
 ```go
