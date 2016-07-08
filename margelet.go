@@ -186,6 +186,9 @@ func (margelet *Margelet) Stop() {
 // HandleSession - handles any message as session message with handler
 func (margelet *Margelet) HandleSession(message *tgbotapi.Message, command string) {
 	if authHandler, ok := margelet.SessionHandlers[command]; ok {
+		fakeStartMsg := tgbotapi.Message{From: message.From, Chat: message.Chat, Text: command}
+		margelet.SessionRepository.Create(message.Chat.ID, message.From.ID, "start")
+		margelet.SessionRepository.Add(message.Chat.ID, message.From.ID, &fakeStartMsg)
 		handleSession(margelet, message, authHandler)
 		return
 	}
