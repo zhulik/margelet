@@ -139,7 +139,7 @@ func TestMargelet(t *testing.T) {
 				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "/sum", Chat: &chat}}
 				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "10", Chat: &chat}}
 				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "20", Chat: &chat}}
-				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "/cancel", Chat: &chat}}
+				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "cancel", Chat: &chat}}
 
 				time.Sleep(100 * time.Millisecond)
 				m.Stop()
