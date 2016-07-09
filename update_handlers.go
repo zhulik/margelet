@@ -3,12 +3,15 @@ package margelet
 import (
 	"fmt"
 	"gopkg.in/telegram-bot-api.v4"
+	"log"
+	"runtime/debug"
 	"strings"
 )
 
 func handleUpdate(margelet *Margelet, update tgbotapi.Update) {
 	defer func() {
 		if err := recover(); err != nil {
+			log.Println(debug.Stack())
 
 			var panicMessage string
 
