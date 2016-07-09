@@ -11,7 +11,7 @@ import (
 func handleUpdate(margelet *Margelet, update tgbotapi.Update) {
 	defer func() {
 		if err := recover(); err != nil {
-			log.Println(debug.Stack())
+			log.Println(string(debug.Stack()))
 
 			var panicMessage string
 
