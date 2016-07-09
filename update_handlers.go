@@ -112,8 +112,9 @@ func handleSession(margelet *Margelet, message *tgbotapi.Message, authHandler au
 		return
 	}
 
-	if err == nil {
-		margelet.SessionRepository.Add(message.Chat.ID, message.From.ID, message)
+	if err != nil {
+		log.Printf("Margelet handling session error %s", err.Error())
 	}
+	margelet.SessionRepository.Add(message.Chat.ID, message.From.ID, message)
 
 }
