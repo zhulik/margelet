@@ -190,3 +190,13 @@ func (margelet *Margelet) HandleSession(message *tgbotapi.Message, command strin
 		return
 	}
 }
+
+// StartSession - start new session with given command, adds message to dialog
+func (margelet *Margelet) StartSession(message *tgbotapi.Message, command string) {
+	if authHandler, ok := margelet.SessionHandlers[command]; ok {
+		margelet.GetSessionRepository().Create(message.Chat.ID, message.From.ID, command)
+		margelet.GetSessionRepository().Add(message.Chat.ID, message.From.ID, message)
+		handleSession(margelet, message, authHandler)
+		return
+	}
+}
