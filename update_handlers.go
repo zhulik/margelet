@@ -11,7 +11,9 @@ import (
 func handleUpdate(margelet *Margelet, update tgbotapi.Update) {
 	defer func() {
 		if err := recover(); err != nil {
-			log.Println(string(debug.Stack()))
+			if margelet.verbose {
+				log.Println(string(debug.Stack()))
+			}
 
 			var panicMessage string
 
@@ -114,6 +116,7 @@ func handleSession(margelet *Margelet, message *tgbotapi.Message, authHandler au
 
 	if err != nil {
 		log.Printf("Margelet handling session error %s", err.Error())
+		return
 	}
 	margelet.SessionRepository.Add(message.Chat.ID, message.From.ID, message)
 
