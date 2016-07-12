@@ -28,8 +28,8 @@ type CommandHandler interface {
 
 // SessionHandler - interface for session handlers
 type SessionHandler interface {
-	HandleSession(bot MargeletAPI, message *tgbotapi.Message, responses []tgbotapi.Message) (bool, error)
-	CancelSession(bot MargeletAPI, message *tgbotapi.Message, responses []tgbotapi.Message)
+	HandleSession(bot MargeletAPI, message *tgbotapi.Message, session Session) (bool, error)
+	CancelSession(bot MargeletAPI, message *tgbotapi.Message, session Session)
 	HelpMessage() string
 }
 
@@ -47,6 +47,18 @@ type MargeletAPI interface {
 	GetRedis() *redis.Client
 	HandleSession(message *tgbotapi.Message, command string)
 	StartSession(message *tgbotapi.Message, command string)
+	SendImageByURL(chatID int64, url string, caption string) (tgbotapi.Message, error)
+
+	SendTypingAction(chatID int64) error
+	SendUploadPhotoAction(chatID int64) error
+	SendRecordVideoAction(chatID int64) error
+	SendUploadVideoAction(chatID int64) error
+	SendRecordAudioAction(chatID int64) error
+	SendUploadAudioAction(chatID int64) error
+	SendUploadDocumentAction(chatID int64) error
+	SendFindLocationAction(chatID int64) error
+
+	SendHideKeyboard(chatID int64, message string) error
 }
 
 // TGBotAPI - interface, that describe telegram-bot-api API
@@ -62,4 +74,12 @@ type TGBotAPI interface {
 // AuthorizationPolicy - interface, that describes authorization policy for command or session
 type AuthorizationPolicy interface {
 	Allow(message *tgbotapi.Message) error
+}
+
+// Session - interface, that describes incapsulated info aboud user's session with bot
+type Session interface {
+	Responses() []tgbotapi.Message
+
+	QuickSend(text string) (tgbotapi.Message, error)
+	QuckReply(text string) (tgbotapi.Message, error)
 }

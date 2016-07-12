@@ -101,13 +101,15 @@ func handleSession(margelet *Margelet, message *tgbotapi.Message, authHandler au
 		margelet.QuickSend(message.Chat.ID, "Authorization error: "+err.Error())
 		return
 	}
+	dialog := margelet.SessionRepository.Dialog(message.Chat.ID, message.From.ID)
+	session := newMargetletSession(margelet, message, dialog)
 	if strings.TrimSpace(message.Command()) == "cancel" {
-		authHandler.handler.CancelSession(margelet, message, margelet.SessionRepository.Dialog(message.Chat.ID, message.From.ID))
+		authHandler.handler.CancelSession(margelet, message, session)
 		margelet.SessionRepository.Remove(message.Chat.ID, message.From.ID)
 		return
 	}
 
-	finish, err := authHandler.handler.HandleSession(margelet, message, margelet.SessionRepository.Dialog(message.Chat.ID, message.From.ID))
+	finish, err := authHandler.handler.HandleSession(margelet, message, session)
 
 	if finish {
 		margelet.SessionRepository.Remove(message.Chat.ID, message.From.ID)
@@ -119,5 +121,4 @@ func handleSession(margelet *Margelet, message *tgbotapi.Message, authHandler au
 		return
 	}
 	margelet.SessionRepository.Add(message.Chat.ID, message.From.ID, message)
-
 }

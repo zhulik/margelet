@@ -1,8 +1,11 @@
 package margelet
 
 import (
+	"fmt"
 	"gopkg.in/redis.v3"
 	"gopkg.in/telegram-bot-api.v4"
+	"net/http"
+	"path/filepath"
 )
 
 type policies []AuthorizationPolicy
@@ -199,4 +202,78 @@ func (margelet *Margelet) StartSession(message *tgbotapi.Message, command string
 		handleSession(margelet, message, authHandler)
 		return
 	}
+}
+
+// SendImageByURL - sends given by url image to chatID
+func (margelet *Margelet) SendImageByURL(chatID int64, url string, caption string) (tgbotapi.Message, error) {
+	resp, err := http.Get(url)
+
+	if err != nil {
+		return tgbotapi.Message{}, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		return tgbotapi.Message{}, fmt.Errorf("Error obtaining image by url %s", url)
+	}
+	reader := tgbotapi.FileReader{Name: fmt.Sprintf(filepath.Base(url)), Reader: resp.Body, Size: resp.ContentLength}
+
+	cfg := tgbotapi.NewPhotoUpload(chatID, reader)
+	cfg.Caption = caption
+	return margelet.Send(cfg)
+}
+
+// SendTypingAction - sends typing chat action to chatID
+func (margelet *Margelet) SendTypingAction(chatID int64) error {
+	_, err := margelet.bot.Send(tgbotapi.NewChatAction(chatID, "typing"))
+	return err
+}
+
+// SendUploadPhotoAction - sends upload_photo chat action to chatID
+func (margelet *Margelet) SendUploadPhotoAction(chatID int64) error {
+	_, err := margelet.bot.Send(tgbotapi.NewChatAction(chatID, "upload_photo"))
+	return err
+}
+
+// SendRecordVideoAction - sends record_video chat action to chatID
+func (margelet *Margelet) SendRecordVideoAction(chatID int64) error {
+	_, err := margelet.bot.Send(tgbotapi.NewChatAction(chatID, "record_video"))
+	return err
+}
+
+// SendUploadVideoAction - sends upload_video chat action to chatID
+func (margelet *Margelet) SendUploadVideoAction(chatID int64) error {
+	_, err := margelet.bot.Send(tgbotapi.NewChatAction(chatID, "upload_video"))
+	return err
+}
+
+// SendRecordAudioAction - sends record_audio chat action to chatID
+func (margelet *Margelet) SendRecordAudioAction(chatID int64) error {
+	_, err := margelet.bot.Send(tgbotapi.NewChatAction(chatID, "record_audio"))
+	return err
+}
+
+// SendUploadAudioAction - sends upload_audio chat action to chatID
+func (margelet *Margelet) SendUploadAudioAction(chatID int64) error {
+	_, err := margelet.bot.Send(tgbotapi.NewChatAction(chatID, "upload_audio"))
+	return err
+}
+
+// SendUploadDocumentAction - sends upload_document chat action to chatID
+func (margelet *Margelet) SendUploadDocumentAction(chatID int64) error {
+	_, err := margelet.bot.Send(tgbotapi.NewChatAction(chatID, "upload_document"))
+	return err
+}
+
+// SendFindLocationAction - sends find_location chat action to chatID
+func (margelet *Margelet) SendFindLocationAction(chatID int64) error {
+	_, err := margelet.bot.Send(tgbotapi.NewChatAction(chatID, "find_location"))
+	return err
+}
+
+// SendHideKeyboard - hides keyboard in chatID
+func (margelet *Margelet) SendHideKeyboard(chatID int64, message string) error {
+	msg := tgbotapi.NewMessage(chatID, message)
+	msg.ReplyMarkup = tgbotapi.NewHideKeyboard(true)
+	_, err := margelet.Send(msg)
+	return err
 }

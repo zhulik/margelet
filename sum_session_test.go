@@ -13,40 +13,37 @@ type SumSession struct {
 }
 
 // HandleResponse - Handlers user response
-func (session SumSession) HandleSession(bot margelet.MargeletAPI, message *tgbotapi.Message, responses []tgbotapi.Message) (bool, error) {
+func (s SumSession) HandleSession(bot margelet.MargeletAPI, message *tgbotapi.Message, session margelet.Session) (bool, error) {
 	var msg tgbotapi.MessageConfig
-	switch len(responses) {
+	switch len(session.Responses()) {
 	case 0:
 		msg = tgbotapi.MessageConfig{Text: "Hello, please, write one number per message, after some iterations write 'end'."}
-		msg.ReplyMarkup = tgbotapi.ForceReply{ForceReply: true, Selective: true}
+		s.response(bot, message, msg)
 	default:
 		if message.Text == "end" {
 			var sum int
-			for _, m := range responses {
+			for _, m := range session.Responses() {
 				n, _ := strconv.Atoi(m.Text)
 				sum += n
 			}
 			msg = tgbotapi.MessageConfig{Text: fmt.Sprintf("Your sum: %d", sum)}
-			session.response(bot, message, msg)
-			msg.ReplyMarkup = tgbotapi.ForceReply{ForceReply: true, Selective: true}
+			s.response(bot, message, msg)
 			return true, nil
 		}
 
 		_, err := strconv.Atoi(message.Text)
 		if err != nil {
 			msg = tgbotapi.MessageConfig{Text: "Sorry, not a number"}
-			session.response(bot, message, msg)
-			msg.ReplyMarkup = tgbotapi.ForceReply{ForceReply: true, Selective: true}
+			s.response(bot, message, msg)
 			return false, err
 		}
 	}
 
-	session.response(bot, message, msg)
 	return false, nil
 }
 
 // CancelResponse - Chance to clean up everything
-func (session SumSession) CancelSession(bot margelet.MargeletAPI, message *tgbotapi.Message, responses []tgbotapi.Message) {
+func (s SumSession) CancelSession(bot margelet.MargeletAPI, message *tgbotapi.Message, session margelet.Session) {
 	//Clean up all variables only used in the session
 
 }
@@ -54,6 +51,7 @@ func (session SumSession) CancelSession(bot margelet.MargeletAPI, message *tgbot
 func (session SumSession) response(bot margelet.MargeletAPI, message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
 	msg.ChatID = message.Chat.ID
 	msg.ReplyToMessageID = message.MessageID
+	msg.ReplyMarkup = tgbotapi.ForceReply{ForceReply: true, Selective: true}
 	bot.Send(msg)
 }
 
