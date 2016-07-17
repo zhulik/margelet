@@ -278,3 +278,8 @@ func (margelet *Margelet) SendHideKeyboard(chatID int64, message string) error {
 	_, err := margelet.Send(msg)
 	return err
 }
+
+// RawBot - returns low-level tgbotapi.Bot
+func (margelet *Margelet) RawBot() *tgbotapi.BotAPI {
+	return margelet.bot.(*tgbotapi.BotAPI)
+}

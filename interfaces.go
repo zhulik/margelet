@@ -59,6 +59,8 @@ type MargeletAPI interface {
 	SendFindLocationAction(chatID int64) error
 
 	SendHideKeyboard(chatID int64, message string) error
+
+	RawBot() *tgbotapi.BotAPI
 }
 
 // TGBotAPI - interface, that describe telegram-bot-api API
