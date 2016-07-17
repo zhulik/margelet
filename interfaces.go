@@ -28,8 +28,8 @@ type CommandHandler interface {
 
 // SessionHandler - interface for session handlers
 type SessionHandler interface {
-	HandleSession(bot MargeletAPI, message *tgbotapi.Message, session Session) (bool, error)
-	CancelSession(bot MargeletAPI, message *tgbotapi.Message, session Session)
+	HandleSession(bot MargeletAPI, session Session) (bool, error)
+	CancelSession(bot MargeletAPI, session Session)
 	HelpMessage() string
 }
 
@@ -83,7 +83,37 @@ type AuthorizationPolicy interface {
 // Session - interface, that describes incapsulated info aboud user's session with bot
 type Session interface {
 	Responses() []tgbotapi.Message
+	Message() *tgbotapi.Message
 
 	QuickSend(text string) (tgbotapi.Message, error)
 	QuckReply(text string) (tgbotapi.Message, error)
+	// SendImageByURL send image by url to session chat
+	SendImageByURL(url string, caption string, replyMarkup interface{}) (tgbotapi.Message, error)
+
+	// SendTypingAction send typing action to session chat
+	SendTypingAction() error
+
+	// SendTypingAction send upload photo action to session chat
+	SendUploadPhotoAction() error
+
+	// SendRecordVideoAction send record video action to session chat
+	SendRecordVideoAction() error
+
+	// SendUploadVideoAction send upload video action to session chat
+	SendUploadVideoAction() error
+
+	// SendRecordAudioAction send record audio action to session chat
+	SendRecordAudioAction() error
+
+	// SendUploadAudioAction send upload audio action to session chat
+	SendUploadAudioAction() error
+
+	// SendUploadDocumentAction send upload document action to session chat
+	SendUploadDocumentAction() error
+
+	// SendFindLocationAction send find location action to session chat
+	SendFindLocationAction() error
+
+	// SendHideKeyboard send message with hidding keyboard to session chat
+	SendHideKeyboard(chatID int64, message string) error
 }
