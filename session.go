@@ -21,6 +21,7 @@ func newMargetletSession(bot MargeletAPI, message *tgbotapi.Message, responses [
 		userID:      message.From.ID,
 		lastMessage: message,
 		responses:   responses,
+		finished:    false,
 	}
 }
 
