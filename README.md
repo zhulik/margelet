@@ -56,8 +56,7 @@ Simple example:
 package margelet_test
 
 import (
-	"github.com/zhulik/margelet"
-	"gopkg.in/telegram-bot-api.v4"
+	"../margelet"
 )
 
 // EchoHandler is simple handler example
@@ -65,10 +64,11 @@ type EchoHandler struct {
 }
 
 // Response send message back to author
-func (handler EchoHandler) HandleMessage(bot margelet.MargeletAPI, message tgbotapi.Message) error {
-	_, err := bot.Send(tgbotapi.NewMessage(message.Chat.ID, message.Text))
+func (handler EchoHandler) HandleMessage(m margelet.Message) error {
+	_, err := m.QuickSend(m.Message().Text)
 	return err
 }
+
 ```
 
 This handler will repeat any user's message back to chat.
@@ -143,12 +143,10 @@ type SumSession struct {
 }
 
 // HandleResponse - Handlers user response
-func (s SumSession) HandleSession(bot margelet.MargeletAPI, session margelet.Session) error {
-	var msg tgbotapi.MessageConfig
+func (s SumSession) HandleSession(session margelet.Session) error {
 	switch len(session.Responses()) {
 	case 0:
-		msg = tgbotapi.MessageConfig{Text: "Hello, please, write one number per message, after some iterations write 'end'."}
-		s.response(bot, session.Message(), msg)
+		session.QuickReply("Hello, please, write one number per message, after some iterations write 'end'.")
 	default:
 		if session.Message().Text == "end" {
 			var sum int
@@ -156,16 +154,14 @@ func (s SumSession) HandleSession(bot margelet.MargeletAPI, session margelet.Ses
 				n, _ := strconv.Atoi(m.Text)
 				sum += n
 			}
-			msg = tgbotapi.MessageConfig{Text: fmt.Sprintf("Your sum: %d", sum)}
-			s.response(bot, session.Message(), msg)
+			session.QuickReply(fmt.Sprintf("Your sum: %d", sum))
 			session.Finish()
 			return nil
 		}
 
 		_, err := strconv.Atoi(session.Message().Text)
 		if err != nil {
-			msg = tgbotapi.MessageConfig{Text: "Sorry, not a number"}
-			s.response(bot, session.Message(), msg)
+			session.QuickReply("Sorry, not a number")
 			return err
 		}
 	}
@@ -174,7 +170,7 @@ func (s SumSession) HandleSession(bot margelet.MargeletAPI, session margelet.Ses
 }
 
 // CancelResponse - Chance to clean up everything
-func (s SumSession) CancelSession(bot margelet.MargeletAPI, session margelet.Session) {
+func (s SumSession) CancelSession(session margelet.Session) {
 	//Clean up all variables only used in the session
 
 }
@@ -192,7 +188,7 @@ func (session SumSession) HelpMessage() string {
 }
 ```
 
-Command handlers can be added to margelet with `AddSessionHandler` function:
+Session handlers can be added to margelet with `AddSessionHandler` function:
 ```go
 bot, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<redis password>", 0, "your bot token", false)
 bot.AddSessionHandler("help", SumSession{})
@@ -249,30 +245,26 @@ Callback handler is struct that implements CallbackHandler interface. CallbackHa
 
 Simple example:
 ```go
-
 package margelet_test
 
 import (
-	"github.com/zhulik/margelet"
+	"../margelet"
 	"gopkg.in/telegram-bot-api.v4"
 )
 
 type CallbackMessage struct {
 }
 
-func (handler CallbackMessage) HandleCallback(bot margelet.MargeletAPI, query *tgbotapi.CallbackQuery) error {
-
+func (handler CallbackMessage) HandleCallback(query margelet.CallbackQuery) error {
 	config := tgbotapi.CallbackConfig{
-		CallbackQueryID: query.ID,
+		CallbackQueryID: query.Query().ID,
 		Text:            "Done!",
 		ShowAlert:       false,
 	}
 
-	bot.AnswerCallbackQuery(config)
+	query.Bot().AnswerCallbackQuery(config)
 	return nil
 }
-
-
 ```
 
 Callback handler can be added to margelet by `CallbackHandler` assignment:
