@@ -283,3 +283,22 @@ func (margelet *Margelet) SendHideKeyboard(chatID int64, message string) error {
 func (margelet *Margelet) RawBot() *tgbotapi.BotAPI {
 	return margelet.bot.(*tgbotapi.BotAPI)
 }
+
+// GetUserProfilePhotos - returns user profile photos by config
+func (margelet *Margelet) GetUserProfilePhotos(config tgbotapi.UserProfilePhotosConfig) (tgbotapi.UserProfilePhotos, error) {
+	return margelet.RawBot().GetUserProfilePhotos(config)
+}
+
+// GetCurrentUserpic - returs current userpic for userID or error
+func (margelet *Margelet) GetCurrentUserpic(userID int) (string, error) {
+	photos, err := margelet.GetUserProfilePhotos(tgbotapi.UserProfilePhotosConfig{UserID: userID, Offset: 0, Limit: 1})
+	if err != nil {
+		return "", err
+	}
+
+	if len(photos.Photos) > 0 {
+		p := photos.Photos[len(photos.Photos)-1]
+		return margelet.GetFileDirectURL(p[len(p)-1].FileID)
+	}
+	return "", fmt.Errorf("No userpic found")
+}

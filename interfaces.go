@@ -61,6 +61,8 @@ type MargeletAPI interface {
 	SendHideKeyboard(chatID int64, message string) error
 
 	RawBot() *tgbotapi.BotAPI
+	GetUserProfilePhotos(config tgbotapi.UserProfilePhotosConfig) (tgbotapi.UserProfilePhotos, error)
+	GetCurrentUserpic(userID int) (string, error)
 }
 
 // TGBotAPI - interface, that describe telegram-bot-api API
