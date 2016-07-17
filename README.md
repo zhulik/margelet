@@ -131,9 +131,10 @@ Session handler is struct that implements SessionHandler interface. Simple examp
 package margelet_test
 
 import (
-	"strconv"
 	"fmt"
-	"github.com/zhulik/margelet"
+	"strconv"
+
+	"../margelet"
 	"gopkg.in/telegram-bot-api.v4"
 )
 
@@ -142,46 +143,46 @@ type SumSession struct {
 }
 
 // HandleResponse - Handlers user response
-func (session SumSession) HandleResponse(bot margelet.MargeletAPI, message *tgbotapi.Message, responses []tgbotapi.Message) (bool, error) {
+func (s SumSession) HandleSession(bot margelet.MargeletAPI, session margelet.Session) error {
 	var msg tgbotapi.MessageConfig
-	switch len(responses) {
+	switch len(session.Responses()) {
 	case 0:
 		msg = tgbotapi.MessageConfig{Text: "Hello, please, write one number per message, after some iterations write 'end'."}
-		msg.ReplyMarkup = tgbotapi.ForceReply{true, true}
+		s.response(bot, session.Message(), msg)
 	default:
-		if message.Text == "end" {
+		if session.Message().Text == "end" {
 			var sum int
-			for _, m := range responses {
+			for _, m := range session.Responses() {
 				n, _ := strconv.Atoi(m.Text)
 				sum += n
 			}
 			msg = tgbotapi.MessageConfig{Text: fmt.Sprintf("Your sum: %d", sum)}
-			session.response(bot, message, msg)
-			msg.ReplyMarkup = tgbotapi.ForceReply{false, true}
-			return true, nil
+			s.response(bot, session.Message(), msg)
+			session.Finish()
+			return nil
 		}
 
-		_, err := strconv.Atoi(message.Text)
+		_, err := strconv.Atoi(session.Message().Text)
 		if err != nil {
 			msg = tgbotapi.MessageConfig{Text: "Sorry, not a number"}
-			session.response(bot, message, msg)
-			msg.ReplyMarkup = tgbotapi.ForceReply{true, true}
-			return false, err
+			s.response(bot, session.Message(), msg)
+			return err
 		}
 	}
 
-	session.response(bot, message, msg)
-	return false, nil
+	return nil
 }
 
 // CancelResponse - Chance to clean up everything
-func (session SumSession) CancelSession(bot margelet.MargeletAPI, message *tgbotapi.Message, responses []tgbotapi.Message){
-  //Clean up all variables only used in the session
+func (s SumSession) CancelSession(bot margelet.MargeletAPI, session margelet.Session) {
+	//Clean up all variables only used in the session
+
 }
 
 func (session SumSession) response(bot margelet.MargeletAPI, message *tgbotapi.Message, msg tgbotapi.MessageConfig) {
 	msg.ChatID = message.Chat.ID
 	msg.ReplyToMessageID = message.MessageID
+	msg.ReplyMarkup = tgbotapi.ForceReply{ForceReply: true, Selective: true}
 	bot.Send(msg)
 }
 
