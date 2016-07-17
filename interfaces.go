@@ -90,7 +90,7 @@ type Session interface {
 
 	QuickSend(text string) (tgbotapi.Message, error)
 	QuckReply(text string) (tgbotapi.Message, error)
-	QuckForceReply(text string) (tgbotapi.Message, error)
+	QuickForceReply(text string) (tgbotapi.Message, error)
 	// SendImageByURL send image by url to session chat
 	SendImageByURL(url string, caption string, replyMarkup interface{}) (tgbotapi.Message, error)
 

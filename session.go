@@ -40,7 +40,7 @@ func (s *margeletSession) QuckReply(text string) (tgbotapi.Message, error) {
 	return s.bot.QuickReply(s.chatID, s.lastMessage.MessageID, text)
 }
 
-func (s *margeletSession) QuckForceReply(text string) (tgbotapi.Message, error) {
+func (s *margeletSession) QuickForceReply(text string) (tgbotapi.Message, error) {
 	return s.bot.QuickForceReply(s.chatID, s.lastMessage.MessageID, text)
 }
 
