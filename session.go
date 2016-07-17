@@ -36,7 +36,7 @@ func (s *margeletSession) QuickSend(text string) (tgbotapi.Message, error) {
 }
 
 // QuckReply send a reply to last session message
-func (s *margeletSession) QuckReply(text string) (tgbotapi.Message, error) {
+func (s *margeletSession) QuickReply(text string) (tgbotapi.Message, error) {
 	return s.bot.QuickReply(s.chatID, s.lastMessage.MessageID, text)
 }
 
