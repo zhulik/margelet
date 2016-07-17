@@ -40,6 +40,10 @@ func (s *margeletSession) QuckReply(text string) (tgbotapi.Message, error) {
 	return s.bot.QuickReply(s.chatID, s.lastMessage.MessageID, text)
 }
 
+func (s *margeletSession) QuckForceReply(text string) (tgbotapi.Message, error) {
+	return s.bot.QuickForceReply(s.chatID, s.lastMessage.MessageID, text)
+}
+
 // SendImageByURL send image by url to session chat
 func (s *margeletSession) SendImageByURL(url string, caption string, replyMarkup interface{}) (tgbotapi.Message, error) {
 	return s.bot.SendImageByURL(s.chatID, url, caption, replyMarkup)

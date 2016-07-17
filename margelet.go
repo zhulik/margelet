@@ -142,6 +142,14 @@ func (margelet *Margelet) QuickReply(chatID int64, messageID int, message string
 	return margelet.bot.Send(msg)
 }
 
+// QuickForceReply - quick send text force reply to message
+func (margelet *Margelet) QuickForceReply(chatID int64, messageID int, message string) (tgbotapi.Message, error) {
+	msg := tgbotapi.NewMessage(chatID, message)
+	msg.ReplyToMessageID = messageID
+	msg.ReplyMarkup = tgbotapi.ForceReply{true, true}
+	return margelet.bot.Send(msg)
+}
+
 // GetFileDirectURL - converts fileID to direct URL
 func (margelet *Margelet) GetFileDirectURL(fileID string) (string, error) {
 	return margelet.bot.GetFileDirectURL(fileID)

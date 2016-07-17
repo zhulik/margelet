@@ -40,6 +40,8 @@ type MargeletAPI interface {
 	AnswerCallbackQuery(config tgbotapi.CallbackConfig) (tgbotapi.APIResponse, error)
 	QuickSend(chatID int64, message string) (tgbotapi.Message, error)
 	QuickReply(chatID int64, messageID int, message string) (tgbotapi.Message, error)
+	QuickForceReply(chatID int64, messageID int, message string) (tgbotapi.Message, error)
+
 	GetFileDirectURL(fileID string) (string, error)
 	IsMessageToMe(message tgbotapi.Message) bool
 	GetConfigRepository() *ChatConfigRepository
@@ -88,6 +90,7 @@ type Session interface {
 
 	QuickSend(text string) (tgbotapi.Message, error)
 	QuckReply(text string) (tgbotapi.Message, error)
+	QuckForceReply(text string) (tgbotapi.Message, error)
 	// SendImageByURL send image by url to session chat
 	SendImageByURL(url string, caption string, replyMarkup interface{}) (tgbotapi.Message, error)
 
