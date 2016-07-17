@@ -7,7 +7,7 @@ import (
 
 // MessageHandler - interface for message handlers
 type MessageHandler interface {
-	HandleMessage(bot MargeletAPI, message *tgbotapi.Message) error
+	HandleMessage(message Message) error
 }
 
 // InlineHandler - interface for message handlers
@@ -86,8 +86,9 @@ type AuthorizationPolicy interface {
 	Allow(message *tgbotapi.Message) error
 }
 
-// Chatter - interface, that describes incapsulated info aboud user's message with some helper methods
-type Chatter interface {
+// Message - interface, that describes incapsulated info aboud user's message with some helper methods
+type Message interface {
+	Store
 	Message() *tgbotapi.Message
 	GetFileDirectURL(fileID string) (string, error)
 	QuickSend(text string) (tgbotapi.Message, error)
@@ -109,15 +110,13 @@ type Chatter interface {
 
 // Session - interface, that describes incapsulated info aboud user's session with bot
 type Session interface {
-	Chatter
-	Store
+	Message
 	Responses() []tgbotapi.Message
 	Finish()
 }
 
 type CallbackQuery interface {
-	Chatter
-	Store
+	Message
 	Query() *tgbotapi.CallbackQuery
 	Data() string
 }

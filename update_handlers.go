@@ -86,12 +86,13 @@ func handleCommand(margelet *Margelet, message *tgbotapi.Message) {
 	}
 }
 
-func handleMessage(margelet *Margelet, message *tgbotapi.Message) {
+func handleMessage(margelet *Margelet, msg *tgbotapi.Message) {
 	for _, handler := range margelet.MessageHandlers {
-		err := handler.HandleMessage(margelet, message)
+		m := newMessage(margelet, msg)
+		err := handler.HandleMessage(m)
 
 		if err != nil {
-			margelet.QuickSend(message.Chat.ID, "Error occured: "+err.Error())
+			m.QuickSend("Error occured: " + err.Error())
 		}
 	}
 }
