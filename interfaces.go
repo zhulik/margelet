@@ -106,6 +106,7 @@ type Message interface {
 	SendHideKeyboard(message string) error
 	GetCurrentUserpic() (string, error)
 	Bot() MargeletAPI
+	StartSession(command string)
 }
 
 // Session - interface, that describes incapsulated info aboud user's session with bot
