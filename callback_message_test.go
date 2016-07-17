@@ -8,14 +8,13 @@ import (
 type CallbackMessage struct {
 }
 
-func (handler CallbackMessage) HandleCallback(bot margelet.MargeletAPI, query *tgbotapi.CallbackQuery) error {
-
+func (handler CallbackMessage) HandleCallback(query margelet.CallbackQuery) error {
 	config := tgbotapi.CallbackConfig{
-		CallbackQueryID: query.ID,
+		CallbackQueryID: query.Query().ID,
 		Text:            "Done!",
 		ShowAlert:       false,
 	}
 
-	bot.AnswerCallbackQuery(config)
+	query.Bot().AnswerCallbackQuery(config)
 	return nil
 }

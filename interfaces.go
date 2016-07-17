@@ -17,7 +17,7 @@ type InlineHandler interface {
 
 // CallbackHandler - interface for message handlers
 type CallbackHandler interface {
-	HandleCallback(bot MargeletAPI, query *tgbotapi.CallbackQuery) error
+	HandleCallback(query CallbackQuery) error
 }
 
 // CommandHandler - interface for command handlers
@@ -28,13 +28,20 @@ type CommandHandler interface {
 
 // SessionHandler - interface for session handlers
 type SessionHandler interface {
-	HandleSession(bot MargeletAPI, session Session) error
-	CancelSession(bot MargeletAPI, session Session)
+	HandleSession(session Session) error
+	CancelSession(session Session)
 	HelpMessage() string
+}
+
+type Store interface {
+	GetConfigRepository() *ChatConfigRepository
+	GetSessionRepository() SessionRepository
+	GetRedis() *redis.Client
 }
 
 // MargeletAPI - interface, that describes margelet API
 type MargeletAPI interface {
+	Store
 	Send(c tgbotapi.Chattable) (tgbotapi.Message, error)
 	AnswerInlineQuery(config tgbotapi.InlineConfig) (tgbotapi.APIResponse, error)
 	AnswerCallbackQuery(config tgbotapi.CallbackConfig) (tgbotapi.APIResponse, error)
@@ -44,9 +51,6 @@ type MargeletAPI interface {
 
 	GetFileDirectURL(fileID string) (string, error)
 	IsMessageToMe(message tgbotapi.Message) bool
-	GetConfigRepository() *ChatConfigRepository
-	GetSessionRepository() SessionRepository
-	GetRedis() *redis.Client
 	HandleSession(message *tgbotapi.Message, command string)
 	StartSession(message *tgbotapi.Message, command string)
 	SendImageByURL(chatID int64, url string, caption string, replyMarkup interface{}) (tgbotapi.Message, error)
@@ -82,42 +86,38 @@ type AuthorizationPolicy interface {
 	Allow(message *tgbotapi.Message) error
 }
 
-// Session - interface, that describes incapsulated info aboud user's session with bot
-type Session interface {
-	Responses() []tgbotapi.Message
+// Chatter - interface, that describes incapsulated info aboud user's message with some helper methods
+type Chatter interface {
 	Message() *tgbotapi.Message
-	Finish()
-
+	GetFileDirectURL(fileID string) (string, error)
 	QuickSend(text string) (tgbotapi.Message, error)
 	QuickReply(text string) (tgbotapi.Message, error)
 	QuickForceReply(text string) (tgbotapi.Message, error)
-	// SendImageByURL send image by url to session chat
 	SendImageByURL(url string, caption string, replyMarkup interface{}) (tgbotapi.Message, error)
-
-	// SendTypingAction send typing action to session chat
 	SendTypingAction() error
-
-	// SendTypingAction send upload photo action to session chat
 	SendUploadPhotoAction() error
-
-	// SendRecordVideoAction send record video action to session chat
 	SendRecordVideoAction() error
-
-	// SendUploadVideoAction send upload video action to session chat
 	SendUploadVideoAction() error
-
-	// SendRecordAudioAction send record audio action to session chat
 	SendRecordAudioAction() error
-
-	// SendUploadAudioAction send upload audio action to session chat
 	SendUploadAudioAction() error
-
-	// SendUploadDocumentAction send upload document action to session chat
 	SendUploadDocumentAction() error
-
-	// SendFindLocationAction send find location action to session chat
 	SendFindLocationAction() error
+	SendHideKeyboard(message string) error
+	GetCurrentUserpic() (string, error)
+	Bot() MargeletAPI
+}
 
-	// SendHideKeyboard send message with hidding keyboard to session chat
-	SendHideKeyboard(chatID int64, message string) error
+// Session - interface, that describes incapsulated info aboud user's session with bot
+type Session interface {
+	Chatter
+	Store
+	Responses() []tgbotapi.Message
+	Finish()
+}
+
+type CallbackQuery interface {
+	Chatter
+	Store
+	Query() *tgbotapi.CallbackQuery
+	Data() string
 }

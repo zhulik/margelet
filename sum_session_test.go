@@ -13,12 +13,10 @@ type SumSession struct {
 }
 
 // HandleResponse - Handlers user response
-func (s SumSession) HandleSession(bot margelet.MargeletAPI, session margelet.Session) error {
-	var msg tgbotapi.MessageConfig
+func (s SumSession) HandleSession(session margelet.Session) error {
 	switch len(session.Responses()) {
 	case 0:
-		msg = tgbotapi.MessageConfig{Text: "Hello, please, write one number per message, after some iterations write 'end'."}
-		s.response(bot, session.Message(), msg)
+		session.QuickReply("Hello, please, write one number per message, after some iterations write 'end'.")
 	default:
 		if session.Message().Text == "end" {
 			var sum int
@@ -26,16 +24,14 @@ func (s SumSession) HandleSession(bot margelet.MargeletAPI, session margelet.Ses
 				n, _ := strconv.Atoi(m.Text)
 				sum += n
 			}
-			msg = tgbotapi.MessageConfig{Text: fmt.Sprintf("Your sum: %d", sum)}
-			s.response(bot, session.Message(), msg)
+			session.QuickReply(fmt.Sprintf("Your sum: %d", sum))
 			session.Finish()
 			return nil
 		}
 
 		_, err := strconv.Atoi(session.Message().Text)
 		if err != nil {
-			msg = tgbotapi.MessageConfig{Text: "Sorry, not a number"}
-			s.response(bot, session.Message(), msg)
+			session.QuickReply("Sorry, not a number")
 			return err
 		}
 	}
@@ -44,7 +40,7 @@ func (s SumSession) HandleSession(bot margelet.MargeletAPI, session margelet.Ses
 }
 
 // CancelResponse - Chance to clean up everything
-func (s SumSession) CancelSession(bot margelet.MargeletAPI, session margelet.Session) {
+func (s SumSession) CancelSession(session margelet.Session) {
 	//Clean up all variables only used in the session
 
 }

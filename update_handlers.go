@@ -61,7 +61,7 @@ func handleCallback(margelet *Margelet, query *tgbotapi.CallbackQuery) {
 	handler := margelet.CallbackHandler
 
 	if handler != nil {
-		handler.HandleCallback(margelet, query)
+		handler.HandleCallback(newCallbackQuery(margelet, query))
 	}
 }
 
@@ -104,12 +104,12 @@ func handleSession(margelet *Margelet, message *tgbotapi.Message, authHandler au
 	dialog := margelet.SessionRepository.Dialog(message.Chat.ID, message.From.ID)
 	session := newMargetletSession(margelet, message, dialog)
 	if strings.TrimSpace(message.Command()) == "cancel" {
-		authHandler.handler.CancelSession(margelet, session)
+		authHandler.handler.CancelSession(session)
 		margelet.SessionRepository.Remove(message.Chat.ID, message.From.ID)
 		return
 	}
 
-	err := authHandler.handler.HandleSession(margelet, session)
+	err := authHandler.handler.HandleSession(session)
 
 	if session.finished {
 		margelet.SessionRepository.Remove(message.Chat.ID, message.From.ID)
