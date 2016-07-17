@@ -214,6 +214,7 @@ func (margelet *Margelet) StartSession(message *tgbotapi.Message, command string
 
 // SendImageByURL - sends given by url image to chatID
 func (margelet *Margelet) SendImageByURL(chatID int64, url string, caption string, replyMarkup interface{}) (tgbotapi.Message, error) {
+	margelet.SendUploadPhotoAction(chatID)
 	resp, err := http.Get(url)
 
 	if err != nil {
