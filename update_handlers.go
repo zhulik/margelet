@@ -109,9 +109,9 @@ func handleSession(margelet *Margelet, message *tgbotapi.Message, authHandler au
 		return
 	}
 
-	finish, err := authHandler.handler.HandleSession(margelet, session)
+	err := authHandler.handler.HandleSession(margelet, session)
 
-	if finish {
+	if session.finished {
 		margelet.SessionRepository.Remove(message.Chat.ID, message.From.ID)
 		return
 	}

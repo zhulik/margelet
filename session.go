@@ -11,9 +11,10 @@ type margeletSession struct {
 	userID      int
 	lastMessage *tgbotapi.Message
 	responses   []tgbotapi.Message
+	finished    bool
 }
 
-func newMargetletSession(bot MargeletAPI, message *tgbotapi.Message, responses []tgbotapi.Message) Session {
+func newMargetletSession(bot MargeletAPI, message *tgbotapi.Message, responses []tgbotapi.Message) *margeletSession {
 	return &margeletSession{
 		bot:         bot,
 		chatID:      message.Chat.ID,
@@ -90,4 +91,8 @@ func (s *margeletSession) SendHideKeyboard(chatID int64, message string) error {
 
 func (s *margeletSession) Message() *tgbotapi.Message {
 	return s.lastMessage
+}
+
+func (s *margeletSession) Finish() {
+	s.finished = true
 }

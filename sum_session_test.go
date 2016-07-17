@@ -13,7 +13,7 @@ type SumSession struct {
 }
 
 // HandleResponse - Handlers user response
-func (s SumSession) HandleSession(bot margelet.MargeletAPI, session margelet.Session) (bool, error) {
+func (s SumSession) HandleSession(bot margelet.MargeletAPI, session margelet.Session) error {
 	var msg tgbotapi.MessageConfig
 	switch len(session.Responses()) {
 	case 0:
@@ -28,18 +28,19 @@ func (s SumSession) HandleSession(bot margelet.MargeletAPI, session margelet.Ses
 			}
 			msg = tgbotapi.MessageConfig{Text: fmt.Sprintf("Your sum: %d", sum)}
 			s.response(bot, session.Message(), msg)
-			return true, nil
+			session.Finish()
+			return nil
 		}
 
 		_, err := strconv.Atoi(session.Message().Text)
 		if err != nil {
 			msg = tgbotapi.MessageConfig{Text: "Sorry, not a number"}
 			s.response(bot, session.Message(), msg)
-			return false, err
+			return err
 		}
 	}
 
-	return false, nil
+	return nil
 }
 
 // CancelResponse - Chance to clean up everything
