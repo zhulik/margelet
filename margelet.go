@@ -112,7 +112,7 @@ func (margelet *Margelet) AddCommandHandler(command string, handler CommandHandl
 }
 
 // SetUnknownCommandHandler - sets unknown command handler
-func (margelet *Margelet) SetUnknownCommandHandler(command string, handler CommandHandler, auth ...AuthorizationPolicy) {
+func (margelet *Margelet) SetUnknownCommandHandler(handler CommandHandler, auth ...AuthorizationPolicy) {
 	margelet.UnknownCommandHandler = &authorizedCommandHandler{auth, handler}
 }
 
