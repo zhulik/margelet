@@ -298,7 +298,7 @@ func (margelet *Margelet) GetUserProfilePhotos(config tgbotapi.UserProfilePhotos
 	return margelet.RawBot().GetUserProfilePhotos(config)
 }
 
-// GetCurrentUserpic - returs current userpic for userID or error
+// GetCurrentUserpic - returns current userpic for userID or error
 func (margelet *Margelet) GetCurrentUserpic(userID int) (string, error) {
 	photos, err := margelet.GetUserProfilePhotos(tgbotapi.UserProfilePhotosConfig{UserID: userID, Offset: 0, Limit: 1})
 	if err != nil {
