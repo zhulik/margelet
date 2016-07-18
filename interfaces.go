@@ -22,7 +22,7 @@ type CallbackHandler interface {
 
 // CommandHandler - interface for command handlers
 type CommandHandler interface {
-	HandleCommand(bot MargeletAPI, message *tgbotapi.Message) error
+	HandleCommand(msg Message) error
 	HelpMessage() string
 }
 

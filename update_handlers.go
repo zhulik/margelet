@@ -71,7 +71,7 @@ func handleCommand(margelet *Margelet, message *tgbotapi.Message) {
 			margelet.QuickSend(message.Chat.ID, "Authorization error: "+err.Error())
 			return
 		}
-		err := authHandler.handler.HandleCommand(margelet, message)
+		err := authHandler.handler.HandleCommand(newMessage(margelet, message))
 
 		if err != nil {
 			margelet.QuickSend(message.Chat.ID, "Error occured: "+err.Error())

@@ -86,13 +86,20 @@ and will receive all message messages with this command, only if there is no act
 
 Simple example:
 ```go
+package margelet
+
+import (
+	"fmt"
+	"strings"
+)
+
 // HelpHandler Default handler for /help command. Margelet will add this automatically
 type HelpHandler struct {
 	Margelet *Margelet
 }
 
-// Handle sends default help message
-func (handler HelpHandler) HandleCommand(bot MargeletAPI, message *tgbotapi.Message) error {
+// HandleCommand sends default help message
+func (handler HelpHandler) HandleCommand(message Message) error {
 	lines := []string{}
 	for command, h := range handler.Margelet.CommandHandlers {
 		lines = append(lines, fmt.Sprintf("/%s - %s", command, h.handler.HelpMessage()))
@@ -102,7 +109,7 @@ func (handler HelpHandler) HandleCommand(bot MargeletAPI, message *tgbotapi.Mess
 		lines = append(lines, fmt.Sprintf("/%s - %s", command, h.handler.HelpMessage()))
 	}
 
-	_, err := bot.Send(tgbotapi.NewMessage(message.Chat.ID, strings.Join(lines, "\n")))
+	_, err := message.QuickSend(strings.Join(lines, "\n"))
 	return err
 }
 
