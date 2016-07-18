@@ -38,11 +38,12 @@ type authorizedSessionHandler struct {
 type Margelet struct {
 	bot TGBotAPI
 
-	MessageHandlers []MessageHandler
-	CommandHandlers map[string]authorizedCommandHandler
-	SessionHandlers map[string]authorizedSessionHandler
-	InlineHandler   InlineHandler
-	CallbackHandler CallbackHandler
+	MessageHandlers       []MessageHandler
+	CommandHandlers       map[string]authorizedCommandHandler
+	UnknownCommandHandler *authorizedCommandHandler
+	SessionHandlers       map[string]authorizedSessionHandler
+	InlineHandler         InlineHandler
+	CallbackHandler       CallbackHandler
 
 	running              bool
 	verbose              bool
@@ -108,6 +109,11 @@ func (margelet *Margelet) AddMessageHandler(handler MessageHandler) {
 // AddCommandHandler - adds new CommandHandler to Margelet
 func (margelet *Margelet) AddCommandHandler(command string, handler CommandHandler, auth ...AuthorizationPolicy) {
 	margelet.CommandHandlers[command] = authorizedCommandHandler{auth, handler}
+}
+
+// SetUnknownCommandHandler - sets unknown command handler
+func (margelet *Margelet) SetUnknownCommandHandler(command string, handler CommandHandler, auth ...AuthorizationPolicy) {
+	margelet.UnknownCommandHandler = &authorizedCommandHandler{auth, handler}
 }
 
 // AddSessionHandler - adds new SessionHandler to Margelet

@@ -84,6 +84,18 @@ func handleCommand(margelet *Margelet, message *tgbotapi.Message) {
 		handleSession(margelet, message, authHandler)
 		return
 	}
+
+	if margelet.UnknownCommandHandler != nil {
+		if err := margelet.UnknownCommandHandler.Allow(message); err != nil {
+			margelet.QuickSend(message.Chat.ID, "Authorization error: "+err.Error())
+			return
+		}
+		err := margelet.UnknownCommandHandler.handler.HandleCommand(newMessage(margelet, message))
+
+		if err != nil {
+			margelet.QuickSend(message.Chat.ID, "Error occured: "+err.Error())
+		}
+	}
 }
 
 func handleMessage(margelet *Margelet, msg *tgbotapi.Message) {
