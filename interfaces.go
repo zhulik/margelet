@@ -36,6 +36,7 @@ type SessionHandler interface {
 type Store interface {
 	GetConfigRepository() *ChatConfigRepository
 	GetSessionRepository() SessionRepository
+	GetChatRepository() *ChatRepository
 	GetRedis() *redis.Client
 }
 

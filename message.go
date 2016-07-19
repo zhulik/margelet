@@ -116,3 +116,7 @@ func (s *message) GetRedis() *redis.Client {
 func (s *message) StartSession(command string) {
 	s.bot.StartSession(s.message, command)
 }
+
+func (s *message) GetChatRepository() *ChatRepository {
+	return s.bot.GetChatRepository()
+}

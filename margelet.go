@@ -48,7 +48,7 @@ type Margelet struct {
 	running              bool
 	verbose              bool
 	Redis                *redis.Client
-	ChatRepository       *chatRepository
+	ChatRepository       *ChatRepository
 	SessionRepository    SessionRepository
 	ChatConfigRepository *ChatConfigRepository
 }
@@ -316,4 +316,9 @@ func (margelet *Margelet) GetCurrentUserpic(userID int) (string, error) {
 		return margelet.GetFileDirectURL(p[len(p)-1].FileID)
 	}
 	return "", fmt.Errorf("No userpic found")
+}
+
+// GetChatRepository - returns chats repository
+func (margelet *Margelet) GetChatRepository() *ChatRepository {
+	return margelet.ChatRepository
 }
