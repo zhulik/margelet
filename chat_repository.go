@@ -21,6 +21,11 @@ func (chat *ChatRepository) Add(id int64) {
 	chat.redis.SAdd(chat.key, strconv.FormatInt(id, 10))
 }
 
+func (chat *ChatRepository) Exist(id int64) (res bool) {
+	res, _ = chat.redis.SIsMember(chat.key, strconv.FormatInt(id, 10)).Result()
+	return
+}
+
 func (chat *ChatRepository) Remove(id int64) {
 	chat.redis.SRem(chat.key, strconv.FormatInt(id, 10))
 }
