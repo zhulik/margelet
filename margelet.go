@@ -137,14 +137,21 @@ func (margelet *Margelet) AnswerCallbackQuery(config tgbotapi.CallbackConfig) (t
 }
 
 // QuickSend - quick send text message to chatID
-func (margelet *Margelet) QuickSend(chatID int64, message string) (tgbotapi.Message, error) {
-	return margelet.bot.Send(tgbotapi.NewMessage(chatID, message))
+func (margelet *Margelet) QuickSend(chatID int64, message string, replyMarkup ...interface{}) (tgbotapi.Message, error) {
+	msg := tgbotapi.NewMessage(chatID, message)
+	if len(replyMarkup) > 0 {
+		msg.ReplyMarkup = replyMarkup[0]
+	}
+	return margelet.bot.Send(msg)
 }
 
 // QuickReply - quick send text reply to message
-func (margelet *Margelet) QuickReply(chatID int64, messageID int, message string) (tgbotapi.Message, error) {
+func (margelet *Margelet) QuickReply(chatID int64, messageID int, message string, replyMarkup ...interface{}) (tgbotapi.Message, error) {
 	msg := tgbotapi.NewMessage(chatID, message)
 	msg.ReplyToMessageID = messageID
+	if len(replyMarkup) > 0 {
+		msg.ReplyMarkup = replyMarkup[0]
+	}
 	return margelet.bot.Send(msg)
 }
 

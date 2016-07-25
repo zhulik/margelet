@@ -22,13 +22,13 @@ func (s *message) Bot() MargeletAPI {
 }
 
 // QuickSend send test to session chat
-func (s *message) QuickSend(text string) (tgbotapi.Message, error) {
-	return s.bot.QuickSend(s.message.Chat.ID, text)
+func (s *message) QuickSend(text string, replyMarkup ...interface{}) (tgbotapi.Message, error) {
+	return s.bot.QuickSend(s.message.Chat.ID, text, replyMarkup)
 }
 
 // QuckReply send a reply to last session message
-func (s *message) QuickReply(text string) (tgbotapi.Message, error) {
-	return s.bot.QuickReply(s.message.Chat.ID, s.message.MessageID, text)
+func (s *message) QuickReply(text string, replyMarkup ...interface{}) (tgbotapi.Message, error) {
+	return s.bot.QuickReply(s.message.Chat.ID, s.message.MessageID, text, replyMarkup)
 }
 
 func (s *message) QuickForceReply(text string) (tgbotapi.Message, error) {
