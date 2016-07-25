@@ -37,6 +37,7 @@ type Store interface {
 	GetConfigRepository() *ChatConfigRepository
 	GetSessionRepository() SessionRepository
 	GetChatRepository() *ChatRepository
+	GetStatsRepository() StatsRepository
 	GetRedis() *redis.Client
 }
 

@@ -16,7 +16,7 @@ type SumSession struct {
 func (s SumSession) HandleSession(session margelet.Session) error {
 	switch len(session.Responses()) {
 	case 0:
-		session.QuickReply("Hello, please, write one number per message, after some iterations write 'end'.")
+		session.QuickReply("Hello, please, write one number per message, after some iterations write 'end'.", nil)
 	default:
 		if session.Message().Text == "end" {
 			var sum int
@@ -24,14 +24,14 @@ func (s SumSession) HandleSession(session margelet.Session) error {
 				n, _ := strconv.Atoi(m.Text)
 				sum += n
 			}
-			session.QuickReply(fmt.Sprintf("Your sum: %d", sum))
+			session.QuickReply(fmt.Sprintf("Your sum: %d", sum), nil)
 			session.Finish()
 			return nil
 		}
 
 		_, err := strconv.Atoi(session.Message().Text)
 		if err != nil {
-			session.QuickReply("Sorry, not a number")
+			session.QuickReply("Sorry, not a number", nil)
 			return err
 		}
 	}

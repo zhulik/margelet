@@ -31,6 +31,7 @@ func handleUpdate(margelet *Margelet, update tgbotapi.Update) {
 	case update.Message != nil:
 		message := update.Message
 		margelet.ChatRepository.Add(message.Chat.ID)
+		margelet.StatsRepository.Incr(message.Chat.ID, message.From.ID, "message_sent")
 
 		// If we have active session in this chat with this user, handle it first
 		if command := margelet.SessionRepository.Command(message.Chat.ID, message.From.ID); len(command) > 0 {

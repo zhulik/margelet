@@ -125,3 +125,8 @@ func (s *message) StartSession(command string) {
 func (s *message) GetChatRepository() *ChatRepository {
 	return s.bot.GetChatRepository()
 }
+
+// GetStatsRepository - returns stats repository
+func (s *message) GetStatsRepository() StatsRepository {
+	return s.bot.GetStatsRepository()
+}

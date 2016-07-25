@@ -51,6 +51,7 @@ type Margelet struct {
 	ChatRepository       *ChatRepository
 	SessionRepository    SessionRepository
 	ChatConfigRepository *ChatConfigRepository
+	StatsRepository      StatsRepository
 }
 
 // NewMargelet creates new Margelet instance
@@ -80,6 +81,7 @@ func NewMargeletFromBot(botName string, redisAddr string, redisPassword string, 
 	chatRepository := newChatRepository(botName, redis)
 	sessionRepository := newSessionRepository(botName, redis)
 	chatConfigRepository := newChatConfigRepository(botName, redis)
+	statsRepository := newStatsRepository(botName, redis)
 
 	margelet := Margelet{
 		bot:                  bot,
@@ -94,6 +96,7 @@ func NewMargeletFromBot(botName string, redisAddr string, redisPassword string, 
 		ChatRepository:       chatRepository,
 		SessionRepository:    sessionRepository,
 		ChatConfigRepository: chatConfigRepository,
+		StatsRepository:      statsRepository,
 	}
 
 	margelet.AddCommandHandler("help", HelpHandler{&margelet})
@@ -184,6 +187,11 @@ func (margelet *Margelet) GetConfigRepository() *ChatConfigRepository {
 // GetSessionRepository - returns session repository
 func (margelet *Margelet) GetSessionRepository() SessionRepository {
 	return margelet.SessionRepository
+}
+
+// GetStatsRepository - returns stats repository
+func (margelet *Margelet) GetStatsRepository() StatsRepository {
+	return margelet.StatsRepository
 }
 
 // GetRedis - returns margelet's redis client

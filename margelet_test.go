@@ -48,7 +48,7 @@ func TestMargelet(t *testing.T) {
 		})
 
 		Convey("When quick sending message", func() {
-			_, err := m.QuickSend(0, "TEST")
+			_, err := m.QuickSend(0, "TEST", nil)
 
 			Convey("Error should be nil", func() {
 				So(err, ShouldBeNil)
@@ -56,7 +56,7 @@ func TestMargelet(t *testing.T) {
 		})
 
 		Convey("When quick replying message", func() {
-			_, err := m.QuickReply(0, 100500, "TEST")
+			_, err := m.QuickReply(0, 100500, "TEST", nil)
 
 			Convey("Error should be nil", func() {
 				So(err, ShouldBeNil)
