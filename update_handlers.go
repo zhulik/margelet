@@ -23,7 +23,7 @@ func handleUpdate(margelet *Margelet, update tgbotapi.Update) {
 				panicMessage = "Panic occured!"
 			}
 
-			margelet.QuickSend(update.Message.Chat.ID, panicMessage)
+			margelet.QuickSend(update.Message.Chat.ID, panicMessage, nil)
 		}
 	}()
 
@@ -68,13 +68,13 @@ func handleCallback(margelet *Margelet, query *tgbotapi.CallbackQuery) {
 func handleCommand(margelet *Margelet, message *tgbotapi.Message) {
 	if authHandler, ok := margelet.CommandHandlers[strings.TrimSpace(message.Command())]; ok {
 		if err := authHandler.Allow(message); err != nil {
-			margelet.QuickSend(message.Chat.ID, "Authorization error: "+err.Error())
+			margelet.QuickSend(message.Chat.ID, "Authorization error: "+err.Error(), nil)
 			return
 		}
 		err := authHandler.handler.HandleCommand(newMessage(margelet, message))
 
 		if err != nil {
-			margelet.QuickSend(message.Chat.ID, "Error occured: "+err.Error())
+			margelet.QuickSend(message.Chat.ID, "Error occured: "+err.Error(), nil)
 		}
 		return
 	}
@@ -87,13 +87,13 @@ func handleCommand(margelet *Margelet, message *tgbotapi.Message) {
 
 	if margelet.UnknownCommandHandler != nil {
 		if err := margelet.UnknownCommandHandler.Allow(message); err != nil {
-			margelet.QuickSend(message.Chat.ID, "Authorization error: "+err.Error())
+			margelet.QuickSend(message.Chat.ID, "Authorization error: "+err.Error(), nil)
 			return
 		}
 		err := margelet.UnknownCommandHandler.handler.HandleCommand(newMessage(margelet, message))
 
 		if err != nil {
-			margelet.QuickSend(message.Chat.ID, "Error occured: "+err.Error())
+			margelet.QuickSend(message.Chat.ID, "Error occured: "+err.Error(), nil)
 		}
 	}
 }
@@ -104,14 +104,14 @@ func handleMessage(margelet *Margelet, msg *tgbotapi.Message) {
 		err := handler.HandleMessage(m)
 
 		if err != nil {
-			m.QuickSend("Error occured: " + err.Error())
+			m.QuickSend("Error occured: "+err.Error(), nil)
 		}
 	}
 }
 
 func handleSession(margelet *Margelet, message *tgbotapi.Message, authHandler authorizedSessionHandler) {
 	if err := authHandler.Allow(message); err != nil {
-		margelet.QuickSend(message.Chat.ID, "Authorization error: "+err.Error())
+		margelet.QuickSend(message.Chat.ID, "Authorization error: "+err.Error(), nil)
 		return
 	}
 	dialog := margelet.SessionRepository.Dialog(message.Chat.ID, message.From.ID)

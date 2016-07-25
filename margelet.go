@@ -137,21 +137,17 @@ func (margelet *Margelet) AnswerCallbackQuery(config tgbotapi.CallbackConfig) (t
 }
 
 // QuickSend - quick send text message to chatID
-func (margelet *Margelet) QuickSend(chatID int64, message string, replyMarkup ...interface{}) (tgbotapi.Message, error) {
+func (margelet *Margelet) QuickSend(chatID int64, message string, replyMarkup interface{}) (tgbotapi.Message, error) {
 	msg := tgbotapi.NewMessage(chatID, message)
-	if len(replyMarkup) > 0 {
-		msg.ReplyMarkup = replyMarkup[0]
-	}
+	msg.ReplyMarkup = replyMarkup
 	return margelet.bot.Send(msg)
 }
 
 // QuickReply - quick send text reply to message
-func (margelet *Margelet) QuickReply(chatID int64, messageID int, message string, replyMarkup ...interface{}) (tgbotapi.Message, error) {
+func (margelet *Margelet) QuickReply(chatID int64, messageID int, message string, replyMarkup interface{}) (tgbotapi.Message, error) {
 	msg := tgbotapi.NewMessage(chatID, message)
 	msg.ReplyToMessageID = messageID
-	if len(replyMarkup) > 0 {
-		msg.ReplyMarkup = replyMarkup[0]
-	}
+	msg.ReplyMarkup = replyMarkup
 	return margelet.bot.Send(msg)
 }
 
@@ -161,6 +157,13 @@ func (margelet *Margelet) QuickForceReply(chatID int64, messageID int, message s
 	msg.ReplyToMessageID = messageID
 	msg.ReplyMarkup = tgbotapi.ForceReply{true, true}
 	return margelet.bot.Send(msg)
+}
+
+// SendImage - sends image to chat
+func (margelet *Margelet) SendImage(chatID int64, reader tgbotapi.FileReader, replyMarkup interface{}) (tgbotapi.Message, error) {
+	msg := tgbotapi.NewPhotoUpload(chatID, reader)
+	msg.ReplyMarkup = replyMarkup
+	return margelet.Send(msg)
 }
 
 // GetFileDirectURL - converts fileID to direct URL

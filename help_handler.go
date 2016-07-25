@@ -21,7 +21,7 @@ func (handler HelpHandler) HandleCommand(message Message) error {
 		lines = append(lines, fmt.Sprintf("/%s - %s", command, h.handler.HelpMessage()))
 	}
 
-	_, err := message.QuickSend(strings.Join(lines, "\n"))
+	_, err := message.QuickSend(strings.Join(lines, "\n"), nil)
 	return err
 }
 

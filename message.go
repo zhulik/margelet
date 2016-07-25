@@ -22,12 +22,12 @@ func (s *message) Bot() MargeletAPI {
 }
 
 // QuickSend send test to session chat
-func (s *message) QuickSend(text string, replyMarkup ...interface{}) (tgbotapi.Message, error) {
+func (s *message) QuickSend(text string, replyMarkup interface{}) (tgbotapi.Message, error) {
 	return s.bot.QuickSend(s.message.Chat.ID, text, replyMarkup)
 }
 
 // QuckReply send a reply to last session message
-func (s *message) QuickReply(text string, replyMarkup ...interface{}) (tgbotapi.Message, error) {
+func (s *message) QuickReply(text string, replyMarkup interface{}) (tgbotapi.Message, error) {
 	return s.bot.QuickReply(s.message.Chat.ID, s.message.MessageID, text, replyMarkup)
 }
 
@@ -38,6 +38,11 @@ func (s *message) QuickForceReply(text string) (tgbotapi.Message, error) {
 // SendImageByURL send image by url to session chat
 func (s *message) SendImageByURL(url string, caption string, replyMarkup interface{}) (tgbotapi.Message, error) {
 	return s.bot.SendImageByURL(s.message.Chat.ID, url, caption, replyMarkup)
+}
+
+// SendImage send image by url to session chat
+func (s *message) SendImage(reader tgbotapi.FileReader, replyMarkup interface{}) (tgbotapi.Message, error) {
+	return s.bot.SendImage(s.message.Chat.ID, reader, replyMarkup)
 }
 
 // SendTypingAction send typing action to session chat
