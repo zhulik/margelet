@@ -103,6 +103,10 @@ func (s *message) GetCurrentUserpic() (string, error) {
 	return s.bot.GetCurrentUserpic(s.message.From.ID)
 }
 
+func (s *message) GetCurrentUserpicID() (string, error) {
+	return s.bot.GetCurrentUserpicID(s.message.From.ID)
+}
+
 // GetConfigRepository - returns chat config repository
 func (s *message) GetConfigRepository() *ChatConfigRepository {
 	return s.bot.GetConfigRepository()

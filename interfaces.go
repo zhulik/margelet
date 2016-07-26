@@ -72,6 +72,7 @@ type MargeletAPI interface {
 	RawBot() *tgbotapi.BotAPI
 	GetUserProfilePhotos(config tgbotapi.UserProfilePhotosConfig) (tgbotapi.UserProfilePhotos, error)
 	GetCurrentUserpic(userID int) (string, error)
+	GetCurrentUserpicID(userID int) (string, error)
 }
 
 // TGBotAPI - interface, that describe telegram-bot-api API
@@ -109,6 +110,7 @@ type Message interface {
 	SendFindLocationAction() error
 	SendHideKeyboard(message string) error
 	GetCurrentUserpic() (string, error)
+	GetCurrentUserpicID() (string, error)
 	Bot() MargeletAPI
 	StartSession(command string)
 }

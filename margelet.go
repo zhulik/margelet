@@ -322,8 +322,18 @@ func (margelet *Margelet) GetUserProfilePhotos(config tgbotapi.UserProfilePhotos
 	return margelet.RawBot().GetUserProfilePhotos(config)
 }
 
-// GetCurrentUserpic - returns current userpic for userID or error
+// GetCurrentUserpic - returns current userpic URL for userID or error
 func (margelet *Margelet) GetCurrentUserpic(userID int) (string, error) {
+	fileID, err := margelet.GetCurrentUserpicID(userID)
+	if err != nil {
+		return "", err
+	}
+
+	return margelet.GetFileDirectURL(fileID)
+}
+
+// GetCurrentUserpicID - returns current userpic FileID for userID or error
+func (margelet *Margelet) GetCurrentUserpicID(userID int) (string, error) {
 	photos, err := margelet.GetUserProfilePhotos(tgbotapi.UserProfilePhotosConfig{UserID: userID, Offset: 0, Limit: 1})
 	if err != nil {
 		return "", err
@@ -331,7 +341,7 @@ func (margelet *Margelet) GetCurrentUserpic(userID int) (string, error) {
 
 	if len(photos.Photos) > 0 {
 		p := photos.Photos[len(photos.Photos)-1]
-		return margelet.GetFileDirectURL(p[len(p)-1].FileID)
+		return p[len(p)-1].FileID, nil
 	}
 	return "", fmt.Errorf("No userpic found")
 }
