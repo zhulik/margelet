@@ -11,7 +11,7 @@ type callbackQuery struct {
 
 func newCallbackQuery(bot MargeletAPI, query *tgbotapi.CallbackQuery) *callbackQuery {
 	return &callbackQuery{
-		message: newMessage(bot, query.Message),
+		message: NewMessage(bot, query.Message),
 		query:   query,
 	}
 }

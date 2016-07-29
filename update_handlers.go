@@ -8,11 +8,31 @@ import (
 	"strings"
 )
 
+func getFromID(update tgbotapi.Update) int {
+	var from *tgbotapi.User
+	switch {
+	case update.Message != nil:
+		from = update.Message.From
+	case update.InlineQuery != nil:
+		from = update.InlineQuery.From
+	case update.CallbackQuery != nil:
+		from = update.CallbackQuery.From
+	}
+	if from != nil {
+		return from.ID
+	}
+	return -1
+}
+
 func handleUpdate(margelet *Margelet, update tgbotapi.Update) {
 	defer func() {
 		if err := recover(); err != nil {
-			if margelet.verbose {
-				log.Println(string(debug.Stack()))
+			log.Println(string(debug.Stack()))
+
+			if margelet.RecoverCallback != nil {
+
+				margelet.RecoverCallback(margelet, getFromID(update), err)
+				return
 			}
 
 			var panicMessage string
@@ -72,7 +92,7 @@ func handleCommand(margelet *Margelet, message *tgbotapi.Message) {
 			margelet.QuickSend(message.Chat.ID, "Authorization error: "+err.Error(), nil)
 			return
 		}
-		err := authHandler.handler.HandleCommand(newMessage(margelet, message))
+		err := authHandler.handler.HandleCommand(NewMessage(margelet, message))
 
 		if err != nil {
 			margelet.QuickSend(message.Chat.ID, "Error occured: "+err.Error(), nil)
@@ -91,7 +111,7 @@ func handleCommand(margelet *Margelet, message *tgbotapi.Message) {
 			margelet.QuickSend(message.Chat.ID, "Authorization error: "+err.Error(), nil)
 			return
 		}
-		err := margelet.UnknownCommandHandler.handler.HandleCommand(newMessage(margelet, message))
+		err := margelet.UnknownCommandHandler.handler.HandleCommand(NewMessage(margelet, message))
 
 		if err != nil {
 			margelet.QuickSend(message.Chat.ID, "Error occured: "+err.Error(), nil)
@@ -101,7 +121,7 @@ func handleCommand(margelet *Margelet, message *tgbotapi.Message) {
 
 func handleMessage(margelet *Margelet, msg *tgbotapi.Message) {
 	for _, handler := range margelet.MessageHandlers {
-		m := newMessage(margelet, msg)
+		m := NewMessage(margelet, msg)
 		err := handler.HandleMessage(m)
 
 		if err != nil {

@@ -15,7 +15,7 @@ type margeletSession struct {
 
 func newMargetletSession(bot MargeletAPI, msg *tgbotapi.Message, responses []tgbotapi.Message) *margeletSession {
 	return &margeletSession{
-		message:   newMessage(bot, msg),
+		message:   NewMessage(bot, msg),
 		responses: responses,
 		finished:  false,
 	}

@@ -10,7 +10,8 @@ type message struct {
 	message *tgbotapi.Message
 }
 
-func newMessage(bot MargeletAPI, msg *tgbotapi.Message) *message {
+// NewMessage returns message, that wraps bot and message
+func NewMessage(bot MargeletAPI, msg *tgbotapi.Message) *message {
 	return &message{
 		bot:     bot,
 		message: msg,

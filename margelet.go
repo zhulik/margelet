@@ -10,6 +10,9 @@ import (
 
 type policies []AuthorizationPolicy
 
+// RecoverCallback - callback wich will be called when margelet recovers from panic
+type RecoverCallback func(margelet *Margelet, userID int, r interface{})
+
 func (p policies) Allow(message *tgbotapi.Message) error {
 	if len(p) == 0 {
 		return nil
@@ -38,20 +41,20 @@ type authorizedSessionHandler struct {
 type Margelet struct {
 	bot TGBotAPI
 
+	RecoverCallback       RecoverCallback
 	MessageHandlers       []MessageHandler
 	CommandHandlers       map[string]authorizedCommandHandler
 	UnknownCommandHandler *authorizedCommandHandler
 	SessionHandlers       map[string]authorizedSessionHandler
 	InlineHandler         InlineHandler
 	CallbackHandler       CallbackHandler
-
-	running              bool
-	verbose              bool
-	Redis                *redis.Client
-	ChatRepository       *ChatRepository
-	SessionRepository    SessionRepository
-	ChatConfigRepository *ChatConfigRepository
-	StatsRepository      StatsRepository
+	running               bool
+	verbose               bool
+	Redis                 *redis.Client
+	ChatRepository        *ChatRepository
+	SessionRepository     SessionRepository
+	ChatConfigRepository  *ChatConfigRepository
+	StatsRepository       StatsRepository
 }
 
 // NewMargelet creates new Margelet instance
@@ -208,7 +211,8 @@ func (margelet *Margelet) Run() error {
 	}
 
 	for margelet.running {
-		handleUpdate(margelet, <-updates)
+		msg := <-updates
+		go handleUpdate(margelet, msg)
 	}
 	return nil
 }
@@ -251,6 +255,14 @@ func (margelet *Margelet) SendImageByURL(chatID int64, url string, caption strin
 	reader := tgbotapi.FileReader{Name: fmt.Sprintf(filepath.Base(url)), Reader: resp.Body, Size: resp.ContentLength}
 
 	cfg := tgbotapi.NewPhotoUpload(chatID, reader)
+	cfg.Caption = caption
+	cfg.ReplyMarkup = replyMarkup
+	return margelet.Send(cfg)
+}
+
+// SendImageByID - sends given by FileID image to chatID
+func (margelet *Margelet) SendImageByID(chatID int64, fileID string, caption string, replyMarkup interface{}) (tgbotapi.Message, error) {
+	cfg := tgbotapi.NewPhotoShare(chatID, fileID)
 	cfg.Caption = caption
 	cfg.ReplyMarkup = replyMarkup
 	return margelet.Send(cfg)
