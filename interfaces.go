@@ -57,7 +57,7 @@ type MargeletAPI interface {
 	HandleSession(message *tgbotapi.Message, command string)
 	StartSession(message *tgbotapi.Message, command string)
 	SendImageByURL(chatID int64, url string, caption string, replyMarkup interface{}) (tgbotapi.Message, error)
-	SendImageByID(chatID int64, fileID string, caption string, replyMarkup interface{}) (tgbotapi.Message, error)
+	SendImageByID(chatID int64, url string, caption string, replyMarkup interface{}) (tgbotapi.Message, error)
 
 	SendTypingAction(chatID int64) error
 	SendUploadPhotoAction(chatID int64) error

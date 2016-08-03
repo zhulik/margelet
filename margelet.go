@@ -6,12 +6,15 @@ import (
 	"gopkg.in/telegram-bot-api.v4"
 	"net/http"
 	"path/filepath"
+	"strconv"
 )
 
 type policies []AuthorizationPolicy
 
 // RecoverCallback - callback wich will be called when margelet recovers from panic
 type RecoverCallback func(margelet *Margelet, userID int, r interface{})
+type ReceiveCallback func(from int, text string)
+type SendCallback func(to int64, text string)
 
 func (p policies) Allow(message *tgbotapi.Message) error {
 	if len(p) == 0 {
@@ -42,6 +45,8 @@ type Margelet struct {
 	bot TGBotAPI
 
 	RecoverCallback       RecoverCallback
+	ReceiveCallback       ReceiveCallback
+	SendCallback          SendCallback
 	MessageHandlers       []MessageHandler
 	CommandHandlers       map[string]authorizedCommandHandler
 	UnknownCommandHandler *authorizedCommandHandler
@@ -100,6 +105,8 @@ func NewMargeletFromBot(botName string, redisAddr string, redisPassword string, 
 		SessionRepository:    sessionRepository,
 		ChatConfigRepository: chatConfigRepository,
 		StatsRepository:      statsRepository,
+		ReceiveCallback:      func(f int, t string) {},
+		SendCallback:         func(f int64, t string) {},
 	}
 
 	margelet.AddCommandHandler("help", HelpHandler{&margelet})
@@ -134,16 +141,25 @@ func (margelet *Margelet) Send(c tgbotapi.Chattable) (tgbotapi.Message, error) {
 
 // AnswerInlineQuery  - send answer to InlineQuery
 func (margelet *Margelet) AnswerInlineQuery(config tgbotapi.InlineConfig) (tgbotapi.APIResponse, error) {
+	v, err := strconv.Atoi(config.InlineQueryID)
+	if err != nil {
+		go margelet.SendCallback(int64(v), config.InlineQueryID)
+	}
 	return margelet.bot.AnswerInlineQuery(config)
 }
 
 // AnswerCallbackQuery  - send answer to CallbackQuery
 func (margelet *Margelet) AnswerCallbackQuery(config tgbotapi.CallbackConfig) (tgbotapi.APIResponse, error) {
+	v, err := strconv.Atoi(config.CallbackQueryID)
+	if err != nil {
+		go margelet.SendCallback(int64(v), config.Text)
+	}
 	return margelet.bot.AnswerCallbackQuery(config)
 }
 
 // QuickSend - quick send text message to chatID
 func (margelet *Margelet) QuickSend(chatID int64, message string, replyMarkup interface{}) (tgbotapi.Message, error) {
+	go margelet.SendCallback(chatID, message)
 	msg := tgbotapi.NewMessage(chatID, message)
 	msg.ReplyMarkup = replyMarkup
 	return margelet.bot.Send(msg)
@@ -151,6 +167,7 @@ func (margelet *Margelet) QuickSend(chatID int64, message string, replyMarkup in
 
 // QuickReply - quick send text reply to message
 func (margelet *Margelet) QuickReply(chatID int64, messageID int, message string, replyMarkup interface{}) (tgbotapi.Message, error) {
+	go margelet.SendCallback(chatID, message)
 	msg := tgbotapi.NewMessage(chatID, message)
 	msg.ReplyToMessageID = messageID
 	msg.ReplyMarkup = replyMarkup
@@ -159,6 +176,7 @@ func (margelet *Margelet) QuickReply(chatID int64, messageID int, message string
 
 // QuickForceReply - quick send text force reply to message
 func (margelet *Margelet) QuickForceReply(chatID int64, messageID int, message string) (tgbotapi.Message, error) {
+	go margelet.SendCallback(chatID, message)
 	msg := tgbotapi.NewMessage(chatID, message)
 	msg.ReplyToMessageID = messageID
 	msg.ReplyMarkup = tgbotapi.ForceReply{true, true}
@@ -167,6 +185,7 @@ func (margelet *Margelet) QuickForceReply(chatID int64, messageID int, message s
 
 // SendImage - sends image to chat
 func (margelet *Margelet) SendImage(chatID int64, reader tgbotapi.FileReader, replyMarkup interface{}) (tgbotapi.Message, error) {
+	go margelet.SendCallback(chatID, reader.Name)
 	msg := tgbotapi.NewPhotoUpload(chatID, reader)
 	msg.ReplyMarkup = replyMarkup
 	return margelet.Send(msg)
@@ -243,6 +262,7 @@ func (margelet *Margelet) StartSession(message *tgbotapi.Message, command string
 // SendImageByURL - sends given by url image to chatID
 func (margelet *Margelet) SendImageByURL(chatID int64, url string, caption string, replyMarkup interface{}) (tgbotapi.Message, error) {
 	margelet.SendUploadPhotoAction(chatID)
+	go margelet.SendCallback(chatID, url)
 	resp, err := http.Get(url)
 
 	if err != nil {
@@ -262,6 +282,7 @@ func (margelet *Margelet) SendImageByURL(chatID int64, url string, caption strin
 
 // SendImageByID - sends given by FileID image to chatID
 func (margelet *Margelet) SendImageByID(chatID int64, fileID string, caption string, replyMarkup interface{}) (tgbotapi.Message, error) {
+	go margelet.SendCallback(chatID, fileID)
 	cfg := tgbotapi.NewPhotoShare(chatID, fileID)
 	cfg.Caption = caption
 	cfg.ReplyMarkup = replyMarkup
@@ -270,54 +291,63 @@ func (margelet *Margelet) SendImageByID(chatID int64, fileID string, caption str
 
 // SendTypingAction - sends typing chat action to chatID
 func (margelet *Margelet) SendTypingAction(chatID int64) error {
+	go margelet.SendCallback(chatID, "typing")
 	_, err := margelet.bot.Send(tgbotapi.NewChatAction(chatID, "typing"))
 	return err
 }
 
 // SendUploadPhotoAction - sends upload_photo chat action to chatID
 func (margelet *Margelet) SendUploadPhotoAction(chatID int64) error {
+	go margelet.SendCallback(chatID, "upload_photo")
 	_, err := margelet.bot.Send(tgbotapi.NewChatAction(chatID, "upload_photo"))
 	return err
 }
 
 // SendRecordVideoAction - sends record_video chat action to chatID
 func (margelet *Margelet) SendRecordVideoAction(chatID int64) error {
+	go margelet.SendCallback(chatID, "record_video")
 	_, err := margelet.bot.Send(tgbotapi.NewChatAction(chatID, "record_video"))
 	return err
 }
 
 // SendUploadVideoAction - sends upload_video chat action to chatID
 func (margelet *Margelet) SendUploadVideoAction(chatID int64) error {
+	go margelet.SendCallback(chatID, "upload_video")
 	_, err := margelet.bot.Send(tgbotapi.NewChatAction(chatID, "upload_video"))
 	return err
 }
 
 // SendRecordAudioAction - sends record_audio chat action to chatID
 func (margelet *Margelet) SendRecordAudioAction(chatID int64) error {
+	go margelet.SendCallback(chatID, "record_audio")
 	_, err := margelet.bot.Send(tgbotapi.NewChatAction(chatID, "record_audio"))
 	return err
 }
 
 // SendUploadAudioAction - sends upload_audio chat action to chatID
 func (margelet *Margelet) SendUploadAudioAction(chatID int64) error {
+	go margelet.SendCallback(chatID, "upload_audio")
 	_, err := margelet.bot.Send(tgbotapi.NewChatAction(chatID, "upload_audio"))
 	return err
 }
 
 // SendUploadDocumentAction - sends upload_document chat action to chatID
 func (margelet *Margelet) SendUploadDocumentAction(chatID int64) error {
+	go margelet.SendCallback(chatID, "upload_document")
 	_, err := margelet.bot.Send(tgbotapi.NewChatAction(chatID, "upload_document"))
 	return err
 }
 
 // SendFindLocationAction - sends find_location chat action to chatID
 func (margelet *Margelet) SendFindLocationAction(chatID int64) error {
+	go margelet.SendCallback(chatID, "find_location")
 	_, err := margelet.bot.Send(tgbotapi.NewChatAction(chatID, "find_location"))
 	return err
 }
 
 // SendHideKeyboard - hides keyboard in chatID
 func (margelet *Margelet) SendHideKeyboard(chatID int64, message string) error {
+	go margelet.SendCallback(chatID, message)
 	msg := tgbotapi.NewMessage(chatID, message)
 	msg.ReplyMarkup = tgbotapi.NewHideKeyboard(true)
 	_, err := margelet.Send(msg)

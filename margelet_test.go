@@ -93,11 +93,12 @@ func TestMargelet(t *testing.T) {
 			m.InlineHandler = &InlineImage{}
 			m.CallbackHandler = &CallbackMessage{}
 			chat := tgbotapi.Chat{ID: 1}
+			from := tgbotapi.User{ID: 1}
 
 			Convey("When running should handle message without panic", func() {
 				go m.Run()
 
-				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "Test", Chat: &chat}}
+				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "Test", Chat: &chat, From: &from}}
 				time.Sleep(10 * time.Millisecond)
 				m.Stop()
 			})
@@ -105,7 +106,7 @@ func TestMargelet(t *testing.T) {
 			Convey("When running should handle command without panic", func() {
 				go m.Run()
 
-				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "/help", Chat: &chat}}
+				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "/help", Chat: &chat, From: &from}}
 
 				time.Sleep(10 * time.Millisecond)
 				m.Stop()
@@ -114,7 +115,7 @@ func TestMargelet(t *testing.T) {
 			Convey("When running panic should not crash bot", func() {
 				go m.Run()
 
-				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "/panic", Chat: &chat}}
+				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "/panic", Chat: &chat, From: &from}}
 
 				time.Sleep(10 * time.Millisecond)
 				m.Stop()
@@ -123,11 +124,11 @@ func TestMargelet(t *testing.T) {
 			Convey("When running should handle session without panic", func() {
 				go m.Run()
 
-				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "/sum", Chat: &chat}}
-				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "10", Chat: &chat}}
-				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "20", Chat: &chat}}
-				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "test", Chat: &chat}}
-				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "end", Chat: &chat}}
+				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "/sum", Chat: &chat, From: &from}}
+				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "10", Chat: &chat, From: &from}}
+				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "20", Chat: &chat, From: &from}}
+				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "test", Chat: &chat, From: &from}}
+				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "end", Chat: &chat, From: &from}}
 
 				time.Sleep(100 * time.Millisecond)
 				m.Stop()
@@ -136,10 +137,10 @@ func TestMargelet(t *testing.T) {
 			Convey("When running should handle session with early cancel without panic", func() {
 				go m.Run()
 
-				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "/sum", Chat: &chat}}
-				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "10", Chat: &chat}}
-				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "20", Chat: &chat}}
-				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "cancel", Chat: &chat}}
+				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "/sum", Chat: &chat, From: &from}}
+				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "10", Chat: &chat, From: &from}}
+				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "20", Chat: &chat, From: &from}}
+				botMock.Updates <- tgbotapi.Update{Message: &tgbotapi.Message{Text: "cancel", Chat: &chat, From: &from}}
 
 				time.Sleep(100 * time.Millisecond)
 				m.Stop()
@@ -148,7 +149,7 @@ func TestMargelet(t *testing.T) {
 			Convey("When running should handle inline query without panic", func() {
 				go m.Run()
 
-				botMock.Updates <- tgbotapi.Update{InlineQuery: &tgbotapi.InlineQuery{ID: "test_id", Query: "test"}}
+				botMock.Updates <- tgbotapi.Update{InlineQuery: &tgbotapi.InlineQuery{ID: "test_id", Query: "test", From: &from}}
 
 				time.Sleep(100 * time.Millisecond)
 				m.Stop()

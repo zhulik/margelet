@@ -49,6 +49,7 @@ func handleUpdate(margelet *Margelet, update tgbotapi.Update) {
 
 	switch {
 	case update.Message != nil:
+		go margelet.ReceiveCallback(update.Message.From.ID, update.Message.Text)
 		message := update.Message
 		margelet.ChatRepository.Add(message.Chat.ID)
 		margelet.StatsRepository.Incr(message.Chat.ID, message.From.ID, "message_sent")
@@ -64,8 +65,10 @@ func handleUpdate(margelet *Margelet, update tgbotapi.Update) {
 			}
 		}
 	case update.InlineQuery != nil:
+		go margelet.ReceiveCallback(update.InlineQuery.From.ID, update.InlineQuery.Query)
 		handleInline(margelet, update.InlineQuery)
 	case update.CallbackQuery != nil:
+		go margelet.ReceiveCallback(update.CallbackQuery.From.ID, update.CallbackQuery.Data)
 		handleCallback(margelet, update.CallbackQuery)
 	}
 }
