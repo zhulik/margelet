@@ -42,8 +42,8 @@ func (s *message) SendImageByURL(url string, caption string, replyMarkup interfa
 }
 
 // SendImage send image by url to session chat
-func (s *message) SendImage(reader tgbotapi.FileReader, replyMarkup interface{}) (tgbotapi.Message, error) {
-	return s.bot.SendImage(s.message.Chat.ID, reader, replyMarkup)
+func (s *message) SendImage(reader tgbotapi.FileReader, caption string, replyMarkup interface{}) (tgbotapi.Message, error) {
+	return s.bot.SendImage(s.message.Chat.ID, reader, caption, replyMarkup)
 }
 
 // SendTypingAction send typing action to session chat
@@ -134,4 +134,12 @@ func (s *message) GetChatRepository() *ChatRepository {
 // GetStatsRepository - returns stats repository
 func (s *message) GetStatsRepository() StatsRepository {
 	return s.bot.GetStatsRepository()
+}
+
+func (s *message) SendDocument(reader tgbotapi.FileReader, replyMarkup interface{}) (tgbotapi.Message, error) {
+	return s.bot.SendDocument(s.Message().Chat.ID, reader, replyMarkup)
+}
+
+func (s *message) SendDocumentByURL(url string, replyMarkup interface{}) (tgbotapi.Message, error) {
+	return s.bot.SendDocumentByURL(s.Message().Chat.ID, url, replyMarkup)
 }

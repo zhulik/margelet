@@ -50,7 +50,7 @@ type MargeletAPI interface {
 	QuickSend(chatID int64, message string, replyMarkup interface{}) (tgbotapi.Message, error)
 	QuickReply(chatID int64, messageID int, message string, replyMarkup interface{}) (tgbotapi.Message, error)
 	QuickForceReply(chatID int64, messageID int, message string) (tgbotapi.Message, error)
-	SendImage(chatID int64, reader tgbotapi.FileReader, replyMarkup interface{}) (tgbotapi.Message, error)
+	SendImage(chatID int64, reader tgbotapi.FileReader, caption string, replyMarkup interface{}) (tgbotapi.Message, error)
 
 	GetFileDirectURL(fileID string) (string, error)
 	IsMessageToMe(message tgbotapi.Message) bool
@@ -58,6 +58,9 @@ type MargeletAPI interface {
 	StartSession(message *tgbotapi.Message, command string)
 	SendImageByURL(chatID int64, url string, caption string, replyMarkup interface{}) (tgbotapi.Message, error)
 	SendImageByID(chatID int64, url string, caption string, replyMarkup interface{}) (tgbotapi.Message, error)
+
+	SendDocument(chatID int64, reader tgbotapi.FileReader, replyMarkup interface{}) (tgbotapi.Message, error)
+	SendDocumentByURL(chatID int64, url string, replyMarkup interface{}) (tgbotapi.Message, error)
 
 	SendTypingAction(chatID int64) error
 	SendUploadPhotoAction(chatID int64) error
@@ -100,7 +103,10 @@ type Message interface {
 	QuickReply(text string, replyMarkup interface{}) (tgbotapi.Message, error)
 	QuickForceReply(text string) (tgbotapi.Message, error)
 	SendImageByURL(url string, caption string, replyMarkup interface{}) (tgbotapi.Message, error)
-	SendImage(reader tgbotapi.FileReader, replyMarkup interface{}) (tgbotapi.Message, error)
+	SendImage(reader tgbotapi.FileReader, caption string, replyMarkup interface{}) (tgbotapi.Message, error)
+	SendDocument(reader tgbotapi.FileReader, replyMarkup interface{}) (tgbotapi.Message, error)
+	SendDocumentByURL(url string, replyMarkup interface{}) (tgbotapi.Message, error)
+
 	SendTypingAction() error
 	SendUploadPhotoAction() error
 	SendRecordVideoAction() error
