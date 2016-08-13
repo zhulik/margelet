@@ -3,6 +3,7 @@ package margelet
 import (
 	"gopkg.in/redis.v3"
 	"gopkg.in/telegram-bot-api.v4"
+	"net/url"
 )
 
 // MessageHandler - interface for message handlers
@@ -87,6 +88,7 @@ type TGBotAPI interface {
 	GetFileDirectURL(fileID string) (string, error)
 	IsMessageToMe(message tgbotapi.Message) bool
 	GetUpdatesChan(config tgbotapi.UpdateConfig) (<-chan tgbotapi.Update, error)
+	MakeRequest(endpoint string, params url.Values) (tgbotapi.APIResponse, error)
 }
 
 // AuthorizationPolicy - interface, that describes authorization policy for command or session
