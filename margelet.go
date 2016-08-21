@@ -1,15 +1,10 @@
 package margelet
 
 import (
-	"encoding/json"
-	"errors"
 	"fmt"
 	"gopkg.in/redis.v3"
 	"gopkg.in/telegram-bot-api.v4"
-	"io/ioutil"
-	"log"
 	"net/http"
-	"net/url"
 	"path/filepath"
 	"strconv"
 )
@@ -280,59 +275,10 @@ func (margelet *Margelet) StartSession(message *tgbotapi.Message, command string
 func (margelet *Margelet) SendImageByURL(chatID int64, imgURL string, caption string, replyMarkup interface{}) (tgbotapi.Message, error) {
 	margelet.SendUploadPhotoAction(chatID)
 	go margelet.SendCallback(chatID, imgURL)
-
-	rmData, err := json.Marshal(replyMarkup)
-	if err != nil {
-		return tgbotapi.Message{}, err
-	}
-
-	params := url.Values{}
-	params.Add("chat_id", strconv.FormatInt(chatID, 10))
-	params.Add("photo", imgURL)
-	params.Add("caption", caption)
-	params.Add("reply_markup", string(rmData))
-	method := fmt.Sprintf("https://api.telegram.org/beta/bot%s/sendPhoto", margelet.token)
-	client := new(http.Client)
-	resp, err := client.PostForm(method, params)
-	if err != nil {
-		return tgbotapi.Message{}, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode == http.StatusForbidden {
-		return tgbotapi.Message{}, errors.New(tgbotapi.ErrAPIForbidden)
-	}
-
-	bytes, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return tgbotapi.Message{}, err
-	}
-
-	log.Println(method, string(bytes))
-
-	var apiResp tgbotapi.APIResponse
-	json.Unmarshal(bytes, &apiResp)
-
-	if !apiResp.Ok {
-		return tgbotapi.Message{}, errors.New(apiResp.Description)
-	}
-
-	return tgbotapi.Message{}, nil
-	// resp, err := http.Get(url)
-	//
-	// if err != nil {
-	// 	return tgbotapi.Message{}, err
-	// }
-	// defer resp.Body.Close()
-	// if resp.StatusCode != 200 {
-	// 	return tgbotapi.Message{}, fmt.Errorf("Error obtaining image by url %s", url)
-	// }
-	// reader := tgbotapi.FileReader{Name: fmt.Sprintf(filepath.Base(url)), Reader: resp.Body, Size: resp.ContentLength}
-	//
-	// cfg := tgbotapi.NewPhotoUpload(chatID, reader)
-	// cfg.Caption = caption
-	// cfg.ReplyMarkup = replyMarkup
-	// return margelet.Send(cfg)
+	cfg := tgbotapi.NewPhotoShare(chatID, imgURL)
+	cfg.Caption = caption
+	cfg.ReplyMarkup = replyMarkup
+	return margelet.Send(cfg)
 }
 
 // SendDocumentByURL - sends given by url document to chatID

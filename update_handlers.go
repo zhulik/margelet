@@ -27,7 +27,7 @@ func getFromID(update tgbotapi.Update) int {
 func handleUpdate(margelet *Margelet, update tgbotapi.Update) {
 	defer func() {
 		if err := recover(); err != nil {
-			log.Println(err, string(debug.Stack()))
+			log.Println(string(debug.Stack()))
 
 			if margelet.RecoverCallback != nil {
 
