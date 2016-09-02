@@ -2,9 +2,10 @@ package margelet
 
 import (
 	"fmt"
-	"gopkg.in/redis.v3"
 	"strconv"
 	"strings"
+
+	"gopkg.in/redis.v3"
 )
 
 // StatsRepository - public interface for session repository
@@ -38,5 +39,5 @@ func (stats *statsRepository) Get(chatID int64, userID int, name string) int {
 }
 
 func (stats *statsRepository) keyFor(chatID int64, userID int, name string) string {
-	return fmt.Sprintf("%s_%d_%d_%d", stats.key, chatID, userID, name)
+	return fmt.Sprintf("%s_%d_%d_%s", stats.key, chatID, userID, name)
 }
