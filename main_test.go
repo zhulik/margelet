@@ -1,6 +1,8 @@
 package margelet_test
 
 import (
+	"net/url"
+
 	"../margelet"
 
 	"gopkg.in/telegram-bot-api.v4"
@@ -32,6 +34,10 @@ func (bot BotMock) IsMessageToMe(message tgbotapi.Message) bool {
 
 func (bot BotMock) GetUpdatesChan(config tgbotapi.UpdateConfig) (<-chan tgbotapi.Update, error) {
 	return bot.Updates, nil
+}
+
+func (bot BotMock) MakeRequest(endpoint string, params url.Values) (tgbotapi.APIResponse, error) {
+	return tgbotapi.APIResponse{}, nil
 }
 
 var (
