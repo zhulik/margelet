@@ -52,6 +52,10 @@ func getMargelet() *margelet.Margelet {
 	return m
 }
 
+//Empty Function, because "go vet" wants Margelet() to exist because the ExampleMargelet function
+func Margelet() {
+}
+
 func ExampleMargelet() {
 	bot, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<redis password>", 0, "your bot token", false)
 
