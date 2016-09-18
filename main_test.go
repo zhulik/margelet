@@ -1,6 +1,8 @@
 package margelet_test
 
 import (
+	"net/url"
+
 	"../margelet"
 
 	"gopkg.in/telegram-bot-api.v4"
@@ -34,6 +36,10 @@ func (bot BotMock) GetUpdatesChan(config tgbotapi.UpdateConfig) (<-chan tgbotapi
 	return bot.Updates, nil
 }
 
+func (bot BotMock) MakeRequest(endpoint string, params url.Values) (tgbotapi.APIResponse, error) {
+	return tgbotapi.APIResponse{}, nil
+}
+
 var (
 	botMock = BotMock{}
 )
@@ -44,6 +50,10 @@ func getMargelet() *margelet.Margelet {
 
 	m.Redis.FlushDb()
 	return m
+}
+
+//Empty Function, because "go vet" wants Margelet() to exist because the ExampleMargelet function
+func Margelet() {
 }
 
 func ExampleMargelet() {
