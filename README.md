@@ -1,5 +1,6 @@
 * [Русский](README_ru.md)
 
+<img src="https://img.shields.io/badge/license-MIT%20License-green">
 
 [![Build Status](https://travis-ci.org/zhulik/margelet.svg?branch=master)](https://travis-ci.org/zhulik/margelet)
 # Margelet
