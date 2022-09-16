@@ -44,12 +44,12 @@ Out of the box, margelet supports only /help command, it responds something like
 ### Concept
 Margelet is based on some concepts:
 
-* Message handlers
-* Command handlers
-* Session handlers
-* Chat configs
-* Inline handlers
-* Message handlers
+:white_check_mark: Message handlers
+:white_check_mark: Command handlers
+:white_check_mark: Session handlers
+:white_check_mark: Chat configs
+:white_check_mark: Inline handlers
+:white_check_mark: Message handlers
 
 ### Message handler is a struct that implements Handler interface. 
 It receives all chat messages dependant on bot's Privacy mode [Privacy mode](https://core.telegram.org/bots#privacy-mode). 
