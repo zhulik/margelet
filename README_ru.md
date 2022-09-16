@@ -5,7 +5,7 @@
 [![Build Status](https://travis-ci.org/zhulik/margelet.svg?branch=master)](https://travis-ci.org/zhulik/margelet)
 <img src="https://img.shields.io/badge/last%20modified-today-brightgreen">
 <img src="https://img.shields.io/badge/platform-linux--64%20%7C%20win--32%20%7C%20osx--64%20%7C%20win--64-lightgrey">
-<img src="https://img.shields.io/badge/issues-1%20open-yellow">
+<img src="https://img.shields.io/badge/issues-2%20open-yellow">
 <img src="https://img.shields.io/badge/license-MIT%20License-green">
 # Margelet
 Telegram Bot Framework для Go основан на Telegram-bot-API[telegram-bot-api](https://gopkg.in/telegram-bot-api.v4).
