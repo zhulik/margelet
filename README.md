@@ -1,3 +1,6 @@
+* [Русский](README_ru.md)
+
+
 [![Build Status](https://travis-ci.org/zhulik/margelet.svg?branch=master)](https://travis-ci.org/zhulik/margelet)
 # Margelet
 Telegram Bot Framework for Go is based on telegram-bot-api [telegram-bot-api](https://gopkg.in/telegram-bot-api.v4.
