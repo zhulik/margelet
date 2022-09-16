@@ -12,7 +12,8 @@ Margelet — это всего лишь тонкий слой, который п
 `go get github.com/zhulik/margelet`
 
 ## Простое использование
-```package main
+```go
+package main
 
 import (
 	"github.com/zhulik/margelet"
@@ -46,8 +47,7 @@ Margelet основан на некоторых концепциях:
 * Обработчики сообщений
 
 
-### Обработчик сообщений — это структура, реализующая интерфейс Handler. Он получает все сообщения чата, зависящие от режима конфиденциальности бота 
-[Privacy mode](https://core.telegram.org/bots#privacy-mode). Он не получает команды.
+### Обработчик сообщений — это структура, реализующая интерфейс Handler. Он получает все сообщения чата, зависящие от режима конфиденциальности бота [Privacy mode](https://core.telegram.org/bots#privacy-mode). Он не получает команды.
 
 Простой пример:
 ```
@@ -293,9 +293,9 @@ bot, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<re
 bot.GetConfigRepository().Set(<chatID>, "<info>")
 ...
 info := bot.GetConfigRepository().Get(<chatID>)
-
+```
 OR
-
+``` go
 type userInfo struct{
   FavColor string // First character has to be Capital otherwise it wont be saved
 }
