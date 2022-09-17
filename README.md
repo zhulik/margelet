@@ -1,20 +1,25 @@
+* [Русский](README_ru.md)
+
 [![Build Status](https://travis-ci.org/zhulik/margelet.svg?branch=master)](https://travis-ci.org/zhulik/margelet)
+<img src="https://img.shields.io/badge/last%20modified-today-brightgreen">
+<img src="https://img.shields.io/badge/platform-linux--64%20%7C%20win--32%20%7C%20osx--64%20%7C%20win--64-lightgrey">
+<img src="https://img.shields.io/badge/issues-2%20open-yellow">
+<img src="https://img.shields.io/badge/license-MIT%20License-green">
 # Margelet
-Telegram Bot Framework for Go is based on [telegram-bot-api](https://gopkg.in/telegram-bot-api.v4)
+Telegram Bot Framework for Go is based on telegram-bot-api [telegram-bot-api](https://gopkg.in/telegram-bot-api.v4.
 
-It uses Redis to store it's states, configs and so on.
+ It uses Redis to store it's states, configs and so on.
 
-Any low-level interactions with Telegram Bot API(downloading files, keyboards and so on) should be performed through
-[telegram-bot-api](https://gopkg.in/telegram-bot-api.v4).
+Any low-level interactions with Telegram Bot API(downloading files, keyboards and so on) 
+should be performed through  (https://gopkg.in/telegram-bot-api.v4).
 
-Margelet is just a thin layer, that allows you to solve
-basic bot tasks quickly and easy.
+Margelet is just a thin layer, that allows you to solve basic bot tasks quickly and easy.
 
 ## Installation
-`go get github.com/zhulik/margelet`
-
-## Simple usage
 ```go
+go get github.com/zhulik/margelet
+
+Simple usage
 package main
 
 import (
@@ -34,25 +39,26 @@ func main() {
 	}
 }
 ```
-
-Out of the box, margelet supports only `/help` command, it responds something like this
+Out of the box, margelet supports only /help command, it responds something like this
 
 `/help - Show bot help`
 
-## Concept
+### Concept
 Margelet is based on some concepts:
-* Message handlers
-* Command handlers
-* Session handlers
-* Chat configs
-* Inline handlers
 
-### Message handlers
-Message handler is a struct that implements Handler interface. It receives all chat messages dependant on bot's
-[Privacy mode](https://core.telegram.org/bots#privacy-mode). It doesn't receive commands.
+:white_check_mark: Message handlers
+:white_check_mark: Command handlers
+:white_check_mark: Session handlers
+:white_check_mark: Chat configs
+:white_check_mark: Inline handlers
+:white_check_mark: Message handlers
+
+### Message handler is a struct that implements Handler interface. 
+It receives all chat messages dependant on bot's Privacy mode [Privacy mode](https://core.telegram.org/bots#privacy-mode). 
+It doesn't receive commands.
 
 Simple example:
-```go
+``` go 
 package margelet_test
 
 import (
@@ -68,24 +74,22 @@ func (handler EchoHandler) HandleMessage(m margelet.Message) error {
 	_, err := m.QuickSend(m.Message().Text)
 	return err
 }
-
 ```
-
 This handler will repeat any user's message back to chat.
 
 Message helpers can be added to margelet with `AddMessageHandler` function:
-```go
+
+``` go 
 bot, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<redis password>", 0, "your bot token", false)
 bot.AddMessageHandler(EchoHandler{})
 bot.Run()
 ```
-
 ### Command handlers
-Command handler is struct that implements CommandHandler interface. CommandHandler can be subscribed on any command you need
-and will receive all message messages with this command, only if there is no active session with this user in this chat
+Command handler is struct that implements CommandHandler interface. CommandHandler can be subscribed on any command you need and will receive all message messages with this command, only if there is no active session with this user in this chat
 
 Simple example:
-```go
+
+``` go 
 package margelet
 
 import (
@@ -118,23 +122,22 @@ func (handler HelpHandler) HelpMessage() string {
 	return "Show bot help"
 }
 ```
-
 Command handlers can be added to margelet with `AddCommandHandler` function:
-```go
+
+``` go 
 bot, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<redis password>", 0, "your bot token", false)
 bot.AddCommandHandler("help", HelpHandler{bot})
 bot.Run()
 ```
-
 ### Session handlers
-Session here is an interactive dialog with user, like [@BotFather](https://telegram.me/botfather) does. User runs session
-with a command and then response to bot's questions until bot collects all needed information. It can be used for bot
-configuration, for example.
+Session here is an interactive dialog with user, like [@BotFather](https://telegram.me/botfather) does. 
+User runs session with a command and then response to bot's questions until bot collects all needed 
+information. It can be used for bot configuration, for example.
 
-**Session handlers API is still developing**
+### Session handlers API is still developing**
 
 Session handler is struct that implements SessionHandler interface. Simple example:
-```go
+``` go 
 package margelet_test
 
 import (
@@ -194,25 +197,25 @@ func (session SumSession) HelpMessage() string {
 	return "Sum your numbers and print result"
 }
 ```
-
 Session handlers can be added to margelet with `AddSessionHandler` function:
-```go
+
+``` go 
 bot, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<redis password>", 0, "your bot token", false)
 bot.AddSessionHandler("help", SumSession{})
 bot.Run()
 ```
 
-On each user response it receives all previous user responses, so you can restore session state. HandleResponse return values
-it important:
+On each user response it receives all previous user responses, so you can restore session state. HandleResponse return values it important:
+
 * first(bool), means that margelet should finish session, so return true if you receive all needed info from user, false otherwise
-* second(err), means that bot cannot handle user's message. This message will not be added to session dialog history.
-Return any error if you can handle user's message and return nil if message is accepted.
+* second(err), means that bot cannot handle user's message. This message will not be added to session dialog history. Return any error if you can handle user's message and return nil if message is accepted.
 
 ### Inline handlers
 Inline handler is struct that implements InlineHandler interface. InlineHandler can be subscribed on any inline queries.
 
 Simple example:
-```go
+
+``` go 
 package margelet_test
 
 import (
@@ -239,9 +242,9 @@ func (handler InlineImage) HandleInline(bot margelet.MargeletAPI, query *tgbotap
 	return nil
 }
 ```
-
 Inline handler can be added to margelet by `InlineHandler` assignment:
-```go
+
+``` go 
 bot, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<redis password>", 0, "your bot token", false)
 m.InlineHandler = &InlineImage{}
 bot.Run()
@@ -251,7 +254,8 @@ bot.Run()
 Callback handler is struct that implements CallbackHandler interface. CallbackHandler can be subscribed on any callback queries.
 
 Simple example:
-```go
+
+``` go 
 package margelet_test
 
 import (
@@ -275,24 +279,27 @@ func (handler CallbackMessage) HandleCallback(query margelet.CallbackQuery) erro
 ```
 
 Callback handler can be added to margelet by `CallbackHandler` assignment:
-```go
+
+``` go 
 bot, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<redis password>", 0, "your bot token", false)
 m.CallbackHandler = &CallbackMessage{}
 bot.Run()
 ```
 
 ### Chat configs
-Bots can store any config string(you can use serialized JSON) for any chat. It can be used for storing user's
-configurations and other user-related information. Simple example:
-```go
+Bots can store any config string(you can use serialized JSON) for any chat. 
+It can be used for storing user's configurations and other user-related information.
+Simple example:
+
+``` go 
 bot, err := margelet.NewMargelet("<your awesome bot name>", "<redis addr>", "<redis password>", 0, "your bot token", false)
 ...
 bot.GetConfigRepository().Set(<chatID>, "<info>")
 ...
 info := bot.GetConfigRepository().Get(<chatID>)
-
+```
 OR
-
+```
 type userInfo struct{
   FavColor string // First character has to be Capital otherwise it wont be saved
 }
@@ -305,6 +312,6 @@ bot.GetConfigRepository().GetWithStruct(<chatID>, &user)
 ```
 Chat config repository can be accessed from session handlers.
 
-## Example project
-Simple and clean example project can be found [here](https://github.com/zhulik/cat_bot). It provides command handling
-and session configuration.
+### Example project
+Simple and clean example project can be found here  -> [here](https://github.com/zhulik/cat_bot). 
+It provides command handling and session configuration.
